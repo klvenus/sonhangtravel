@@ -12,6 +12,7 @@ const fallbackTourData = {
   title: 'Tour Đông Hưng 1 Ngày - Khám Phá Thành Phố Biên Giới',
   slug: 'tour-dong-hung-1-ngay',
   shortDescription: 'Đông Hưng (东兴) giáp với thành phố Móng Cái, tỉnh Quảng Ninh – nơi đây diễn ra hoạt động thương mại sôi động nhộn nhịp quanh năm, với nền ẩm thực và văn hóa đậm đà bản sắc Trung Hoa.',
+  content: '',
   price: 780000,
   originalPrice: 980000,
   duration: '1 ngày',
