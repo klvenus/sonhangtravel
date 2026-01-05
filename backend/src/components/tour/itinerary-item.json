@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_tour_itinerary_items",
+  "info": {
+    "displayName": "Lịch trình",
+    "icon": "calendar",
+    "description": "Chi tiết lịch trình từng ngày"
+  },
+  "options": {},
+  "attributes": {
+    "time": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

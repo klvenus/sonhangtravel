@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_tour_list_items",
+  "info": {
+    "displayName": "Mục danh sách",
+    "icon": "check",
+    "description": "Một mục trong danh sách (bao gồm/không bao gồm/lưu ý)"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

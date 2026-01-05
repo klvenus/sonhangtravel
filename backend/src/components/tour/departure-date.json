@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_tour_departure_dates",
+  "info": {
+    "displayName": "Ngày khởi hành",
+    "icon": "calendar-alt",
+    "description": "Lịch khởi hành tour"
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "price": {
+      "type": "integer"
+    },
+    "availableSlots": {
+      "type": "integer",
+      "default": 20
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["available", "almost_full", "full"],
+      "default": "available"
+    }
+  }
+}

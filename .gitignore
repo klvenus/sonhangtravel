@@ -1,0 +1,85 @@
+# Dependencies# Dependencies
+
+node_modules/node_modules/
+
+.pnp.pnp
+
+.pnp.js.pnp.js
+
+
+
+# Testing# Testing
+
+coverage/coverage/
+
+
+
+# Next.js# Next.js
+
+frontend/.next/.next/
+
+frontend/out/out/
+
+build/
+
+# Production
+
+build/# Misc
+
+dist/.DS_Store
+
+*.pem
+
+# Strapi
+
+backend/.tmp/# Debug
+
+backend/.cache/npm-debug.log*
+
+backend/build/yarn-debug.log*
+
+backend/dist/yarn-error.log*
+
+backend/exports/
+
+# Local env files
+
+# Database.env
+
+*.db.env.local
+
+*.sqlite.env.development.local
+
+.env.test.local
+
+# Misc.env.production.local
+
+.DS_Store
+
+*.pem# Vercel
+
+.env.vercel
+
+.env.*
+
+!.env.example# TypeScript
+
+*.tsbuildinfo
+
+# Debugnext-env.d.ts
+
+npm-debug.log*
+
+yarn-debug.log*# Payload
+
+yarn-error.log*/media
+
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
