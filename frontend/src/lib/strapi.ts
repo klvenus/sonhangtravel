@@ -2,6 +2,9 @@
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
+// Timeout config (longer for production cold starts on free tier hosting)
+const API_TIMEOUT = process.env.NODE_ENV === 'production' ? 30000 : 10000; // 30s prod, 10s dev
+
 // Types
 export interface StrapiImage {
   id: number;
@@ -127,28 +130,48 @@ function getHeaders(): HeadersInit {
   return headers;
 }
 
-// Fetch wrapper with error handling
-async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidate?: number | false }): Promise<T> {
+// Fetch wrapper with error handling and timeout
+async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidate?: number | false; timeout?: number }): Promise<T> {
   const url = `${STRAPI_URL}/api${endpoint}`;
   
-  const { revalidate, ...fetchOptions } = options || {};
+  const { revalidate, timeout = API_TIMEOUT, ...fetchOptions } = options || {};
   
-  const res = await fetch(url, {
-    ...fetchOptions,
-    headers: getHeaders(),
-    cache: 'force-cache', // Force cache for better performance
-    next: { 
-      revalidate: revalidate ?? 3600, // Default: cache 1 hour
-      tags: ['strapi'] // Tag for on-demand revalidation
-    },
-  });
+  // Create abort controller for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
   
-  if (!res.ok) {
-    console.error(`API Error: ${res.status} ${res.statusText}`);
-    throw new Error(`Failed to fetch ${endpoint}`);
+  try {
+    const res = await fetch(url, {
+      ...fetchOptions,
+      headers: getHeaders(),
+      signal: controller.signal,
+      cache: 'force-cache', // Force cache for better performance
+      next: { 
+        revalidate: revalidate ?? 3600, // Default: cache 1 hour
+        tags: ['strapi'] // Tag for on-demand revalidation
+      },
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!res.ok) {
+      console.error(`API Error: ${res.status} ${res.statusText}`);
+      throw new Error(`Failed to fetch ${endpoint}: ${res.status} ${res.statusText}`);
+    }
+    
+    return res.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        console.error(`Request timeout after ${timeout}ms for ${endpoint}`);
+        throw new Error(`Request timeout: ${endpoint}`);
+      }
+      console.error(`Fetch error for ${endpoint}:`, error.message);
+    }
+    throw error;
   }
-  
-  return res.json();
 }
 
 // ============ TOUR API ============
