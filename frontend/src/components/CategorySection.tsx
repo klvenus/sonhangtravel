@@ -1,12 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getCategories, getImageUrl, Category } from '@/lib/strapi'
+
+// Category type for component
+interface CategoryData {
+  id: number
+  name: string
+  slug: string
+  image: string
+  tourCount: number
+  icon: string
+}
 
 // Fallback data
-const fallbackCategories = [
+const fallbackCategories: CategoryData[] = [
   {
     id: 1,
     name: 'Đông Hưng',
@@ -57,43 +65,15 @@ const fallbackCategories = [
   },
 ]
 
-// Transform Strapi category
-function transformCategory(cat: Category) {
-  const tourCount = Array.isArray(cat.tours) ? cat.tours.length : 0
-  const categoryName = cat.ten || cat.name || 'Danh mục'
-  return {
-    id: cat.id,
-    name: categoryName,
-    slug: cat.slug,
-    image: getImageUrl(cat.image, 'medium') || `https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=80`,
-    tourCount: tourCount,
-    icon: cat.icon || '🏯',
-  }
+interface Props {
+  initialCategories?: CategoryData[]
 }
 
-export default function CategorySection() {
-  const [categories, setCategories] = useState(fallbackCategories)
-  const [useFallback, setUseFallback] = useState(false)
+export default function CategorySection({ initialCategories }: Props) {
+  const displayCategories = initialCategories && initialCategories.length > 0 
+    ? initialCategories 
+    : fallbackCategories
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const data = await getCategories()
-        if (data && data.length > 0) {
-          setCategories(data.map(transformCategory))
-          setUseFallback(false)
-        } else {
-          setUseFallback(true)
-        }
-      } catch (error) {
-        console.log('Using fallback categories')
-        setUseFallback(true)
-      }
-    }
-    fetchCategories()
-  }, [])
-
-  const displayCategories = useFallback ? fallbackCategories : categories
   return (
     <section className="py-4 md:py-8 bg-white md:bg-gray-50">
       {/* Mobile Version - Klook style */}

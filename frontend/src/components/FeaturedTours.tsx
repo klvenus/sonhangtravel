@@ -1,9 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import TourCard from './TourCard'
 import Link from 'next/link'
-import { getTours, getImageUrl, Tour } from '@/lib/strapi'
 
 // Tour type for component
 interface TourCardData {
@@ -21,15 +19,8 @@ interface TourCardData {
   isNew?: boolean
 }
 
-const tabs = [
-  { id: 'hot', label: 'Hot nhất', sort: 'bookingCount:desc' },
-  { id: 'cheap', label: 'Giá rẻ', sort: 'price:asc' },
-  { id: 'new', label: 'Mới nhất', sort: 'createdAt:desc' },
-  { id: 'sale', label: 'Đang giảm', sort: 'createdAt:desc' },
-]
-
 // Fallback data khi chưa có dữ liệu từ Strapi
-const fallbackTours = [
+const fallbackTours: TourCardData[] = [
   {
     id: '1',
     title: 'Tour Đông Hưng 2N1Đ - Khám phá thành phố biên giới',
@@ -108,64 +99,14 @@ const fallbackTours = [
   },
 ]
 
-// Transform Strapi tour to component props
-function transformTour(tour: Tour) {
-  return {
-    id: String(tour.id),
-    title: tour.title,
-    slug: tour.slug,
-    image: getImageUrl(tour.thumbnail, 'medium'),
-    location: tour.destination,
-    duration: tour.duration,
-    price: tour.price,
-    originalPrice: tour.originalPrice,
-    rating: tour.rating || 5,
-    reviewCount: tour.reviewCount || 0,
-    isHot: tour.featured,
-    isNew: false, // Can be calculated from createdAt
-  }
+interface Props {
+  initialTours?: TourCardData[]
 }
 
-export default function FeaturedTours() {
-  const [activeTab, setActiveTab] = useState('hot')
-  const [tours, setTours] = useState<TourCardData[]>(fallbackTours)
-  const [loading, setLoading] = useState(true)
-  const [useFallback, setUseFallback] = useState(false)
-
-  useEffect(() => {
-    async function fetchTours() {
-      try {
-        const activeTabConfig = tabs.find(t => t.id === activeTab)
-        console.log('Fetching tours with sort:', activeTabConfig?.sort)
-        const response = await getTours({
-          pageSize: 6,
-          sort: activeTabConfig?.sort,
-        })
-        
-        console.log('API Response:', response)
-        
-        if (response.data && response.data.length > 0) {
-          const transformed = response.data.map(transformTour)
-          console.log('Transformed tours:', transformed)
-          setTours(transformed)
-          setUseFallback(false)
-        } else {
-          console.log('No data, using fallback')
-          setUseFallback(true)
-        }
-      } catch (error) {
-        console.error('API Error:', error)
-        console.log('Using fallback data - Strapi not connected')
-        setUseFallback(true)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchTours()
-  }, [activeTab])
-
-  const displayTours = useFallback ? fallbackTours : tours
+export default function FeaturedTours({ initialTours }: Props) {
+  const displayTours = initialTours && initialTours.length > 0 
+    ? initialTours 
+    : fallbackTours
 
   return (
     <section className="py-4 md:py-8">
@@ -204,25 +145,8 @@ export default function FeaturedTours() {
         {/* Section Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">Tour Nổi Bật </h2>
+            <h2 className="text-2xl font-bold text-gray-800">Tour Nổi Bật</h2>
             <p className="text-gray-600 mt-1">Những tour được yêu thích nhất</p>
-          </div>
-          
-          {/* Tabs */}
-          <div className="flex gap-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-[#00CBA9] text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
           </div>
         </div>
 

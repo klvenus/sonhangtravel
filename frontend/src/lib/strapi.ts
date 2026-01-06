@@ -128,13 +128,18 @@ function getHeaders(): HeadersInit {
 }
 
 // Fetch wrapper with error handling
-async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
+async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidate?: number | false }): Promise<T> {
   const url = `${STRAPI_URL}/api${endpoint}`;
   
+  const { revalidate, ...fetchOptions } = options || {};
+  
   const res = await fetch(url, {
-    ...options,
+    ...fetchOptions,
     headers: getHeaders(),
-    cache: 'no-store', // Always fetch fresh data
+    next: { 
+      revalidate: revalidate ?? 3600, // Default: cache 1 hour
+      tags: ['strapi'] // Tag for on-demand revalidation
+    },
   });
   
   if (!res.ok) {
