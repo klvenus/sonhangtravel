@@ -99,21 +99,21 @@ export default function TourCard({
     )
   }
 
-  // Vertical Card (Default)
+  // Mobile Vertical Card - Klook Style
   return (
-    <Link href={`/tour/${slug}`}>
-      <div className="tour-card group">
-        {/* Image */}
-        <div className="relative h-36 md:h-44 overflow-hidden">
+    <Link href={`/tour/${slug}`} className="block">
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm md:shadow-md md:hover:shadow-lg transition-shadow">
+        {/* Image Container */}
+        <div className="relative aspect-[4/3] md:h-44 overflow-hidden">
           <Image
             src={image}
             alt={title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover md:group-hover:scale-105 transition-transform duration-300"
           />
           
-          {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {/* Desktop Badges */}
+          <div className="hidden md:flex absolute top-2 left-2 flex-col gap-1">
             {isHot && (
               <span className="bg-[#FF6B35] text-white text-[10px] font-bold px-2 py-0.5 rounded">
                 🔥 HOT
@@ -124,61 +124,64 @@ export default function TourCard({
                 MỚI
               </span>
             )}
-            {discountPercent > 0 && (
-              <span className="bg-[#00CBA9] text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                -{discountPercent}%
-              </span>
-            )}
           </div>
 
-          {/* Duration Badge */}
-          <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm">
-            {duration}
-          </div>
-
-          {/* Wishlist */}
-          <button className="absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full flex items-center justify-center active:scale-95 transition-transform">
+          {/* Desktop Wishlist */}
+          <button className="hidden md:flex absolute top-2 right-2 w-7 h-7 bg-white/90 rounded-full items-center justify-center active:scale-95 transition-transform">
             <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </button>
+
+          {/* Desktop Duration Badge */}
+          <div className="hidden md:block absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm">
+            {duration}
+          </div>
         </div>
 
         {/* Content */}
-        <div className="p-3">
-          {/* Location */}
-          <div className="flex items-center gap-1 text-gray-500 text-xs mb-1">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            </svg>
-            <span className="truncate">{location}</span>
+        <div className="p-2.5 md:p-3">
+          {/* Category/Location Tag - Mobile */}
+          <div className="text-[11px] text-gray-500 mb-1 truncate">
+            {location} • {duration}
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 mb-2 min-h-[2.5rem] group-hover:text-[#00CBA9] transition-colors">
+          <h3 className="font-medium text-gray-800 text-[13px] md:text-sm leading-snug line-clamp-2 mb-1.5 md:mb-2 min-h-[2.25rem] md:min-h-[2.5rem]">
             {title}
           </h3>
 
-          {/* Rating */}
-          <div className="flex items-center gap-1 mb-2">
-            <span className="flex items-center gap-0.5 bg-green-50 text-green-700 px-1.5 py-0.5 rounded text-xs font-medium">
-              <span className="text-yellow-500">★</span>
-              {rating.toFixed(1)}
-            </span>
-            <span className="text-gray-400 text-xs">({reviewCount})</span>
+          {/* Rating - Klook style */}
+          <div className="flex items-center gap-1 mb-1.5 md:mb-2">
+            <span className="text-orange-500 text-xs">★</span>
+            <span className="text-xs font-medium text-gray-700">{rating.toFixed(1)}</span>
+            <span className="text-xs text-gray-400">({formatPrice(reviewCount)})</span>
           </div>
 
-          {/* Price */}
-          <div className="flex items-end gap-2">
-            <div className="text-[#FF6B35] font-bold">
-              {formatPrice(price)}đ
-            </div>
-            {originalPrice && (
-              <div className="text-gray-400 text-xs line-through">
-                {formatPrice(originalPrice)}đ
-              </div>
+          {/* Price Section */}
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-gray-500 text-[11px]">Từ đ</span>
+            <span className="text-gray-900 font-bold text-sm md:text-base">
+              {formatPrice(price)}
+            </span>
+            {originalPrice && originalPrice > price && (
+              <span className="text-gray-400 text-[11px] line-through">
+                đ {formatPrice(originalPrice)}
+              </span>
             )}
           </div>
+
+          {/* Sale Badge - Bottom */}
+          {discountPercent > 0 && (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <span className="text-[#FF6B35] text-[10px] font-medium border border-[#FF6B35] px-1.5 py-0.5 rounded">
+                Sale
+              </span>
+              <span className="text-[#FF6B35] text-[10px] bg-[#FFF5F2] px-1.5 py-0.5 rounded">
+                Giảm {discountPercent}%
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </Link>
