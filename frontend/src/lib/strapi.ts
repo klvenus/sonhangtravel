@@ -136,6 +136,7 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidat
   const res = await fetch(url, {
     ...fetchOptions,
     headers: getHeaders(),
+    cache: 'force-cache', // Force cache for better performance
     next: { 
       revalidate: revalidate ?? 3600, // Default: cache 1 hour
       tags: ['strapi'] // Tag for on-demand revalidation

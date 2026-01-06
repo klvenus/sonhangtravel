@@ -75,10 +75,21 @@ function transformStrapiTour(tour: Tour) {
   }
 }
 
-// Generate static params for common tours (optional)
+// Generate static params for common tours (pre-render at build time)
 export async function generateStaticParams() {
-  // You can pre-generate common tour pages at build time
-  return []
+  try {
+    // Fetch some popular tours to pre-generate at build time
+    const { getTours } = await import('@/lib/strapi')
+    const response = await getTours({ pageSize: 10, sort: 'bookingCount:desc' })
+    
+    return response.data.map((tour) => ({
+      slug: tour.slug,
+    }))
+  } catch (error) {
+    console.error('Error generating static params:', error)
+    // Return empty array if Strapi is not available at build time
+    return []
+  }
 }
 
 interface PageProps {
