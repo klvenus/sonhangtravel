@@ -228,6 +228,24 @@ export default function TourDetailClient({ tourData, isPreview = false }: TourDe
                   </div>
                 </div>
 
+                {/* Mobile Download Tour File Button - Separate section */}
+                {tourData.tourFileUrl && (
+                  <div className="md:hidden mb-4">
+                    <a
+                      href={tourData.tourFileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="flex items-center justify-center gap-2 w-full py-3 bg-blue-50 border-2 border-blue-200 text-blue-600 rounded-xl font-semibold text-sm hover:bg-blue-100 hover:border-blue-300 transition-all"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Tải file tour (PDF)
+                    </a>
+                  </div>
+                )}
+
                 {/* Mobile Price Card */}
                 <div className="md:hidden bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-2xl p-4 mb-6 border border-[#00CBA9]/20">
                   <div className="flex items-end gap-2 mb-2">
@@ -241,23 +259,7 @@ export default function TourDetailClient({ tourData, isPreview = false }: TourDe
                       </>
                     )}
                   </div>
-                  <p className="text-xs text-gray-600 mb-3">Giá/khách • Chưa bao gồm VAT</p>
-                  
-                  {/* Download Tour File Button */}
-                  {tourData.tourFileUrl && (
-                    <a
-                      href={tourData.tourFileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download
-                      className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border-2 border-[#00CBA9] text-[#00CBA9] rounded-xl font-semibold text-sm hover:bg-[#00CBA9] hover:text-white transition-all"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Tải file tour
-                    </a>
-                  )}
+                  <p className="text-xs text-gray-600">Giá/khách • Chưa bao gồm VAT</p>
                 </div>
 
                 {/* Tabs */}
@@ -506,8 +508,24 @@ export default function TourDetailClient({ tourData, isPreview = false }: TourDe
               <div className="hidden md:block">
                 <div className="sticky top-24">
                   <div className="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-xl">
+                    {/* Download Tour File Button - Above price */}
+                    {tourData.tourFileUrl && (
+                      <a
+                        href={tourData.tourFileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        className="flex items-center justify-center gap-2 w-full py-3 mb-4 bg-blue-50 border-2 border-blue-200 text-blue-600 rounded-xl font-semibold text-sm hover:bg-blue-100 hover:border-blue-300 transition-all"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Tải file tour (PDF)
+                      </a>
+                    )}
+
                     {/* Price */}
-                    <div className="mb-6 bg-gradient-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-xl p-4">
+                    <div className="mb-6 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-xl p-4">
                       <div className="flex items-end gap-2 mb-2">
                         <span className="text-4xl font-bold text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
                         {tourData.originalPrice > tourData.price && (
@@ -577,22 +595,6 @@ export default function TourDetailClient({ tourData, isPreview = false }: TourDe
                         <span className="text-sm">Chat Zalo</span>
                       </a>
                     </div>
-
-                    {/* Download Tour File Button */}
-                    {tourData.tourFileUrl && (
-                      <a
-                        href={tourData.tourFileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
-                        className="flex items-center justify-center gap-2 w-full py-3 mb-4 bg-gray-100 border-2 border-gray-200 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-200 hover:border-gray-300 transition-all"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Tải file tour (PDF)
-                      </a>
-                    )}
 
                     {/* Trust badges */}
                     <div className="pt-4 border-t-2 border-gray-100 space-y-3">
