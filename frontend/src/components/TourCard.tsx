@@ -141,16 +141,6 @@ export default function TourCard({
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
-          
-          {/* Wishlist button - top right */}
-          <button 
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-            className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md hover:bg-white hover:scale-110 transition-all duration-200"
-          >
-            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
         </div>
 
         {/* Content */}
@@ -182,12 +172,12 @@ export default function TourCard({
           {/* Price Section - Klook style */}
           <div className="mt-auto space-y-1.5">
             {/* Main price */}
-            <div className="flex items-baseline gap-1">
-              <span className="text-xs text-gray-500">Từ</span>
-              <span className="text-gray-900 font-bold text-lg">
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-[11px] text-gray-500">Từ</span>
+              <span className="text-gray-900 font-bold text-base">
                 {formatPrice(price)}
               </span>
-              <span className="text-gray-900 font-bold text-lg">đ</span>
+              <span className="text-gray-900 font-bold text-base">đ</span>
             </div>
             
             {/* Sale tag - Klook style button */}
