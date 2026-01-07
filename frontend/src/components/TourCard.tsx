@@ -142,14 +142,6 @@ export default function TourCard({
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
           
-          {/* Duration badge - bottom left */}
-          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {duration}
-          </div>
-          
           {/* Wishlist button - top right */}
           <button 
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
@@ -192,10 +184,10 @@ export default function TourCard({
             {/* Main price */}
             <div className="flex items-baseline gap-1">
               <span className="text-xs text-gray-500">Từ</span>
-              <span className="text-xs text-gray-500">đ</span>
               <span className="text-gray-900 font-bold text-lg">
                 {formatPrice(price)}
               </span>
+              <span className="text-gray-900 font-bold text-lg">đ</span>
             </div>
             
             {/* Sale tag - Klook style button */}
