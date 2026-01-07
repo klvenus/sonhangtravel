@@ -53,9 +53,6 @@
       "type": "string",
       "required": true
     },
-    "transportation": {
-      "type": "string"
-    },
     "thumbnail": {
       "type": "media",
       "multiple": false,
