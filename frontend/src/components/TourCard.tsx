@@ -261,10 +261,8 @@ export default function TourCard({
 
         {/* Content */}
         <div className="p-3 flex flex-col flex-1">
-          {/* Category & Location tag - Klook style */}
+          {/* Location - điểm đi - điểm đến */}
           <div className="text-xs text-gray-500 mb-1 truncate">
-            {category && <span className="text-[#FF5722]">{category}</span>}
-            {category && location && <span className="mx-1">•</span>}
             <span>{location}</span>
           </div>
 
