@@ -1,7 +1,7 @@
 import HeroSection from '@/components/HeroSection'
 import CategorySection from '@/components/CategorySection'
 import FeaturedTours from '@/components/FeaturedTours'
-import CategoryTours from '@/components/CategoryTours'
+import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import { getCategories, getTours, getImageUrl, Category, Tour } from '@/lib/strapi'
 
@@ -37,6 +37,7 @@ function transformTour(tour: Tour) {
     isHot: tour.featured,
     isNew: false,
     category: tour.category?.ten || tour.category?.name || undefined,
+    categorySlug: tour.category?.slug || undefined,
   }
 }
 
@@ -44,30 +45,49 @@ export default async function Home() {
   // Fetch data on server
   let categories: ReturnType<typeof transformCategory>[] = []
   let tours: ReturnType<typeof transformTour>[] = []
+  let allTours: ReturnType<typeof transformTour>[] = []
 
   try {
-    const [categoriesData, toursData] = await Promise.all([
+    const [categoriesData, featuredToursData, allToursData] = await Promise.all([
       getCategories(),
-      getTours({ pageSize: 6, sort: 'bookingCount:desc' })
+      getTours({ pageSize: 6, sort: 'bookingCount:desc', featured: true }),
+      getTours({ pageSize: 50, sort: 'bookingCount:desc' })
     ])
     
     if (categoriesData && categoriesData.length > 0) {
       categories = categoriesData.map(transformCategory)
     }
     
-    if (toursData.data && toursData.data.length > 0) {
-      tours = toursData.data.map(transformTour)
+    if (featuredToursData.data && featuredToursData.data.length > 0) {
+      tours = featuredToursData.data.map(transformTour)
+    }
+    
+    if (allToursData.data && allToursData.data.length > 0) {
+      allTours = allToursData.data.map(transformTour)
     }
   } catch (error) {
     console.error('Error fetching home data:', error)
   }
+
+  // Group tours by category
+  const toursByCategory = categories.map(cat => ({
+    category: cat,
+    tours: allTours.filter(tour => tour.categorySlug === cat.slug)
+  })).filter(group => group.tours.length > 0)
 
   return (
     <main>
       <HeroSection />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />
-      <CategoryTours initialCategories={categories} />
+      {toursByCategory.map(group => (
+        <CategoryToursSection 
+          key={group.category.slug}
+          categoryName={group.category.name}
+          categorySlug={group.category.slug}
+          tours={group.tours}
+        />
+      ))}
       <WhyChooseUs />
     </main>
   )
