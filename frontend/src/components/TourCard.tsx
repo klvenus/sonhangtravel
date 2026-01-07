@@ -45,20 +45,20 @@ export default function TourCard({
     : [image]
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isHovering, setIsHovering] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
   
-  // Auto-slide every 3 seconds when hovering (only if multiple images)
+  // Auto-slide every 4 seconds (only if multiple images)
   useEffect(() => {
-    if (allImages.length <= 1 || !isHovering) return
+    if (allImages.length <= 1 || isPaused) return
     
     const interval = setInterval(() => {
       setCurrentImageIndex(prev => (prev + 1) % allImages.length)
-    }, 3000)
+    }, 4000)
     
     return () => clearInterval(interval)
-  }, [allImages.length, isHovering])
+  }, [allImages.length, isPaused])
   
   // Handle swipe gestures
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -188,8 +188,8 @@ export default function TourCard({
         {/* Image Container with Slider */}
         <div 
           className="relative aspect-4/3 overflow-hidden rounded-xl"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
           onTouchStart={allImages.length > 1 ? handleTouchStart : undefined}
           onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
           onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
