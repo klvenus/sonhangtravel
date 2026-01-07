@@ -1,6 +1,11 @@
 import { getTourBySlug, getImageUrl, Tour } from '@/lib/strapi'
 import { notFound } from 'next/navigation'
-import TourDetailClient from './TourDetailClient'
+import dynamic from 'next/dynamic'
+
+// Dynamic import for better code splitting
+const TourDetailClient = dynamic(() => import('./TourDetailClient'), {
+  loading: () => null, // loading.tsx handles this
+})
 
 // ISR - Revalidate every hour
 export const revalidate = 3600
@@ -79,9 +84,9 @@ function transformStrapiTour(tour: Tour) {
 // Generate static params for common tours (pre-render at build time)
 export async function generateStaticParams() {
   try {
-    // Fetch some popular tours to pre-generate at build time
+    // Fetch ALL tours to pre-generate at build time for instant loading
     const { getTours } = await import('@/lib/strapi')
-    const response = await getTours({ pageSize: 10, sort: 'bookingCount:desc' })
+    const response = await getTours({ pageSize: 100, sort: 'bookingCount:desc' })
     
     return response.data.map((tour) => ({
       slug: tour.slug,

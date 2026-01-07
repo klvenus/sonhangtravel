@@ -26,7 +26,15 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'sonhangtravel.onrender.com',
+      },
     ],
+  },
+  // Optimize for production
+  experimental: {
+    optimizeCss: true,
   },
 };
 
