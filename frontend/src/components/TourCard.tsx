@@ -204,10 +204,8 @@ export default function TourCard({
                 <span className="inline-flex items-center text-[11px] text-[#FF5722] font-medium border border-[#FF5722] rounded px-1.5 py-0.5">
                   Sale
                 </span>
-                <span className="inline-flex items-center gap-0.5 text-[11px] text-[#FF5722]">
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L4 10l8 12 8-12L12 2z"/>
-                  </svg>
+                <span className="inline-flex items-center gap-1 text-[11px] text-[#FF5722]">
+                  <span className="text-[#4CD964]">◇</span>
                   Giảm {discountPercent}%
                 </span>
               </div>
