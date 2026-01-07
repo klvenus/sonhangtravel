@@ -50,8 +50,6 @@ function transformStrapiTour(tour: Tour) {
     duration: tour.duration,
     departure: tour.departure || 'Móng Cái',
     destination: tour.destination,
-    transport: tour.transportation || 'Xe du lịch',
-    groupSize: tour.groupSize || '4-15 khách',
     schedule: '',
     rating: tour.rating || 5,
     reviewCount: tour.reviewCount || 0,
