@@ -188,7 +188,7 @@ export default function TourCard({
           <div className="flex-1"></div>
 
           {/* Price Section - Klook style */}
-          <div className="mt-auto space-y-1">
+          <div className="mt-auto space-y-1.5">
             {/* Main price */}
             <div className="flex items-baseline gap-1">
               <span className="text-xs text-gray-500">Từ</span>
@@ -196,20 +196,18 @@ export default function TourCard({
               <span className="text-gray-900 font-bold text-lg">
                 {formatPrice(price)}
               </span>
-              {originalPrice && originalPrice > price && (
-                <span className="text-xs text-gray-400 line-through ml-1">
-                  đ{formatPrice(originalPrice)}
-                </span>
-              )}
             </div>
             
-            {/* Sale tag - Klook style pill */}
+            {/* Sale tag - Klook style with diamond icon */}
             {discountPercent > 0 && (
               <div className="flex items-center gap-1.5">
                 <span className="inline-flex items-center text-[11px] text-[#FF5722] font-medium border border-[#FF5722] rounded px-1.5 py-0.5">
                   Sale
                 </span>
-                <span className="text-[11px] text-[#FF5722]">
+                <span className="inline-flex items-center gap-0.5 text-[11px] text-[#FF5722]">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L4 10l8 12 8-12L12 2z"/>
+                  </svg>
                   Giảm {discountPercent}%
                 </span>
               </div>
