@@ -198,13 +198,13 @@ export default function TourCard({
               </span>
             </div>
             
-            {/* Sale tag - Klook style */}
+            {/* Sale tag - Klook style button */}
             {discountPercent > 0 && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] text-[#FF5722] font-medium">
+              <div className="inline-flex items-center border border-[#FF5722] rounded-full overflow-hidden">
+                <span className="text-[11px] text-[#FF5722] font-medium px-2 py-0.5">
                   Sale
                 </span>
-                <span className="inline-flex items-center gap-0.5 text-[11px] text-white font-medium bg-[#FF5722] rounded-full px-2 py-0.5">
+                <span className="inline-flex items-center gap-0.5 text-[11px] text-white font-medium bg-[#FF5722] px-2 py-0.5">
                   <span>◇</span>
                   Giảm {discountPercent}%
                 </span>
