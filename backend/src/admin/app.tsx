@@ -16,44 +16,35 @@ export default {
         'global.plugins': 'Plugins',
         'global.settings': 'Cài đặt',
         
-        // Tour fields labels
-        'title': 'Tên Tour',
-        'slug': 'Đường dẫn SEO',
-        'shortDescription': 'Mô tả ngắn',
-        'content': 'Nội dung chi tiết',
-        'price': 'Giá tour (VNĐ)',
-        'originalPrice': 'Giá gốc (VNĐ)',
-        'duration': 'Thời gian',
-        'departure': 'Điểm khởi hành',
-        'destination': 'Điểm đến',
-        'transportation': 'Phương tiện',
-        'groupSize': 'Số người/đoàn',
-        'thumbnail': 'Ảnh đại diện',
-        'gallery': 'Thư viện ảnh',
-        'itinerary': 'Lịch trình',
-        'includes': 'Bao gồm',
-        'excludes': 'Không bao gồm',
-        'notes': 'Lưu ý',
-        'policy': 'Chính sách',
-        'category': 'Danh mục',
-        'featured': 'Tour nổi bật',
-        'rating': 'Đánh giá',
-        'reviewCount': 'Số lượt đánh giá',
-        'bookingCount': 'Số lượt đặt',
-        'departureDates': 'Ngày khởi hành',
-        'seo': 'SEO',
+        // Content-type translations cho Tour
+        'content-manager.components.LeftMenu.collection-types': 'Loại nội dung',
+        'content-manager.components.LeftMenu.single-types': 'Nội dung đơn',
         
-        // Category fields
-        'name': 'Tên',
-        'description': 'Mô tả',
-        'icon': 'Icon',
-        'image': 'Hình ảnh',
-        'tours': 'Danh sách tour',
-        'order': 'Thứ tự hiển thị',
+        // Tour field labels - format đúng cho Strapi 5
+        'content-type-builder.form.attribute.item.title': 'Tên Tour',
         
-        // Itinerary
-        'time': 'Thời gian',
-        'text': 'Nội dung',
+        // Buttons & Actions
+        'app.components.Button.publish': 'Xuất bản',
+        'app.components.Button.save': 'Lưu',
+        'app.components.Button.cancel': 'Hủy',
+        'app.components.Button.delete': 'Xóa',
+        'app.components.Button.confirm': 'Xác nhận',
+        
+        // Common
+        'global.back': 'Quay lại',
+        'global.save': 'Lưu',
+        'global.publish': 'Xuất bản',
+        'global.delete': 'Xóa',
+        'global.cancel': 'Hủy',
+        'global.create': 'Tạo mới',
+        
+        // Draft & Publish
+        'content-manager.containers.Edit.draft': 'Bản nháp',
+        'content-manager.containers.Edit.published': 'Đã xuất bản',
+        
+        // Entry actions
+        'content-manager.header.actions.publish': 'Xuất bản',
+        'content-manager.header.actions.unpublish': 'Hủy xuất bản',
       },
     },
     
