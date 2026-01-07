@@ -60,6 +60,12 @@
       "required": false,
       "allowedTypes": ["images"]
     },
+    "tourFile": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["files"]
+    },
     "itinerary": {
       "type": "component",
       "repeatable": true,

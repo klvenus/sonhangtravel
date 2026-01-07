@@ -70,6 +70,7 @@ export interface Tour {
   groupSize?: string;
   thumbnail: StrapiImage;
   gallery?: StrapiImage[];
+  tourFile?: StrapiImage; // PDF file for download
   itinerary?: ItineraryItem[];
   includes?: ListItem[];
   excludes?: ListItem[];
@@ -222,6 +223,7 @@ export async function getTourBySlug(slug: string, preview = false): Promise<Tour
   searchParams.append('populate[5]', 'excludes');
   searchParams.append('populate[6]', 'notes');
   searchParams.append('populate[7]', 'departureDates');
+  searchParams.append('populate[8]', 'tourFile');
   
   // Filter by slug
   searchParams.append('filters[slug][$eq]', slug);

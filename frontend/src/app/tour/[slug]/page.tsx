@@ -56,6 +56,9 @@ function transformStrapiTour(tour: Tour) {
     bookedCount: tour.bookingCount || 0,
     images,
     highlights: [],
+    tourFileUrl: tour.tourFile?.url 
+      ? (tour.tourFile.url.startsWith('http') ? tour.tourFile.url : `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${tour.tourFile.url}`)
+      : undefined,
     itinerary: tour.itinerary?.map(item => ({
       time: item.time || '',
       title: item.title,
