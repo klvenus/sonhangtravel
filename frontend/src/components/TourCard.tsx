@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -6,6 +9,7 @@ interface TourCardProps {
   title: string
   slug: string
   image: string
+  gallery?: string[]
   location: string
   duration: string
   price: number
@@ -23,6 +27,7 @@ export default function TourCard({
   title,
   slug,
   image,
+  gallery,
   location,
   duration,
   price,
@@ -34,6 +39,13 @@ export default function TourCard({
   category,
   variant = 'vertical',
 }: TourCardProps) {
+  // Combine main image with gallery
+  const allImages = gallery && gallery.length > 0 
+    ? [image, ...gallery.filter(img => img !== image)].slice(0, 5)
+    : [image]
+  
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  
   const formatPrice = (p: number) => {
     return new Intl.NumberFormat('vi-VN').format(p)
   }
@@ -132,15 +144,71 @@ export default function TourCard({
   return (
     <Link href={`/tour/${slug}`} className="block h-full group">
       <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-        {/* Image Container */}
+        {/* Image Container with Slider */}
         <div className="relative aspect-4/3 overflow-hidden rounded-xl">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          />
+          {/* Images */}
+          {allImages.map((img, index) => (
+            <Image
+              key={index}
+              src={img}
+              alt={`${title} - ${index + 1}`}
+              fill
+              className={`object-cover transition-opacity duration-300 ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              priority={index === 0}
+            />
+          ))}
+          
+          {/* Navigation arrows - only show if multiple images */}
+          {allImages.length > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setCurrentImageIndex(prev => prev === 0 ? allImages.length - 1 : prev - 1)
+                }}
+                className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
+              >
+                <svg className="w-3 h-3 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setCurrentImageIndex(prev => prev === allImages.length - 1 ? 0 : prev + 1)
+                }}
+                className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
+              >
+                <svg className="w-3 h-3 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              
+              {/* Dot indicators */}
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                {allImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setCurrentImageIndex(index)
+                    }}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                      index === currentImageIndex 
+                        ? 'bg-white w-3' 
+                        : 'bg-white/60 hover:bg-white/80'
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Content */}

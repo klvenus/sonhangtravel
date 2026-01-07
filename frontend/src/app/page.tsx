@@ -23,11 +23,15 @@ function transformCategory(cat: Category) {
 }
 
 function transformTour(tour: Tour) {
+  // Get gallery images
+  const galleryImages = tour.gallery?.map(img => getImageUrl(img, 'medium')).filter(Boolean) || []
+  
   return {
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
     image: getImageUrl(tour.thumbnail, 'medium'),
+    gallery: galleryImages,
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,

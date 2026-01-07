@@ -6,11 +6,14 @@ export const revalidate = 3600
 
 // Transform tour for client component
 function transformTour(tour: Tour) {
+  const galleryImages = tour.gallery?.map(img => getImageUrl(img, 'medium')).filter(Boolean) || []
+  
   return {
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
     image: getImageUrl(tour.thumbnail, 'medium'),
+    gallery: galleryImages,
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,

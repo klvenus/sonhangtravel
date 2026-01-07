@@ -9,6 +9,7 @@ interface TourCardData {
   title: string
   slug: string
   image: string
+  gallery?: string[]
   location: string
   duration: string
   price: number
