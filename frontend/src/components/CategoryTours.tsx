@@ -16,6 +16,7 @@ interface TourCardData {
   reviewCount: number
   isHot?: boolean
   isNew?: boolean
+  category?: string
 }
 
 interface CategoryData {

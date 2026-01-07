@@ -17,6 +17,7 @@ interface TourCardData {
   reviewCount: number
   isHot?: boolean
   isNew?: boolean
+  category?: string
 }
 
 // Fallback data khi chưa có dữ liệu từ Strapi
@@ -33,6 +34,7 @@ const fallbackTours: TourCardData[] = [
     rating: 4.8,
     reviewCount: 256,
     isHot: true,
+    category: 'Đông Hưng',
   },
   {
     id: '2',
@@ -46,6 +48,7 @@ const fallbackTours: TourCardData[] = [
     rating: 4.9,
     reviewCount: 189,
     isHot: true,
+    category: 'Quảng Châu',
   },
   {
     id: '3',
@@ -58,6 +61,7 @@ const fallbackTours: TourCardData[] = [
     rating: 4.7,
     reviewCount: 143,
     isNew: true,
+    category: 'Thượng Hải',
   },
   {
     id: '4',
@@ -71,6 +75,7 @@ const fallbackTours: TourCardData[] = [
     rating: 4.9,
     reviewCount: 312,
     isHot: true,
+    category: 'Bắc Kinh',
   },
   {
     id: '5',
@@ -83,6 +88,7 @@ const fallbackTours: TourCardData[] = [
     rating: 4.6,
     reviewCount: 98,
     isNew: true,
+    category: 'Quảng Châu',
   },
   {
     id: '6',
@@ -96,6 +102,7 @@ const fallbackTours: TourCardData[] = [
     rating: 4.8,
     reviewCount: 178,
     isHot: true,
+    category: 'Hồ Nam',
   },
 ]
 

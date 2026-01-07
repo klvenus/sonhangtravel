@@ -17,6 +17,7 @@ interface TourData {
   reviewCount: number
   isHot?: boolean
   categorySlug: string | null
+  category?: string
 }
 
 interface CategoryData {

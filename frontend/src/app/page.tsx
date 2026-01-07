@@ -36,6 +36,7 @@ function transformTour(tour: Tour) {
     reviewCount: tour.reviewCount || 0,
     isHot: tour.featured,
     isNew: false,
+    category: tour.category?.ten || tour.category?.name || undefined,
   }
 }
 
