@@ -43,12 +43,10 @@ export default function CategoryToursSection({ categoryName, categorySlug, tours
           </Link>
         </div>
 
-        {/* Horizontal Scroll Cards */}
-        <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
-          {tours.slice(0, 6).map((tour) => (
-            <div key={tour.id} className="shrink-0 w-44">
-              <TourCard {...tour} />
-            </div>
+        {/* Grid 2 columns on mobile */}
+        <div className="grid grid-cols-2 gap-3 px-4">
+          {tours.slice(0, 4).map((tour) => (
+            <TourCard key={tour.id} {...tour} />
           ))}
         </div>
       </div>
