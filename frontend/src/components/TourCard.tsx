@@ -133,7 +133,7 @@ export default function TourCard({
     <Link href={`/tour/${slug}`} className="block h-full group">
       <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
         {/* Image Container */}
-        <div className="relative aspect-4/3 overflow-hidden">
+        <div className="relative aspect-4/3 overflow-hidden rounded-xl">
           <Image
             src={image}
             alt={title}
@@ -142,11 +142,8 @@ export default function TourCard({
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
           
-          {/* Orange border frame effect */}
-          <div className="absolute inset-0 rounded-xl ring-4 ring-[#FF5722]/0 group-hover:ring-[#FF5722]/50 transition-all duration-300 pointer-events-none"></div>
-          
           {/* Duration badge - bottom left */}
-          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-2 py-1 rounded-full flex items-center gap-1">
+          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -167,23 +164,23 @@ export default function TourCard({
         {/* Content */}
         <div className="p-3 flex flex-col flex-1">
           {/* Category & Location tag - Klook style */}
-          <div className="text-[11px] text-gray-500 mb-1.5 truncate">
-            {category && <span className="text-[#FF5722] font-medium">{category}</span>}
+          <div className="text-xs text-gray-500 mb-1 truncate">
+            {category && <span className="text-[#FF5722]">{category}</span>}
             {category && location && <span className="mx-1">•</span>}
             <span>{location}</span>
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-2 min-h-10">
+          <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-1.5 min-h-10">
             {title}
           </h3>
 
           {/* Rating - Klook style */}
-          <div className="flex items-center gap-1 mb-3">
-            <svg className="w-4 h-4 text-[#FF5722] fill-current" viewBox="0 0 20 20">
+          <div className="flex items-center gap-1 mb-2">
+            <svg className="w-3.5 h-3.5 text-[#FF5722] fill-current" viewBox="0 0 20 20">
               <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
             </svg>
-            <span className="text-sm font-semibold text-[#FF5722]">{rating.toFixed(1)}</span>
+            <span className="text-sm font-medium text-[#FF5722]">{rating.toFixed(1)}</span>
             <span className="text-xs text-gray-400">({formatPrice(reviewCount)})</span>
           </div>
 
@@ -191,23 +188,29 @@ export default function TourCard({
           <div className="flex-1"></div>
 
           {/* Price Section - Klook style */}
-          <div className="mt-auto">
+          <div className="mt-auto space-y-1">
+            {/* Main price */}
             <div className="flex items-baseline gap-1">
               <span className="text-xs text-gray-500">Từ</span>
-              <span className="text-xs text-[#FF5722]">đ</span>
-              <span className="text-[#FF5722] font-bold text-lg">
+              <span className="text-xs text-gray-500">đ</span>
+              <span className="text-gray-900 font-bold text-lg">
                 {formatPrice(price)}
               </span>
-            </div>
-            
-            {/* Original price & Sale tag */}
-            {originalPrice && originalPrice > price && (
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-gray-400 line-through">
+              {originalPrice && originalPrice > price && (
+                <span className="text-xs text-gray-400 line-through ml-1">
                   đ{formatPrice(originalPrice)}
                 </span>
-                <span className="text-[10px] text-white bg-[#FF5722] px-1.5 py-0.5 rounded font-medium">
-                  Sale {discountPercent}% off
+              )}
+            </div>
+            
+            {/* Sale tag - Klook style pill */}
+            {discountPercent > 0 && (
+              <div className="flex items-center gap-1.5">
+                <span className="inline-flex items-center text-[11px] text-[#FF5722] font-medium border border-[#FF5722] rounded px-1.5 py-0.5">
+                  Sale
+                </span>
+                <span className="text-[11px] text-[#FF5722]">
+                  Giảm {discountPercent}%
                 </span>
               </div>
             )}
