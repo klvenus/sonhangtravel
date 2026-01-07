@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -45,6 +45,47 @@ export default function TourCard({
     : [image]
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isHovering, setIsHovering] = useState(false)
+  const touchStartX = useRef(0)
+  const touchEndX = useRef(0)
+  
+  // Auto-slide every 3 seconds when hovering (only if multiple images)
+  useEffect(() => {
+    if (allImages.length <= 1 || !isHovering) return
+    
+    const interval = setInterval(() => {
+      setCurrentImageIndex(prev => (prev + 1) % allImages.length)
+    }, 3000)
+    
+    return () => clearInterval(interval)
+  }, [allImages.length, isHovering])
+  
+  // Handle swipe gestures
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }, [])
+  
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX
+  }, [])
+  
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const diff = touchStartX.current - touchEndX.current
+    const threshold = 50 // Minimum swipe distance
+    
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        // Swipe left - next image
+        setCurrentImageIndex(prev => (prev + 1) % allImages.length)
+      } else {
+        // Swipe right - previous image
+        setCurrentImageIndex(prev => prev === 0 ? allImages.length - 1 : prev - 1)
+      }
+    }
+  }, [allImages.length])
   
   const formatPrice = (p: number) => {
     return new Intl.NumberFormat('vi-VN').format(p)
@@ -145,7 +186,14 @@ export default function TourCard({
     <Link href={`/tour/${slug}`} className="block h-full group">
       <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
         {/* Image Container with Slider */}
-        <div className="relative aspect-4/3 overflow-hidden rounded-xl">
+        <div 
+          className="relative aspect-4/3 overflow-hidden rounded-xl"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          onTouchStart={allImages.length > 1 ? handleTouchStart : undefined}
+          onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
+          onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
+        >
           {/* Images */}
           {allImages.map((img, index) => (
             <Image
