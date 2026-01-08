@@ -1,4 +1,4 @@
-import { getTourBySlug, getImageUrl, Tour } from '@/lib/strapi'
+import { getTourBySlug, getImageUrl, Tour, getSiteSettings } from '@/lib/strapi'
 import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
@@ -112,15 +112,20 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
   const isPreview = preview === 'true'
   
   try {
-    const tour = await getTourBySlug(slug, isPreview)
+    const [tour, siteSettings] = await Promise.all([
+      getTourBySlug(slug, isPreview),
+      getSiteSettings()
+    ])
     
     if (!tour) {
       notFound()
     }
 
     const tourData = transformStrapiTour(tour)
+    const phoneNumber = siteSettings?.phoneNumber || '0123456789'
+    const zaloNumber = siteSettings?.zaloNumber || undefined
 
-    return <TourDetailClient tourData={tourData} isPreview={isPreview} />
+    return <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} isPreview={isPreview} />
   } catch (error) {
     console.error('Error fetching tour:', error)
     notFound()

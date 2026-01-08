@@ -27,22 +27,24 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch site settings for Header
+  // Fetch site settings for Header and Footer
   const siteSettings = await getSiteSettings();
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
   const phoneNumber = siteSettings?.phoneNumber || '0123456789';
+  const zaloNumber = siteSettings?.zaloNumber || undefined;
+  const email = siteSettings?.email || 'info@sonhangtravel.com';
 
   return (
     <html lang="vi">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} />
+        <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <div className="pb-16 md:pb-0">
           {children}
         </div>
-        <Footer />
+        <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
         <BottomNav />
       </body>
     </html>

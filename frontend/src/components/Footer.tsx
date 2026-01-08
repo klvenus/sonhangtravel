@@ -1,6 +1,14 @@
 import Link from 'next/link'
 
-export default function Footer() {
+interface FooterProps {
+  phoneNumber?: string
+  zaloNumber?: string
+  email?: string
+}
+
+export default function Footer({ phoneNumber = '0123456789', zaloNumber, email = 'info@sonhangtravel.com' }: FooterProps) {
+  const zaloLink = zaloNumber || phoneNumber
+  
   return (
     <footer className="bg-gray-900 text-gray-300 pb-20 md:pb-0">
       {/* Newsletter - Desktop only */}
@@ -41,7 +49,7 @@ export default function Footer() {
           {/* Contact buttons */}
           <div className="flex gap-2 mb-4">
             <a 
-              href="tel:0123456789" 
+              href={`tel:${phoneNumber}`}
               className="flex-1 flex items-center justify-center gap-2 bg-white text-[#00CBA9] py-3 rounded-xl font-medium"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,7 +58,7 @@ export default function Footer() {
               Gọi ngay
             </a>
             <a 
-              href="https://zalo.me/0123456789" 
+              href={`https://zalo.me/${zaloLink}`}
               className="flex-1 flex items-center justify-center gap-2 bg-white/20 text-white py-3 rounded-xl font-medium"
             >
               💬 Chat Zalo
@@ -125,13 +133,13 @@ export default function Footer() {
                   <svg className="w-5 h-5 text-[#00CBA9] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                  <a href="tel:0123456789" className="hover:text-[#00CBA9] transition-colors font-medium">0123.456.789</a>
+                  <a href={`tel:${phoneNumber}`} className="hover:text-[#00CBA9] transition-colors font-medium">{phoneNumber}</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-[#00CBA9] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <a href="mailto:info@sonhangtravel.com" className="hover:text-[#00CBA9] transition-colors">info@sonhangtravel.com</a>
+                  <a href={`mailto:${email}`} className="hover:text-[#00CBA9] transition-colors">{email}</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-[#00CBA9] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

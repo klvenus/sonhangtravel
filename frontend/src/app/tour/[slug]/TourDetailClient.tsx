@@ -38,10 +38,13 @@ interface TourDetailProps {
       notes: string[]
     }
   }
+  phoneNumber?: string
+  zaloNumber?: string
   isPreview?: boolean
 }
 
-export default function TourDetailClient({ tourData, isPreview = false }: TourDetailProps) {
+export default function TourDetailClient({ tourData, phoneNumber = '0123456789', zaloNumber, isPreview = false }: TourDetailProps) {
+  const zaloLink = zaloNumber || phoneNumber
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
@@ -580,7 +583,7 @@ export default function TourDetailClient({ tourData, isPreview = false }: TourDe
                     {/* Contact */}
                     <div className="flex gap-2 mb-4">
                       <a
-                        href="tel:0123456789"
+                        href={`tel:${phoneNumber}`}
                         className="flex-1 flex items-center justify-center gap-2 border-2 border-[#00CBA9] text-[#00CBA9] py-3 rounded-xl hover:bg-[#00CBA9]/10 transition-all font-medium"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -589,7 +592,7 @@ export default function TourDetailClient({ tourData, isPreview = false }: TourDe
                         <span className="text-sm">Gọi ngay</span>
                       </a>
                       <a
-                        href="https://zalo.me/0123456789"
+                        href={`https://zalo.me/${zaloLink}`}
                         className="flex-1 flex items-center justify-center gap-2 border-2 border-blue-500 text-blue-500 py-3 rounded-xl hover:bg-blue-50 transition-all font-medium"
                       >
                         <span className="text-sm">Chat Zalo</span>

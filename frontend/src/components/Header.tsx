@@ -16,9 +16,10 @@ interface HeaderProps {
   logoUrl?: string
   siteName?: string
   phoneNumber?: string
+  zaloNumber?: string
 }
 
-export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789' }: HeaderProps) {
+export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789', zaloNumber }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
@@ -59,7 +60,6 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   SH
                 </div>
               )}
-              <span className="font-bold text-gray-800">{siteName.split(' ')[0]} {siteName.split(' ')[1] || ''}</span>
             </Link>
 
             {/* Right Actions */}
@@ -120,7 +120,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                 </span>
               </div>
               <div className="flex items-center gap-4">
-                <a href={`https://zalo.me/${phoneNumber}`} className="hover:underline">Zalo</a>
+                <a href={`https://zalo.me/${zaloNumber || phoneNumber}`} className="hover:underline">Zalo</a>
                 <a href="https://facebook.com" className="hover:underline">Facebook</a>
               </div>
             </div>
