@@ -46,253 +46,313 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
 
   return (
     <>
-      {/* Bottom Nav Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 pb-safe">
-        <div className="flex items-center justify-around h-16">
-          {/* Home */}
-          <Link
-            href="/"
-            className={`flex flex-col items-center justify-center w-full h-full gap-0.5 transition-colors ${
-              pathname === '/' ? 'text-[#00CBA9]' : 'text-gray-500'
-            }`}
-          >
-            {pathname === '/' ? (
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-            )}
-            <span className="text-[10px] font-medium">Trang chủ</span>
-          </Link>
+      {/* Bottom Nav Bar - Modern Glass Style */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
+        <div className="mx-3 mb-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-100">
+          <div className="flex items-center justify-around h-16 px-2">
+            {/* Home */}
+            <Link
+              href="/"
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${
+                pathname === '/' ? 'text-[#00CBA9]' : 'text-gray-400'
+              }`}
+            >
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                pathname === '/' ? 'bg-[#00CBA9]/10' : ''
+              }`}>
+                <svg className="w-5 h-5" fill={pathname === '/' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={pathname === '/' ? 0 : 1.5}>
+                  {pathname === '/' ? (
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                  )}
+                </svg>
+              </div>
+              <span className="text-[10px] font-semibold">Trang chủ</span>
+            </Link>
 
-          {/* Categories */}
-          <button
-            onClick={() => { setShowCategories(true); setShowMenu(false); }}
-            className={`flex flex-col items-center justify-center w-full h-full gap-0.5 transition-colors ${
-              showCategories || pathname.startsWith('/tours') ? 'text-[#00CBA9]' : 'text-gray-500'
-            }`}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-            <span className="text-[10px] font-medium">Danh mục</span>
-          </button>
+            {/* Tours/Categories */}
+            <button
+              onClick={() => { setShowCategories(true); setShowMenu(false); }}
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${
+                showCategories || pathname.startsWith('/tours') ? 'text-[#00CBA9]' : 'text-gray-400'
+              }`}
+            >
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                pathname.startsWith('/tours') ? 'bg-[#00CBA9]/10' : ''
+              }`}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+              </div>
+              <span className="text-[10px] font-semibold">Tour</span>
+            </button>
 
-          {/* Hotline - CTA */}
-          <a
-            href={`tel:${phoneNumber}`}
-            className="flex flex-col items-center justify-center w-full h-full gap-0.5 -mt-5"
-          >
-            <div className="w-14 h-14 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-full flex items-center justify-center shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            </div>
-            <span className="text-[10px] font-medium text-[#00CBA9]">Hotline</span>
-          </a>
+            {/* Hotline - Center CTA */}
+            <a
+              href={`tel:${phoneNumber}`}
+              className="flex flex-col items-center justify-center flex-1 h-full -mt-6"
+            >
+              <div className="w-14 h-14 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-2xl flex items-center justify-center shadow-lg shadow-[#00CBA9]/30 rotate-3 hover:rotate-0 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                </svg>
+              </div>
+              <span className="text-[10px] font-bold text-[#00CBA9] mt-1">Gọi ngay</span>
+            </a>
 
-          {/* Zalo */}
-          <a
-            href={`https://zalo.me/${zaloLink}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center w-full h-full gap-0.5 text-gray-500"
-          >
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12c0 1.82.49 3.53 1.34 5L2 22l5.14-1.34C8.47 21.51 10.18 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.5 14h-6c-.28 0-.5-.22-.5-.5s.22-.5.5-.5H15v-1h-3c-.55 0-1-.45-1-1v-2c0-.55.45-1 1-1h3v-1h-2.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5h3c.28 0 .5.22.5.5V15c0 .55-.45 1-1 1zm-1-4h-2v1h2v-1z"/>
-            </svg>
-            <span className="text-[10px] font-medium">Zalo</span>
-          </a>
+            {/* Zalo */}
+            <a
+              href={`https://zalo.me/${zaloLink}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-1 text-gray-400"
+            >
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12.49 10.272v-.45h1.347v6.322h-.77a.576.576 0 01-.577-.573v-.052a2.634 2.634 0 01-1.685.625 2.869 2.869 0 01-2.903-2.99 2.873 2.873 0 012.903-3.006 2.634 2.634 0 011.685.623zm-1.453 4.656a1.69 1.69 0 001.453-.751v-2.462a1.69 1.69 0 00-1.453-.75 1.846 1.846 0 00-1.818 1.99 1.842 1.842 0 001.818 1.973zM4 12a8 8 0 1116 0 8 8 0 01-16 0zm8-10C5.373 2 0 7.373 0 14s5.373 12 12 12 12-5.373 12-12S18.627 2 12 2z"/>
+                </svg>
+              </div>
+              <span className="text-[10px] font-semibold">Zalo</span>
+            </a>
 
-          {/* Menu */}
-          <button
-            onClick={() => { setShowMenu(true); setShowCategories(false); }}
-            className={`flex flex-col items-center justify-center w-full h-full gap-0.5 transition-colors ${
-              showMenu ? 'text-[#00CBA9]' : 'text-gray-500'
-            }`}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <span className="text-[10px] font-medium">Menu</span>
-          </button>
+            {/* Menu */}
+            <button
+              onClick={() => { setShowMenu(true); setShowCategories(false); }}
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${
+                showMenu ? 'text-[#00CBA9]' : 'text-gray-400'
+              }`}
+            >
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                showMenu ? 'bg-[#00CBA9]/10' : ''
+              }`}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+              </div>
+              <span className="text-[10px] font-semibold">Menu</span>
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Categories Drawer */}
+      {/* Categories Drawer - Modern Glass Style */}
       {showCategories && (
         <>
           <div 
-            className="md:hidden fixed inset-0 bg-black/50 z-50"
+            className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
             onClick={() => setShowCategories(false)}
           />
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 max-h-[70vh] overflow-y-auto pb-safe animate-slide-up">
-            <div className="sticky top-0 bg-white pt-4 pb-2 px-4 border-b">
-              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3" />
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl rounded-t-[28px] z-50 max-h-[75vh] overflow-y-auto pb-safe shadow-2xl animate-slide-up">
+            {/* Handle bar */}
+            <div className="sticky top-0 bg-white/95 backdrop-blur-xl pt-3 pb-4 px-5 border-b border-gray-100/50">
+              <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-800">Danh mục Tour</h3>
-                <button onClick={() => setShowCategories(false)} className="p-2">
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Khám phá Tour</h3>
+                  <p className="text-xs text-gray-500">Chọn loại tour bạn muốn</p>
+                </div>
+                <button 
+                  onClick={() => setShowCategories(false)} 
+                  className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"
+                >
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             </div>
             
             <div className="p-4 space-y-2">
-              {/* All Tours */}
+              {/* All Tours - Featured */}
               <Link
                 href="/tours"
                 onClick={() => setShowCategories(false)}
-                className="flex items-center gap-3 p-3 bg-linear-to-r from-[#00CBA9]/10 to-transparent rounded-xl"
+                className="flex items-center gap-4 p-4 bg-linear-to-r from-[#00CBA9]/10 via-[#00CBA9]/5 to-transparent rounded-2xl border border-[#00CBA9]/20"
               >
-                <div className="w-10 h-10 bg-[#00CBA9] rounded-xl flex items-center justify-center text-white text-lg">
-                  🌏
+                <div className="w-12 h-12 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-2xl flex items-center justify-center shadow-lg shadow-[#00CBA9]/20">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.919 17.919 0 01-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                  </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-800">Tất cả Tour</p>
+                  <p className="font-semibold text-gray-900">Tất cả Tour</p>
                   <p className="text-xs text-gray-500">Xem toàn bộ tour du lịch</p>
                 </div>
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                <div className="w-8 h-8 bg-[#00CBA9]/10 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-[#00CBA9]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </div>
               </Link>
 
-              {/* Category List */}
-              {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/tours?category=${cat.slug}`}
-                  onClick={() => setShowCategories(false)}
-                  className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-colors"
-                >
-                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-lg">
-                    {cat.icon || '🏯'}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-800">{cat.ten || cat.name}</p>
-                  </div>
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              ))}
+              {/* Category Grid */}
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/tours?category=${cat.slug}`}
+                    onClick={() => setShowCategories(false)}
+                    className="flex flex-col items-center gap-2 p-4 bg-gray-50/80 hover:bg-gray-100/80 rounded-2xl transition-all active:scale-95"
+                  >
+                    <span className="text-2xl">{cat.icon || '🏯'}</span>
+                    <span className="text-sm font-medium text-gray-700 text-center">{cat.ten || cat.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </>
       )}
 
-      {/* Menu Drawer */}
+      {/* Menu Drawer - Modern Glass Style */}
       {showMenu && (
         <>
           <div 
-            className="md:hidden fixed inset-0 bg-black/50 z-50"
+            className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
             onClick={() => setShowMenu(false)}
           />
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-50 max-h-[70vh] overflow-y-auto pb-safe animate-slide-up">
-            <div className="sticky top-0 bg-white pt-4 pb-2 px-4 border-b">
-              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3" />
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl rounded-t-[28px] z-50 max-h-[80vh] overflow-y-auto pb-safe shadow-2xl animate-slide-up">
+            {/* Handle bar */}
+            <div className="sticky top-0 bg-white/95 backdrop-blur-xl pt-3 pb-4 px-5 border-b border-gray-100/50">
+              <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-800">Menu</h3>
-                <button onClick={() => setShowMenu(false)} className="p-2">
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Sơn Hằng Travel</h3>
+                  <p className="text-xs text-gray-500">Chuyên tour Trung Quốc</p>
+                </div>
+                <button 
+                  onClick={() => setShowMenu(false)} 
+                  className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"
+                >
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             </div>
             
-            <div className="p-4 space-y-2">
-              {/* Quick Contact */}
-              <div className="flex gap-2 mb-4">
+            <div className="p-4 space-y-4">
+              {/* Quick Contact Cards */}
+              <div className="grid grid-cols-2 gap-3">
                 <a
                   href={`tel:${phoneNumber}`}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#00CBA9] text-white py-3 rounded-xl font-medium"
+                  className="flex flex-col items-center gap-2 p-4 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-2xl shadow-lg shadow-[#00CBA9]/20"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  Gọi ngay
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold text-white">Gọi ngay</span>
                 </a>
                 <a
                   href={`https://zalo.me/${zaloLink}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white py-3 rounded-xl font-medium"
+                  className="flex flex-col items-center gap-2 p-4 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg shadow-blue-500/20"
                 >
-                  💬 Chat Zalo
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12.49 10.272v-.45h1.347v6.322h-.77a.576.576 0 01-.577-.573v-.052a2.634 2.634 0 01-1.685.625 2.869 2.869 0 01-2.903-2.99 2.873 2.873 0 012.903-3.006 2.634 2.634 0 011.685.623zm-1.453 4.656a1.69 1.69 0 001.453-.751v-2.462a1.69 1.69 0 00-1.453-.75 1.846 1.846 0 00-1.818 1.99 1.842 1.842 0 001.818 1.973zM4 12a8 8 0 1116 0 8 8 0 01-16 0zm8-10C5.373 2 0 7.373 0 14s5.373 12 12 12 12-5.373 12-12S18.627 2 12 2z"/>
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold text-white">Chat Zalo</span>
                 </a>
               </div>
 
-              {/* Menu Items */}
-              <Link
-                href="/tours"
-                onClick={() => setShowMenu(false)}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-colors"
-              >
-                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="font-medium text-gray-800">Tất cả Tour</span>
-              </Link>
+              {/* Navigation Links */}
+              <div className="space-y-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">Điều hướng</p>
+                
+                <Link
+                  href="/"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50/80 rounded-xl transition-all active:scale-[0.98]"
+                >
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                  </div>
+                  <span className="font-medium text-gray-700">Trang chủ</span>
+                </Link>
 
-              <Link
-                href="/uu-dai"
-                onClick={() => setShowMenu(false)}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-colors"
-              >
-                <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                </div>
-                <span className="font-medium text-gray-800">Ưu đãi hot</span>
-              </Link>
+                <Link
+                  href="/tours"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50/80 rounded-xl transition-all active:scale-[0.98]"
+                >
+                  <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.919 17.919 0 01-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                    </svg>
+                  </div>
+                  <span className="font-medium text-gray-700">Tất cả Tour</span>
+                </Link>
 
-              <Link
-                href="/ve-chung-toi"
-                onClick={() => setShowMenu(false)}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-colors"
-              >
-                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="font-medium text-gray-800">Về chúng tôi</span>
-              </Link>
+                <Link
+                  href="/uu-dai"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50/80 rounded-xl transition-all active:scale-[0.98]"
+                >
+                  <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 flex items-center gap-2">
+                    <span className="font-medium text-gray-700">Ưu đãi Hot</span>
+                    <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">HOT</span>
+                  </div>
+                </Link>
+              </div>
 
-              <Link
-                href="/blog"
-                onClick={() => setShowMenu(false)}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-colors"
-              >
-                <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                  </svg>
-                </div>
-                <span className="font-medium text-gray-800">Blog du lịch</span>
-              </Link>
+              {/* Info Links */}
+              <div className="space-y-1 pt-2 border-t border-gray-100">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2 mt-3">Thông tin</p>
+                
+                <Link
+                  href="/ve-chung-toi"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50/80 rounded-xl transition-all active:scale-[0.98]"
+                >
+                  <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium text-gray-700">Về chúng tôi</span>
+                </Link>
 
-              <Link
-                href="/lien-he"
-                onClick={() => setShowMenu(false)}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition-colors"
-              >
-                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </div>
-                <span className="font-medium text-gray-800">Liên hệ</span>
-              </Link>
+                <Link
+                  href="/blog"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50/80 rounded-xl transition-all active:scale-[0.98]"
+                >
+                  <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium text-gray-700">Blog du lịch</span>
+                </Link>
+
+                <Link
+                  href="/lien-he"
+                  onClick={() => setShowMenu(false)}
+                  className="flex items-center gap-4 p-3 hover:bg-gray-50/80 rounded-xl transition-all active:scale-[0.98]"
+                >
+                  <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium text-gray-700">Liên hệ</span>
+                </Link>
+              </div>
             </div>
           </div>
         </>
