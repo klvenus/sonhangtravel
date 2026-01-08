@@ -46,59 +46,51 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
 
   return (
     <>
-      {/* Bottom Nav Bar - Modern Glass Style */}
+      {/* Bottom Nav Bar - Compact Modern Style */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
-        <div className="mx-3 mb-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-100">
-          <div className="flex items-center justify-around h-16 px-2">
+        <div className="mx-2 mb-1.5 bg-white/95 backdrop-blur-xl rounded-full shadow-lg border border-gray-100/80">
+          <div className="flex items-center justify-around h-14 px-1">
             {/* Home */}
             <Link
               href="/"
-              className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all ${
                 pathname === '/' ? 'text-[#00CBA9]' : 'text-gray-400'
               }`}
             >
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                pathname === '/' ? 'bg-[#00CBA9]/10' : ''
-              }`}>
-                <svg className="w-5 h-5" fill={pathname === '/' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={pathname === '/' ? 0 : 1.5}>
-                  {pathname === '/' ? (
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                  )}
-                </svg>
-              </div>
-              <span className="text-[10px] font-semibold">Trang chủ</span>
+              <svg className="w-[22px] h-[22px]" fill={pathname === '/' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={pathname === '/' ? 0 : 1.5}>
+                {pathname === '/' ? (
+                  <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                )}
+              </svg>
+              <span className="text-[9px] font-medium">Trang chủ</span>
             </Link>
 
             {/* Tours/Categories */}
             <button
               onClick={() => { setShowCategories(true); setShowMenu(false); }}
-              className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all ${
                 showCategories || pathname.startsWith('/tours') ? 'text-[#00CBA9]' : 'text-gray-400'
               }`}
             >
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                pathname.startsWith('/tours') ? 'bg-[#00CBA9]/10' : ''
-              }`}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-                </svg>
-              </div>
-              <span className="text-[10px] font-semibold">Tour</span>
+              <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+              </svg>
+              <span className="text-[9px] font-medium">Tour</span>
             </button>
 
             {/* Hotline - Center CTA */}
             <a
               href={`tel:${phoneNumber}`}
-              className="flex flex-col items-center justify-center flex-1 h-full -mt-6"
+              className="flex flex-col items-center justify-center flex-1 h-full -mt-4"
             >
-              <div className="w-14 h-14 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-2xl flex items-center justify-center shadow-lg shadow-[#00CBA9]/30 rotate-3 hover:rotate-0 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <div className="w-12 h-12 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-full flex items-center justify-center shadow-md shadow-[#00CBA9]/25">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                 </svg>
               </div>
-              <span className="text-[10px] font-bold text-[#00CBA9] mt-1">Gọi ngay</span>
+              <span className="text-[9px] font-bold text-[#00CBA9] mt-0.5">Hotline</span>
             </a>
 
             {/* Zalo */}
@@ -106,31 +98,25 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               href={`https://zalo.me/${zaloLink}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center flex-1 h-full gap-1 text-gray-400"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 text-gray-400"
             >
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.49 10.272v-.45h1.347v6.322h-.77a.576.576 0 01-.577-.573v-.052a2.634 2.634 0 01-1.685.625 2.869 2.869 0 01-2.903-2.99 2.873 2.873 0 012.903-3.006 2.634 2.634 0 011.685.623zm-1.453 4.656a1.69 1.69 0 001.453-.751v-2.462a1.69 1.69 0 00-1.453-.75 1.846 1.846 0 00-1.818 1.99 1.842 1.842 0 001.818 1.973zM4 12a8 8 0 1116 0 8 8 0 01-16 0zm8-10C5.373 2 0 7.373 0 14s5.373 12 12 12 12-5.373 12-12S18.627 2 12 2z"/>
-                </svg>
-              </div>
-              <span className="text-[10px] font-semibold">Zalo</span>
+              <svg className="w-[22px] h-[22px]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.49 10.272v-.45h1.347v6.322h-.77a.576.576 0 01-.577-.573v-.052a2.634 2.634 0 01-1.685.625 2.869 2.869 0 01-2.903-2.99 2.873 2.873 0 012.903-3.006 2.634 2.634 0 011.685.623zm-1.453 4.656a1.69 1.69 0 001.453-.751v-2.462a1.69 1.69 0 00-1.453-.75 1.846 1.846 0 00-1.818 1.99 1.842 1.842 0 001.818 1.973zM4 12a8 8 0 1116 0 8 8 0 01-16 0zm8-10C5.373 2 0 7.373 0 14s5.373 12 12 12 12-5.373 12-12S18.627 2 12 2z"/>
+              </svg>
+              <span className="text-[9px] font-medium">Zalo</span>
             </a>
 
             {/* Menu */}
             <button
               onClick={() => { setShowMenu(true); setShowCategories(false); }}
-              className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all ${
                 showMenu ? 'text-[#00CBA9]' : 'text-gray-400'
               }`}
             >
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
-                showMenu ? 'bg-[#00CBA9]/10' : ''
-              }`}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-              </div>
-              <span className="text-[10px] font-semibold">Menu</span>
+              <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+              <span className="text-[9px] font-medium">Menu</span>
             </button>
           </div>
         </div>
