@@ -234,114 +234,170 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
         </div>
       </header>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Menu Drawer - Slide from LEFT */}
       {showMobileMenu && (
         <>
           <div 
             className="md:hidden fixed inset-0 bg-black/50 z-[60]"
             onClick={() => setShowMobileMenu(false)}
           />
-          <div className="md:hidden fixed top-0 right-0 bottom-0 w-[280px] bg-white z-[60] shadow-2xl animate-slide-in-right">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b">
-              <span className="font-bold text-gray-800">Menu</span>
-              <button 
-                onClick={() => setShowMobileMenu(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Quick Contact */}
-            <div className="p-4 border-b">
+          <div className="md:hidden fixed top-0 left-0 bottom-0 w-[300px] bg-white z-[60] shadow-2xl flex flex-col animate-slide-in-left overflow-hidden">
+            {/* Header with Logo */}
+            <div className="bg-linear-to-r from-[#00CBA9] to-[#00A88A] p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  {logoUrl ? (
+                    <Image src={logoUrl} alt={siteName} width={40} height={40} className="w-10 h-10 rounded-xl object-contain bg-white p-1" />
+                  ) : (
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#00CBA9] font-bold shadow">
+                      SH
+                    </div>
+                  )}
+                  <div className="text-white">
+                    <p className="font-bold">{siteName}</p>
+                    <p className="text-xs text-white/80">Tour Trung Quốc Uy Tín</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowMobileMenu(false)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Quick Contact Buttons */}
               <div className="flex gap-2">
                 <a
                   href={`tel:${phoneNumber}`}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#00CBA9] text-white py-2.5 rounded-lg font-medium text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white text-[#00CBA9] py-2.5 rounded-xl font-medium text-sm"
                 >
-                  📞 Gọi ngay
+                  Gọi ngay
                 </a>
                 <a
                   href={`https://zalo.me/${zaloLink}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white py-2.5 rounded-lg font-medium text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white/20 text-white py-2.5 rounded-xl font-medium text-sm border border-white/30"
                 >
-                  💬 Zalo
+                  Chat Zalo
                 </a>
               </div>
             </div>
 
-            {/* Menu Items */}
-            <div className="py-2">
-              <Link
-                href="/"
-                onClick={() => setShowMobileMenu(false)}
-                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
-              >
-                Trang chủ
-              </Link>
-              
-              {/* Tour Categories */}
-              <div className="border-t border-b my-2">
+            {/* Menu Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto">
+              {/* Main Navigation */}
+              <div className="py-2">
+                <Link
+                  href="/"
+                  onClick={() => setShowMobileMenu(false)}
+                  className="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:bg-gray-50 font-medium"
+                >
+                  Trang chủ
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Tour Categories Section */}
+              <div className="border-t border-gray-100">
+                <div className="px-5 py-3 bg-gray-50">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Danh mục Tour</span>
+                </div>
                 <Link
                   href="/tours"
                   onClick={() => setShowMobileMenu(false)}
-                  className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
+                  className="flex items-center justify-between px-5 py-3.5 text-[#00CBA9] hover:bg-gray-50 font-semibold"
                 >
                   Tất cả Tour
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
                     href={`/tours?category=${cat.slug}`}
                     onClick={() => setShowMobileMenu(false)}
-                    className="block px-4 py-2.5 pl-8 text-gray-600 hover:bg-gray-50 text-sm"
+                    className="flex items-center justify-between px-5 py-3 text-gray-600 hover:bg-gray-50 hover:text-[#00CBA9] transition-colors"
                   >
                     {cat.ten || cat.name}
+                    <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </Link>
                 ))}
               </div>
 
-              <Link
-                href="/uu-dai"
-                onClick={() => setShowMobileMenu(false)}
-                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
-              >
-                Ưu đãi
-              </Link>
-              <Link
-                href="/blog"
-                onClick={() => setShowMobileMenu(false)}
-                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
-              >
-                Blog
-              </Link>
-              <Link
-                href="/ve-chung-toi"
-                onClick={() => setShowMobileMenu(false)}
-                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
-              >
-                Về chúng tôi
-              </Link>
-              <Link
-                href="/lien-he"
-                onClick={() => setShowMobileMenu(false)}
-                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
-              >
-                Liên hệ
-              </Link>
+              {/* Other Links */}
+              <div className="border-t border-gray-100">
+                <div className="px-5 py-3 bg-gray-50">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Khám phá</span>
+                </div>
+                <Link
+                  href="/uu-dai"
+                  onClick={() => setShowMobileMenu(false)}
+                  className="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:bg-gray-50 font-medium"
+                >
+                  <span className="flex items-center gap-2">
+                    Ưu đãi hot
+                    <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">HOT</span>
+                  </span>
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/blog"
+                  onClick={() => setShowMobileMenu(false)}
+                  className="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:bg-gray-50 font-medium"
+                >
+                  Blog du lịch
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* About & Contact */}
+              <div className="border-t border-gray-100">
+                <div className="px-5 py-3 bg-gray-50">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Thông tin</span>
+                </div>
+                <Link
+                  href="/ve-chung-toi"
+                  onClick={() => setShowMobileMenu(false)}
+                  className="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:bg-gray-50 font-medium"
+                >
+                  Về chúng tôi
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/lien-he"
+                  onClick={() => setShowMobileMenu(false)}
+                  className="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:bg-gray-50 font-medium"
+                >
+                  Liên hệ
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
             </div>
 
-            {/* Hotline */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-gray-50">
-              <p className="text-xs text-gray-500 mb-1">Hotline hỗ trợ 24/7</p>
-              <a href={`tel:${phoneNumber}`} className="text-lg font-bold text-[#00CBA9]">
+            {/* Footer - Hotline */}
+            <div className="border-t border-gray-200 p-4 bg-gray-50">
+              <p className="text-xs text-gray-500 mb-1">Hỗ trợ 24/7</p>
+              <a href={`tel:${phoneNumber}`} className="text-xl font-bold text-[#00CBA9]">
                 {phoneNumber}
               </a>
+              <p className="text-xs text-gray-400 mt-2">© 2026 {siteName}</p>
             </div>
           </div>
         </>
@@ -349,16 +405,16 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
 
       {/* Animation styles */}
       <style jsx global>{`
-        @keyframes slide-in-right {
+        @keyframes slide-in-left {
           from {
-            transform: translateX(100%);
+            transform: translateX(-100%);
           }
           to {
             transform: translateX(0);
           }
         }
-        .animate-slide-in-right {
-          animation: slide-in-right 0.3s ease-out;
+        .animate-slide-in-left {
+          animation: slide-in-left 0.3s ease-out;
         }
       `}</style>
     </>
