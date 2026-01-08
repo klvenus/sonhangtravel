@@ -3,7 +3,7 @@ import CategorySection from '@/components/CategorySection'
 import FeaturedTours from '@/components/FeaturedTours'
 import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
-import { getCategories, getTours, getImageUrl, Category, Tour } from '@/lib/strapi'
+import { getCategories, getTours, getImageUrl, getSiteSettings, Category, Tour } from '@/lib/strapi'
 
 // ISR - Revalidate every hour
 export const revalidate = 3600
@@ -50,12 +50,16 @@ export default async function Home() {
   let categories: ReturnType<typeof transformCategory>[] = []
   let tours: ReturnType<typeof transformTour>[] = []
   let allTours: ReturnType<typeof transformTour>[] = []
+  let heroBannerUrl: string | undefined = undefined
+  let heroTitle: string | undefined = undefined
+  let heroSubtitle: string | undefined = undefined
 
   try {
-    const [categoriesData, featuredToursData, allToursData] = await Promise.all([
+    const [categoriesData, featuredToursData, allToursData, siteSettings] = await Promise.all([
       getCategories(),
       getTours({ pageSize: 6, sort: 'bookingCount:desc', featured: true }),
-      getTours({ pageSize: 50, sort: 'bookingCount:desc' })
+      getTours({ pageSize: 50, sort: 'bookingCount:desc' }),
+      getSiteSettings()
     ])
     
     if (categoriesData && categoriesData.length > 0) {
@@ -69,6 +73,11 @@ export default async function Home() {
     if (allToursData.data && allToursData.data.length > 0) {
       allTours = allToursData.data.map(transformTour)
     }
+
+    // Extract hero banner settings
+    heroBannerUrl = siteSettings?.heroBanner ? getImageUrl(siteSettings.heroBanner) : undefined
+    heroTitle = siteSettings?.heroTitle || undefined
+    heroSubtitle = siteSettings?.heroSubtitle || undefined
   } catch (error) {
     console.error('Error fetching home data:', error)
   }
@@ -81,7 +90,11 @@ export default async function Home() {
 
   return (
     <main>
-      <HeroSection />
+      <HeroSection 
+        heroBannerUrl={heroBannerUrl} 
+        heroTitle={heroTitle} 
+        heroSubtitle={heroSubtitle} 
+      />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />
       {toursByCategory.map(group => (
