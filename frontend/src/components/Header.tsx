@@ -22,6 +22,7 @@ interface HeaderProps {
 export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789', zaloNumber }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [showCategoryMenu, setShowCategoryMenu] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
@@ -163,11 +164,55 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
 
               {/* Navigation */}
               <nav className="flex items-center gap-6">
-                <Link href="/tours" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
-                  Tour du lịch
+                {/* Tour Dropdown */}
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowCategoryMenu(!showCategoryMenu)}
+                    onMouseEnter={() => setShowCategoryMenu(true)}
+                    className="flex items-center gap-1 text-gray-700 hover:text-[#00CBA9] font-medium transition-colors"
+                  >
+                    Tour du lịch
+                    <svg className={`w-4 h-4 transition-transform ${showCategoryMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {/* Category Dropdown */}
+                  {showCategoryMenu && (
+                    <div 
+                      className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50"
+                      onMouseLeave={() => setShowCategoryMenu(false)}
+                    >
+                      <Link 
+                        href="/tours" 
+                        onClick={() => setShowCategoryMenu(false)}
+                        className="block px-4 py-2.5 text-gray-700 hover:bg-[#00CBA9]/10 hover:text-[#00CBA9] font-medium transition-colors"
+                      >
+                        Tất cả Tour
+                      </Link>
+                      <div className="border-t border-gray-100 my-1"></div>
+                      {categories.map((cat) => (
+                        <Link 
+                          key={cat.id}
+                          href={`/tours?category=${cat.slug}`}
+                          onClick={() => setShowCategoryMenu(false)}
+                          className="block px-4 py-2.5 text-gray-600 hover:bg-[#00CBA9]/10 hover:text-[#00CBA9] transition-colors"
+                        >
+                          {cat.ten || cat.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                <Link href="/uu-dai" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
+                  Ưu đãi
                 </Link>
                 <Link href="/blog" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
                   Blog
+                </Link>
+                <Link href="/ve-chung-toi" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
+                  Về chúng tôi
                 </Link>
                 <Link href="/lien-he" className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-5 py-2.5 rounded-full font-medium transition-colors">
                   Liên hệ
