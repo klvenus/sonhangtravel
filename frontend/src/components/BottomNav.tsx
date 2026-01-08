@@ -46,60 +46,68 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
 
   return (
     <>
-      {/* Bottom Nav Bar - iOS 18 Glass Style */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
-        {/* Glass container with blur effect */}
-        <div className="mx-4 mb-3 rounded-[22px] overflow-hidden" style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.5) 100%)',
-          backdropFilter: 'blur(40px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.6)',
-          border: '0.5px solid rgba(255,255,255,0.5)'
+      {/* Bottom Nav Bar - iOS Style */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+        {/* Glass container */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.72)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          borderTop: '0.5px solid rgba(0, 0, 0, 0.1)'
         }}>
-          <div className="flex items-center justify-around h-[52px]">
+          <div className="flex items-center justify-around h-[50px] pb-safe">
             {/* Home */}
             <Link
               href="/"
-              className={`flex flex-col items-center justify-center flex-1 h-full gap-[2px] transition-all active:scale-90 ${
-                pathname === '/' ? 'text-[#00CBA9]' : 'text-gray-500/80'
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all active:opacity-50 ${
+                pathname === '/' ? 'text-[#00CBA9]' : 'text-gray-400'
               }`}
             >
-              <svg className="w-[22px] h-[22px]" fill={pathname === '/' ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={pathname === '/' ? 0 : 1.8}>
-                {pathname === '/' ? (
-                  <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                )}
-              </svg>
-              <span className="text-[10px] font-medium tracking-tight">Trang chủ</span>
+              {pathname === '/' ? (
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.97 2.59a1.5 1.5 0 00-1.94 0l-7.5 6.363A1.5 1.5 0 003 10.097V19.5A1.5 1.5 0 004.5 21h4.75a.75.75 0 00.75-.75v-4.5a2 2 0 014 0v4.5c0 .414.336.75.75.75h4.75a1.5 1.5 0 001.5-1.5v-9.403a1.5 1.5 0 00-.53-1.144l-7.5-6.363z"/>
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+                </svg>
+              )}
+              <span className="text-[10px] font-medium">Trang chủ</span>
             </Link>
 
             {/* Tours */}
             <button
               onClick={() => { setShowCategories(true); setShowMenu(false); }}
-              className={`flex flex-col items-center justify-center flex-1 h-full gap-[2px] transition-all active:scale-90 ${
-                showCategories || pathname.startsWith('/tours') ? 'text-[#00CBA9]' : 'text-gray-500/80'
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all active:opacity-50 ${
+                pathname.startsWith('/tours') || pathname.startsWith('/tour') ? 'text-[#00CBA9]' : 'text-gray-400'
               }`}
             >
-              <svg className="w-[22px] h-[22px]" fill={pathname.startsWith('/tours') ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582" />
-              </svg>
-              <span className="text-[10px] font-medium tracking-tight">Tour</span>
+              {pathname.startsWith('/tours') || pathname.startsWith('/tour') ? (
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                  <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM8.547 4.505a8.25 8.25 0 1011.672 11.672 1 1 0 01-.242.18 8.25 8.25 0 01-11.43-11.43 1 1 0 01.18-.242l-.18.18zm.18-.18A8.22 8.22 0 0112 3.75c1.142 0 2.23.232 3.22.651a8.255 8.255 0 00-6.493 6.493A8.222 8.222 0 013.75 12c0-1.28.292-2.492.814-3.574l.163.179z" clipRule="evenodd"/>
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.919 17.919 0 01-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/>
+                </svg>
+              )}
+              <span className="text-[10px] font-medium">Tour</span>
             </button>
 
-            {/* Hotline - Center CTA with glow */}
+            {/* Hotline - Center */}
             <a
               href={`tel:${phoneNumber}`}
-              className="flex flex-col items-center justify-center px-2 h-full -mt-3 active:scale-95 transition-transform"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 active:opacity-50 transition-all"
             >
-              <div className="w-11 h-11 rounded-full flex items-center justify-center relative" style={{
-                background: 'linear-gradient(145deg, #00CBA9 0%, #00A88A 100%)',
-                boxShadow: '0 4px 20px rgba(0, 203, 169, 0.4), 0 0 40px rgba(0, 203, 169, 0.15)'
+              <div className="w-11 h-11 -mt-5 rounded-full flex items-center justify-center" style={{
+                background: 'linear-gradient(180deg, #00D4B1 0%, #00A88A 100%)',
+                boxShadow: '0 4px 12px rgba(0, 168, 138, 0.4)'
               }}>
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path fillRule="evenodd" d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z" clipRule="evenodd"/>
                 </svg>
               </div>
+              <span className="text-[10px] font-semibold text-[#00CBA9] -mt-0.5">Hotline</span>
             </a>
 
             {/* Zalo */}
@@ -107,25 +115,31 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               href={`https://zalo.me/${zaloLink}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center justify-center flex-1 h-full gap-[2px] text-gray-500/80 transition-all active:scale-90"
+              className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 text-gray-400 transition-all active:opacity-50"
             >
-              <svg className="w-[22px] h-[22px]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12.49 10.272v-.45h1.347v6.322h-.77a.576.576 0 01-.577-.573v-.052a2.634 2.634 0 01-1.685.625 2.869 2.869 0 01-2.903-2.99 2.873 2.873 0 012.903-3.006 2.634 2.634 0 011.685.623zm-1.453 4.656a1.69 1.69 0 001.453-.751v-2.462a1.69 1.69 0 00-1.453-.75 1.846 1.846 0 00-1.818 1.99 1.842 1.842 0 001.818 1.973zM4 12a8 8 0 1116 0 8 8 0 01-16 0zm8-10C5.373 2 0 7.373 0 14s5.373 12 12 12 12-5.373 12-12S18.627 2 12 2z"/>
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.8 14h-1.2c-.11 0-.2-.09-.2-.2V9.4L17.6 16zm-3-6.6v5.4c0 .66-.54 1.2-1.2 1.2h-.2a.2.2 0 01-.2-.2v-.1c-.4.28-.87.43-1.35.43-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5c.48 0 .95.15 1.35.43V9.2c0-.11.09-.2.2-.2h1.2c.11 0 .2.09.2.2v.2zm-2.55 4.6c.66 0 1.15-.4 1.15-.9v-1.6c-.35-.3-.72-.5-1.15-.5-.77 0-1.4.63-1.4 1.5s.63 1.5 1.4 1.5zM7.2 16H6c-.11 0-.2-.09-.2-.2V9.4L7.2 16z"/>
               </svg>
-              <span className="text-[10px] font-medium tracking-tight">Zalo</span>
+              <span className="text-[10px] font-medium">Zalo</span>
             </a>
 
             {/* Menu */}
             <button
               onClick={() => { setShowMenu(true); setShowCategories(false); }}
-              className={`flex flex-col items-center justify-center flex-1 h-full gap-[2px] transition-all active:scale-90 ${
-                showMenu ? 'text-[#00CBA9]' : 'text-gray-500/80'
+              className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all active:opacity-50 ${
+                showMenu ? 'text-[#00CBA9]' : 'text-gray-400'
               }`}
             >
-              <svg className="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-              <span className="text-[10px] font-medium tracking-tight">Menu</span>
+              {showMenu ? (
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                  <path fillRule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clipRule="evenodd"/>
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                </svg>
+              )}
+              <span className="text-[10px] font-medium">Menu</span>
             </button>
           </div>
         </div>
