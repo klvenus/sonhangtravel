@@ -23,7 +23,10 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
+
+  const zaloLink = zaloNumber || phoneNumber
 
   useEffect(() => {
     async function fetchCategories() {
@@ -78,6 +81,14 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
               </a>
+              <button
+                onClick={() => setShowMobileMenu(true)}
+                className="p-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200"
+              >
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -222,6 +233,134 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Drawer */}
+      {showMobileMenu && (
+        <>
+          <div 
+            className="md:hidden fixed inset-0 bg-black/50 z-[60]"
+            onClick={() => setShowMobileMenu(false)}
+          />
+          <div className="md:hidden fixed top-0 right-0 bottom-0 w-[280px] bg-white z-[60] shadow-2xl animate-slide-in-right">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <span className="font-bold text-gray-800">Menu</span>
+              <button 
+                onClick={() => setShowMobileMenu(false)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Quick Contact */}
+            <div className="p-4 border-b">
+              <div className="flex gap-2">
+                <a
+                  href={`tel:${phoneNumber}`}
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#00CBA9] text-white py-2.5 rounded-lg font-medium text-sm"
+                >
+                  📞 Gọi ngay
+                </a>
+                <a
+                  href={`https://zalo.me/${zaloLink}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-500 text-white py-2.5 rounded-lg font-medium text-sm"
+                >
+                  💬 Zalo
+                </a>
+              </div>
+            </div>
+
+            {/* Menu Items */}
+            <div className="py-2">
+              <Link
+                href="/"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
+              >
+                Trang chủ
+              </Link>
+              
+              {/* Tour Categories */}
+              <div className="border-t border-b my-2">
+                <Link
+                  href="/tours"
+                  onClick={() => setShowMobileMenu(false)}
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
+                >
+                  Tất cả Tour
+                </Link>
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/tours?category=${cat.slug}`}
+                    onClick={() => setShowMobileMenu(false)}
+                    className="block px-4 py-2.5 pl-8 text-gray-600 hover:bg-gray-50 text-sm"
+                  >
+                    {cat.ten || cat.name}
+                  </Link>
+                ))}
+              </div>
+
+              <Link
+                href="/uu-dai"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
+              >
+                Ưu đãi
+              </Link>
+              <Link
+                href="/blog"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
+              >
+                Blog
+              </Link>
+              <Link
+                href="/ve-chung-toi"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
+              >
+                Về chúng tôi
+              </Link>
+              <Link
+                href="/lien-he"
+                onClick={() => setShowMobileMenu(false)}
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium"
+              >
+                Liên hệ
+              </Link>
+            </div>
+
+            {/* Hotline */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-gray-50">
+              <p className="text-xs text-gray-500 mb-1">Hotline hỗ trợ 24/7</p>
+              <a href={`tel:${phoneNumber}`} className="text-lg font-bold text-[#00CBA9]">
+                {phoneNumber}
+              </a>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Animation styles */}
+      <style jsx global>{`
+        @keyframes slide-in-right {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+        .animate-slide-in-right {
+          animation: slide-in-right 0.3s ease-out;
+        }
+      `}</style>
     </>
   )
 }
