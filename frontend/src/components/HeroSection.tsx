@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 const quickFilters = [
   { label: '🔥 Hot', value: 'hot' },
@@ -42,16 +43,36 @@ const bannerSlides = [
   },
 ]
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  heroBannerUrl?: string
+  heroTitle?: string
+  heroSubtitle?: string
+}
+
+export default function HeroSection({ heroBannerUrl, heroTitle, heroSubtitle }: HeroSectionProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
+
+  // Use custom banner if provided
+  const slides = heroBannerUrl 
+    ? [{
+        id: 0,
+        title: heroTitle || 'Khám phá Trung Quốc',
+        subtitle: heroSubtitle || 'Tour du lịch chất lượng cao',
+        tag: 'HOT',
+        image: heroBannerUrl,
+        buttonText: 'Xem tour',
+        buttonLink: '/tours',
+        gradient: 'from-orange-500/80 to-red-500/80',
+      }, ...bannerSlides]
+    : bannerSlides
 
   // Auto slide
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % bannerSlides.length)
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 4000)
     return () => clearInterval(timer)
-  }, [])
+  }, [slides.length])
 
   return (
     <section>
@@ -59,7 +80,7 @@ export default function HeroSection() {
       <div className="md:hidden">
         {/* Banner Carousel */}
         <div className="relative h-44 overflow-hidden">
-          {bannerSlides.map((slide, index) => (
+          {slides.map((slide, index) => (
             <div
               key={slide.id}
               className={`absolute inset-0 transition-all duration-500 ${
@@ -94,7 +115,7 @@ export default function HeroSection() {
 
           {/* Dots */}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {bannerSlides.map((_, index) => (
+            {slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
@@ -111,7 +132,7 @@ export default function HeroSection() {
       <div className="hidden md:block">
         {/* Banner Slider */}
         <div className="relative h-[450px] overflow-hidden">
-          {bannerSlides.map((slide, index) => (
+          {slides.map((slide, index) => (
             <div
               key={slide.id}
               className={`absolute inset-0 transition-opacity duration-500 ${
@@ -143,7 +164,7 @@ export default function HeroSection() {
 
           {/* Navigation Arrows */}
           <button
-            onClick={() => setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length)}
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
             className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,7 +172,7 @@ export default function HeroSection() {
             </svg>
           </button>
           <button
-            onClick={() => setCurrentSlide((prev) => (prev + 1) % bannerSlides.length)}
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
             className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +182,7 @@ export default function HeroSection() {
 
           {/* Dots */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-            {bannerSlides.map((_, index) => (
+            {slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}

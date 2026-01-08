@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { getCategories } from '@/lib/strapi'
 
@@ -11,7 +12,13 @@ interface Category {
   slug: string
 }
 
-export default function Header() {
+interface HeaderProps {
+  logoUrl?: string
+  siteName?: string
+  phoneNumber?: string
+}
+
+export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789' }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
@@ -45,10 +52,14 @@ export default function Header() {
           <div className="flex items-center justify-between px-4 py-3">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-gradient-to-br from-[#00CBA9] to-[#00A88A] rounded-xl flex items-center justify-center text-white font-bold shadow-md">
-                SH
-              </div>
-              <span className="font-bold text-gray-800">Sơn Hằng</span>
+              {logoUrl ? (
+                <Image src={logoUrl} alt={siteName} width={36} height={36} className="w-9 h-9 rounded-xl object-contain" />
+              ) : (
+                <div className="w-9 h-9 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-xl flex items-center justify-center text-white font-bold shadow-md">
+                  SH
+                </div>
+              )}
+              <span className="font-bold text-gray-800">{siteName.split(' ')[0]} {siteName.split(' ')[1] || ''}</span>
             </Link>
 
             {/* Right Actions */}
@@ -61,7 +72,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
-              <a href="tel:0123456789" className="p-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200">
+              <a href={`tel:${phoneNumber}`} className="p-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200">
                 <svg className="w-5 h-5 text-[#00CBA9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
@@ -95,12 +106,12 @@ export default function Header() {
           <div className="bg-[#00CBA9] text-white py-2">
             <div className="container-custom flex justify-between items-center text-sm">
               <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
+                <a href={`tel:${phoneNumber}`} className="flex items-center gap-1 hover:underline">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                  <span className="font-medium">Hotline: 0123.456.789</span>
-                </span>
+                  <span className="font-medium">Hotline: {phoneNumber}</span>
+                </a>
                 <span className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -109,7 +120,7 @@ export default function Header() {
                 </span>
               </div>
               <div className="flex items-center gap-4">
-                <a href="https://zalo.me/0123456789" className="hover:underline">Zalo</a>
+                <a href={`https://zalo.me/${phoneNumber}`} className="hover:underline">Zalo</a>
                 <a href="https://facebook.com" className="hover:underline">Facebook</a>
               </div>
             </div>
@@ -120,11 +131,15 @@ export default function Header() {
             <div className="flex items-center justify-between gap-6">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 shrink-0">
-                <div className="w-11 h-11 bg-gradient-to-br from-[#00CBA9] to-[#00A88A] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
-                  SH
-                </div>
+                {logoUrl ? (
+                  <Image src={logoUrl} alt={siteName} width={44} height={44} className="w-11 h-11 rounded-xl object-contain" />
+                ) : (
+                  <div className="w-11 h-11 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+                    SH
+                  </div>
+                )}
                 <div>
-                  <h1 className="text-xl font-bold text-gray-800 leading-tight">Sơn Hằng Travel</h1>
+                  <h1 className="text-xl font-bold text-gray-800 leading-tight">{siteName}</h1>
                   <p className="text-xs text-gray-500">Tour Trung Quốc Uy Tín</p>
                 </div>
               </Link>

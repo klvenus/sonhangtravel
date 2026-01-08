@@ -300,3 +300,37 @@ export async function searchTours(query: string, page = 1, pageSize = 10): Promi
   
   return fetchAPI<StrapiResponse<Tour[]>>(`/tours?${searchParams.toString()}`);
 }
+
+// ============ SITE SETTINGS API ============
+
+export interface SiteSettings {
+  id: number;
+  siteName: string;
+  logo?: StrapiImage;
+  logoDark?: StrapiImage;
+  heroBanner?: StrapiImage;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  phoneNumber?: string;
+  zaloNumber?: string;
+  email?: string;
+  address?: string;
+  facebookUrl?: string;
+  youtubeUrl?: string;
+  tiktokUrl?: string;
+}
+
+export async function getSiteSettings(): Promise<SiteSettings | null> {
+  try {
+    const searchParams = new URLSearchParams();
+    searchParams.append('populate[0]', 'logo');
+    searchParams.append('populate[1]', 'logoDark');
+    searchParams.append('populate[2]', 'heroBanner');
+    
+    const response = await fetchAPI<{ data: SiteSettings }>(`/site-setting?${searchParams.toString()}`);
+    return response.data || null;
+  } catch (error) {
+    console.error('Error fetching site settings:', error);
+    return null;
+  }
+}
