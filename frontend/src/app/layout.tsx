@@ -47,7 +47,7 @@ export default async function RootLayout({
           {children}
         </div>
         <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
-        <BottomNav />
+        <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <SpeedInsights />
         <Analytics />
       </body>
