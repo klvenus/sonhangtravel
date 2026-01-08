@@ -21,6 +21,23 @@ export interface SharedSeo extends Struct.ComponentSchema {
   };
 }
 
+export interface SiteBannerSlide extends Struct.ComponentSchema {
+  collectionName: 'components_site_banner_slides';
+  info: {
+    description: 'Slide cho banner hero section';
+    displayName: 'Banner Slide';
+    icon: 'picture';
+  };
+  attributes: {
+    image: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
+    linkText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Xem chi ti\u1EBFt'>;
+    linkUrl: Schema.Attribute.String;
+    subtitle: Schema.Attribute.Text;
+    title: Schema.Attribute.String;
+  };
+}
+
 export interface TourDepartureDate extends Struct.ComponentSchema {
   collectionName: 'components_tour_departure_dates';
   info: {
@@ -68,6 +85,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'shared.seo': SharedSeo;
+      'site.banner-slide': SiteBannerSlide;
       'tour.departure-date': TourDepartureDate;
       'tour.itinerary-item': TourItineraryItem;
       'tour.list-item': TourListItem;

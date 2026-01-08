@@ -28,18 +28,10 @@
       "required": false,
       "allowedTypes": ["images"]
     },
-    "heroBanner": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": ["images"]
-    },
-    "heroTitle": {
-      "type": "string",
-      "default": "Khám phá Trung Quốc cùng Sơn Hằng"
-    },
-    "heroSubtitle": {
-      "type": "text"
+    "bannerSlides": {
+      "type": "component",
+      "repeatable": true,
+      "component": "site.banner-slide"
     },
     "phoneNumber": {
       "type": "string"

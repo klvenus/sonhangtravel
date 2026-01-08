@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import { getSiteSettings, getImageUrl } from "@/lib/strapi";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,6 +49,7 @@ export default async function RootLayout({
         <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
         <BottomNav />
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

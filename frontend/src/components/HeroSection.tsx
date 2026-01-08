@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const quickFilters = [
   { label: '🔥 Hot', value: 'hot' },
@@ -10,61 +11,52 @@ const quickFilters = [
   { label: '🛍️ Mua sắm', value: 'shopping' },
 ]
 
-const bannerSlides = [
+// Default slides - fallback when no admin slides
+const defaultSlides = [
   {
     id: 1,
     title: 'Tour Đông Hưng',
     subtitle: 'Chỉ từ 1.990.000đ',
-    tag: 'HOT',
     image: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80',
-    buttonText: 'Đặt ngay',
-    buttonLink: '/tours/dong-hung',
-    gradient: 'from-orange-500/80 to-red-500/80',
+    linkText: 'Đặt ngay',
+    linkUrl: '/tours/dong-hung',
   },
   {
     id: 2,
     title: 'Tour Nam Ninh',
     subtitle: 'Thiên đường mua sắm',
-    tag: 'SALE 30%',
     image: 'https://images.unsplash.com/photo-1537531383496-f4749b8032cf?w=800&q=80',
-    buttonText: 'Khám phá',
-    buttonLink: '/tours/nam-ninh',
-    gradient: 'from-blue-500/80 to-purple-500/80',
+    linkText: 'Khám phá',
+    linkUrl: '/tours/nam-ninh',
   },
   {
     id: 3,
     title: 'Tour Thượng Hải',
     subtitle: 'Thành phố không ngủ',
-    tag: 'MỚI',
     image: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=800&q=80',
-    buttonText: 'Xem tour',
-    buttonLink: '/tours/thuong-hai',
-    gradient: 'from-emerald-500/80 to-teal-500/80',
+    linkText: 'Xem tour',
+    linkUrl: '/tours/thuong-hai',
   },
 ]
 
-interface HeroSectionProps {
-  heroBannerUrl?: string
-  heroTitle?: string
-  heroSubtitle?: string
+interface BannerSlide {
+  id: number
+  image: string
+  title?: string
+  subtitle?: string
+  linkUrl?: string
+  linkText?: string
 }
 
-export default function HeroSection({ heroBannerUrl, heroTitle, heroSubtitle }: HeroSectionProps) {
+interface HeroSectionProps {
+  bannerSlides?: BannerSlide[]
+}
+
+export default function HeroSection({ bannerSlides }: HeroSectionProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
 
-  // Use custom banner if provided
-  const slides = heroBannerUrl 
-    ? [{
-        id: 0,
-        title: heroTitle || 'Khám phá Trung Quốc',
-        subtitle: heroSubtitle || 'Tour du lịch chất lượng cao',
-        tag: 'HOT',
-        image: heroBannerUrl,
-        buttonText: 'Xem tour',
-        buttonLink: '/tours',
-        gradient: 'from-orange-500/80 to-red-500/80',
-      }, ...bannerSlides]
-    : bannerSlides
+  // Use admin slides if provided, otherwise use defaults
+  const slides = bannerSlides && bannerSlides.length > 0 ? bannerSlides : defaultSlides
 
   // Auto slide
   useEffect(() => {
@@ -91,24 +83,27 @@ export default function HeroSection({ heroBannerUrl, heroTitle, heroSubtitle }: 
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url(${slide.image})` }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient}`}></div>
+                <div className="absolute inset-0 bg-linear-to-r from-black/60 to-black/30"></div>
               </div>
               
               <div className="relative h-full flex flex-col justify-center px-4 text-white">
-                <span className="inline-block bg-white/20 backdrop-blur-sm text-xs font-bold px-2 py-1 rounded mb-2 w-fit">
-                  {slide.tag}
-                </span>
-                <h2 className="text-2xl font-bold mb-1">{slide.title}</h2>
-                <p className="text-white/90 text-sm mb-3">{slide.subtitle}</p>
-                <a
-                  href={slide.buttonLink}
-                  className="inline-flex items-center gap-1 bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-full w-fit active:scale-95 transition-transform"
-                >
-                  {slide.buttonText}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
+                {slide.title && (
+                  <>
+                    <h2 className="text-2xl font-bold mb-1">{slide.title}</h2>
+                    <p className="text-white/90 text-sm mb-3">{slide.subtitle}</p>
+                  </>
+                )}
+                {slide.linkUrl && (
+                  <Link
+                    href={slide.linkUrl}
+                    className="inline-flex items-center gap-1 bg-white text-gray-800 text-sm font-semibold px-4 py-2 rounded-full w-fit active:scale-95 transition-transform"
+                  >
+                    {slide.linkText || 'Xem chi tiết'}
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                )}
               </div>
             </div>
           ))}
@@ -147,17 +142,20 @@ export default function HeroSection({ heroBannerUrl, heroTitle, heroSubtitle }: 
               </div>
 
               <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
-                <span className="bg-[#00CBA9] text-sm font-bold px-4 py-1.5 rounded-full mb-4">
-                  {slide.tag}
-                </span>
-                <h1 className="text-5xl font-bold mb-3">{slide.title}</h1>
-                <p className="text-xl text-white/90 mb-6">{slide.subtitle}</p>
-                <a
-                  href={slide.buttonLink}
-                  className="bg-white text-gray-800 font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  {slide.buttonText}
-                </a>
+                {slide.title && (
+                  <>
+                    <h1 className="text-5xl font-bold mb-3">{slide.title}</h1>
+                    <p className="text-xl text-white/90 mb-6">{slide.subtitle}</p>
+                  </>
+                )}
+                {slide.linkUrl && (
+                  <Link
+                    href={slide.linkUrl}
+                    className="bg-white text-gray-800 font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-colors"
+                  >
+                    {slide.linkText || 'Xem chi tiết'}
+                  </Link>
+                )}
               </div>
             </div>
           ))}

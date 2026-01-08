@@ -3,7 +3,7 @@ import CategorySection from '@/components/CategorySection'
 import FeaturedTours from '@/components/FeaturedTours'
 import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
-import { getCategories, getTours, getImageUrl, getSiteSettings, Category, Tour } from '@/lib/strapi'
+import { getCategories, getTours, getImageUrl, getSiteSettings, Category, Tour, BannerSlide } from '@/lib/strapi'
 
 // ISR - Revalidate every hour
 export const revalidate = 3600
@@ -45,14 +45,23 @@ function transformTour(tour: Tour) {
   }
 }
 
+function transformBannerSlide(slide: BannerSlide) {
+  return {
+    id: slide.id,
+    image: getImageUrl(slide.image, 'large'),
+    title: slide.title,
+    subtitle: slide.subtitle,
+    linkUrl: slide.linkUrl,
+    linkText: slide.linkText,
+  }
+}
+
 export default async function Home() {
   // Fetch data on server
   let categories: ReturnType<typeof transformCategory>[] = []
   let tours: ReturnType<typeof transformTour>[] = []
   let allTours: ReturnType<typeof transformTour>[] = []
-  let heroBannerUrl: string | undefined = undefined
-  let heroTitle: string | undefined = undefined
-  let heroSubtitle: string | undefined = undefined
+  let bannerSlides: ReturnType<typeof transformBannerSlide>[] = []
 
   try {
     const [categoriesData, featuredToursData, allToursData, siteSettings] = await Promise.all([
@@ -74,10 +83,10 @@ export default async function Home() {
       allTours = allToursData.data.map(transformTour)
     }
 
-    // Extract hero banner settings
-    heroBannerUrl = siteSettings?.heroBanner ? getImageUrl(siteSettings.heroBanner) : undefined
-    heroTitle = siteSettings?.heroTitle || undefined
-    heroSubtitle = siteSettings?.heroSubtitle || undefined
+    // Extract banner slides from site settings
+    if (siteSettings?.bannerSlides && siteSettings.bannerSlides.length > 0) {
+      bannerSlides = siteSettings.bannerSlides.map(transformBannerSlide)
+    }
   } catch (error) {
     console.error('Error fetching home data:', error)
   }
@@ -90,11 +99,7 @@ export default async function Home() {
 
   return (
     <main>
-      <HeroSection 
-        heroBannerUrl={heroBannerUrl} 
-        heroTitle={heroTitle} 
-        heroSubtitle={heroSubtitle} 
-      />
+      <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />
       {toursByCategory.map(group => (

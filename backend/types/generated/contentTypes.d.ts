@@ -517,15 +517,12 @@ export interface ApiSiteSettingSiteSetting extends Struct.SingleTypeSchema {
   };
   attributes: {
     address: Schema.Attribute.Text;
+    bannerSlides: Schema.Attribute.Component<'site.banner-slide', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     email: Schema.Attribute.Email;
     facebookUrl: Schema.Attribute.String;
-    heroBanner: Schema.Attribute.Media<'images'>;
-    heroSubtitle: Schema.Attribute.Text;
-    heroTitle: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Kh\u00E1m ph\u00E1 Trung Qu\u1ED1c c\u00F9ng S\u01A1n H\u1EB1ng'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

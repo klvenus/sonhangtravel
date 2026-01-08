@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_site_banner_slides",
+  "info": {
+    "displayName": "Banner Slide",
+    "icon": "picture",
+    "description": "Slide cho banner hero section"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "linkUrl": {
+      "type": "string"
+    },
+    "linkText": {
+      "type": "string",
+      "default": "Xem chi tiết"
+    }
+  }
+}

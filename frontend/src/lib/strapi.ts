@@ -303,14 +303,21 @@ export async function searchTours(query: string, page = 1, pageSize = 10): Promi
 
 // ============ SITE SETTINGS API ============
 
+export interface BannerSlide {
+  id: number;
+  image: StrapiImage;
+  title?: string;
+  subtitle?: string;
+  linkUrl?: string;
+  linkText?: string;
+}
+
 export interface SiteSettings {
   id: number;
   siteName: string;
   logo?: StrapiImage;
   logoDark?: StrapiImage;
-  heroBanner?: StrapiImage;
-  heroTitle?: string;
-  heroSubtitle?: string;
+  bannerSlides?: BannerSlide[];
   phoneNumber?: string;
   zaloNumber?: string;
   email?: string;
@@ -325,7 +332,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
     const searchParams = new URLSearchParams();
     searchParams.append('populate[0]', 'logo');
     searchParams.append('populate[1]', 'logoDark');
-    searchParams.append('populate[2]', 'heroBanner');
+    searchParams.append('populate[2]', 'bannerSlides.image');
     
     const response = await fetchAPI<{ data: SiteSettings }>(`/site-setting?${searchParams.toString()}`);
     return response.data || null;
