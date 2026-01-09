@@ -11,7 +11,7 @@ import { NextResponse } from 'next/server'
  *
  * Example cron-job.org setup:
  * - URL: https://sonhangtravel.vercel.app/api/keep-alive
- * - Schedule: */5 * * * * (every 5 minutes)
+ * - Schedule: Every 5-10 minutes
  * - HTTP Method: GET
  */
 
