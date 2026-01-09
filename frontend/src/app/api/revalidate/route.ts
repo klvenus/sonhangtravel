@@ -1,16 +1,20 @@
 import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Secret token to validate webhook requests
-const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET || 'your-secret-token'
-
 export async function POST(request: NextRequest) {
   try {
     // Check secret token
-    const token = request.headers.get('x-revalidate-token') || 
+    const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET;
+
+    if (!REVALIDATE_SECRET) {
+      console.error('REVALIDATE_SECRET is not configured');
+      return NextResponse.json({ message: 'Revalidation not configured' }, { status: 500 })
+    }
+
+    const token = request.headers.get('x-revalidate-token') ||
                   request.nextUrl.searchParams.get('secret')
-    
-    if (token !== REVALIDATE_SECRET) {
+
+    if (!token || token !== REVALIDATE_SECRET) {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
     }
 
@@ -47,9 +51,16 @@ export async function POST(request: NextRequest) {
 
 // Also support GET for easy testing
 export async function GET(request: NextRequest) {
+  const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET;
+
+  if (!REVALIDATE_SECRET) {
+    console.error('REVALIDATE_SECRET is not configured');
+    return NextResponse.json({ message: 'Revalidation not configured' }, { status: 500 })
+  }
+
   const token = request.nextUrl.searchParams.get('secret')
-  
-  if (token !== REVALIDATE_SECRET) {
+
+  if (!token || token !== REVALIDATE_SECRET) {
     return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
   }
 

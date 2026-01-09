@@ -13,6 +13,19 @@ export default [
           upgradeInsecureRequests: null,
         },
       },
+      // HSTS - Force HTTPS for 1 year
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+      // Prevent clickjacking attacks
+      frameguard: {
+        action: 'sameorigin',
+      },
+      // Prevent MIME type sniffing
+      xssFilter: true,
+      noSniff: true,
     },
   },
   'strapi::cors',

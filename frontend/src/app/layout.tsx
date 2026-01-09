@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-verification-code", // Thay bằng code thật từ Google Search Console
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
   },
   alternates: {
     canonical: "https://sonhangtravel.vercel.app",
@@ -177,10 +177,17 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Skip to main content link for accessibility */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:top-4 focus:left-4 focus:px-4 focus:py-2 focus:bg-[#00CBA9] focus:text-white focus:rounded-lg focus:shadow-lg"
+        >
+          Bỏ qua đến nội dung chính
+        </a>
         <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
-        <div className="pb-16 md:pb-0">
+        <main id="main-content" className="pb-16 md:pb-0">
           {children}
-        </div>
+        </main>
         <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
         <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <SpeedInsights />
