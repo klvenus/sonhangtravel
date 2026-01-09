@@ -164,6 +164,12 @@ export default async function RootLayout({
   return (
     <html lang="vi">
       <head>
+        {/* Preconnect to external domains for faster loading */}
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_STRAPI_URL || 'https://sonhangtravel.onrender.com'} />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_STRAPI_URL || 'https://sonhangtravel.onrender.com'} />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
