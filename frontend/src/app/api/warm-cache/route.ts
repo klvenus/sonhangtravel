@@ -8,12 +8,16 @@ async function wakeUpBackend(strapiUrl: string, maxRetries = 3): Promise<boolean
   console.log('🔥 Waking up backend...')
 
   for (let i = 0; i < maxRetries; i++) {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+
     try {
       const start = Date.now()
       const response = await fetch(`${strapiUrl}/_health`, {
         method: 'HEAD',
-        signal: AbortSignal.timeout(30000), // 30s timeout
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
       const duration = Date.now() - start
 
       if (response.ok) {
@@ -21,6 +25,7 @@ async function wakeUpBackend(strapiUrl: string, maxRetries = 3): Promise<boolean
         return true
       }
     } catch (error) {
+      clearTimeout(timeoutId)
       console.log(`⏳ Backend waking up... attempt ${i + 1}/${maxRetries}`)
       if (i < maxRetries - 1) {
         // Exponential backoff: 5s, 10s, 15s
@@ -48,11 +53,16 @@ export async function GET() {
     ]
 
     // Step 3: Fetch all tour detail pages
+    const toursController = new AbortController()
+    const toursTimeoutId = setTimeout(() => toursController.abort(), 30000)
+
     const toursResponse = await fetch(`${strapiUrl}/api/tours?fields[0]=slug&pagination[pageSize]=100`, {
       next: { revalidate: 0 }, // Don't cache this fetch
-      signal: AbortSignal.timeout(30000), // 30s timeout
+      signal: toursController.signal,
     })
-    
+
+    clearTimeout(toursTimeoutId)
+
     if (toursResponse.ok) {
       const toursData = await toursResponse.json()
       const tourSlugs = toursData.data?.map((t: { slug: string }) => `/tour/${t.slug}`) || []

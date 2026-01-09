@@ -23,26 +23,36 @@ export async function GET() {
   try {
     const start = Date.now()
 
-    // Lightweight health check - just ping to keep alive
-    const response = await fetch(`${strapiUrl}/_health`, {
-      method: 'HEAD',
-      signal: AbortSignal.timeout(10000), // 10s timeout
-    })
+    // Create abort controller with timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
 
-    const duration = Date.now() - start
-    const isAlive = response.ok
+    try {
+      // Lightweight health check - just ping to keep alive
+      const response = await fetch(`${strapiUrl}/_health`, {
+        method: 'HEAD',
+        signal: controller.signal,
+      })
 
-    console.log(`Backend keep-alive: ${isAlive ? '✅ alive' : '❌ down'} (${duration}ms)`)
+      clearTimeout(timeoutId)
+      const duration = Date.now() - start
+      const isAlive = response.ok
 
-    return NextResponse.json({
-      success: true,
-      backend: {
-        alive: isAlive,
-        responseTime: duration,
-        url: strapiUrl,
-      },
-      timestamp: new Date().toISOString(),
-    })
+      console.log(`Backend keep-alive: ${isAlive ? '✅ alive' : '❌ down'} (${duration}ms)`)
+
+      return NextResponse.json({
+        success: true,
+        backend: {
+          alive: isAlive,
+          responseTime: duration,
+          url: strapiUrl,
+        },
+        timestamp: new Date().toISOString(),
+      })
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      throw fetchError
+    }
   } catch (error) {
     console.error('Keep-alive ping failed:', error)
 
