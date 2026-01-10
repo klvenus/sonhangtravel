@@ -128,7 +128,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Tìm kiếm tour: Đông Hưng, Nam Ninh, Quế Lâm..."
-              className="w-full px-4 py-3 pl-12 pr-24 rounded-lg border border-gray-300 focus:border-[#00CBA9] focus:ring-2 focus:ring-[#00CBA9]/20 outline-none transition-all"
+              className="w-full px-4 py-3 pl-12 pr-24 rounded-lg border border-gray-300 focus:border-[#00CBA9] focus:ring-2 focus:ring-[#00CBA9]/20 outline-none transition-all text-base"
             />
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"

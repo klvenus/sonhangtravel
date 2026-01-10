@@ -116,7 +116,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm tour, điểm đến..."
-                  className="flex-1 bg-transparent py-3 px-3 text-sm outline-none"
+                  className="flex-1 bg-transparent py-3 px-3 text-base outline-none"
                 />
                 <button type="submit" className="bg-[#00CBA9] text-white px-4 py-3 text-sm font-medium active:scale-95 transition-transform">
                   Tìm
