@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { getCategories } from '@/lib/strapi'
 
 interface Category {
@@ -20,11 +21,13 @@ interface HeaderProps {
 }
 
 export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789', zaloNumber }: HeaderProps) {
+  const router = useRouter()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
 
   const zaloLink = zaloNumber || phoneNumber
 
@@ -47,6 +50,15 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/tours?q=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchOpen(false) // Close mobile search after submit
+      setSearchQuery('') // Clear search input
+    }
+  }
 
   return (
     <>
@@ -95,19 +107,21 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
           {/* Mobile Search Expandable */}
           <div className={`overflow-hidden transition-all duration-300 ${isSearchOpen ? 'max-h-20 pb-3' : 'max-h-0'}`}>
             <div className="px-4">
-              <div className="flex items-center bg-gray-100 rounded-full overflow-hidden">
+              <form onSubmit={handleSearch} className="flex items-center bg-gray-100 rounded-full overflow-hidden">
                 <svg className="w-5 h-5 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm tour, điểm đến..."
                   className="flex-1 bg-transparent py-3 px-3 text-sm outline-none"
                 />
-                <button className="bg-[#00CBA9] text-white px-4 py-3 text-sm font-medium">
+                <button type="submit" className="bg-[#00CBA9] text-white px-4 py-3 text-sm font-medium active:scale-95 transition-transform">
                   Tìm
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -158,19 +172,21 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
 
               {/* Search Bar */}
               <div className="flex-1 max-w-lg">
-                <div className="flex items-center bg-gray-100 rounded-full overflow-hidden border-2 border-transparent focus-within:border-[#00CBA9] focus-within:bg-white transition-colors">
+                <form onSubmit={handleSearch} className="flex items-center bg-gray-100 rounded-full overflow-hidden border-2 border-transparent focus-within:border-[#00CBA9] focus-within:bg-white transition-colors">
                   <svg className="w-5 h-5 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
                     type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Tìm tour, điểm đến..."
                     className="flex-1 bg-transparent py-3 px-3 outline-none"
                   />
-                  <button className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-6 py-3 font-medium transition-colors">
+                  <button type="submit" className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-6 py-3 font-medium transition-colors">
                     Tìm kiếm
                   </button>
-                </div>
+                </form>
               </div>
 
               {/* Navigation */}
