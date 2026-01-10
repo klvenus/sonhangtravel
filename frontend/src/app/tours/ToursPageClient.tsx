@@ -182,8 +182,9 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
           </div>
         )}
 
-        {/* Category Filter - Hide when searching */}
-        {!hasSearched && (
+        {/* Category Filter - HIDDEN: Category section is on homepage only */}
+        {/* Uncomment below if you want to show category filter on tours page */}
+        {/* {!hasSearched && (
           <div className="mb-6">
           <h2 className="text-lg font-bold text-gray-800 mb-3">Điểm đến</h2>
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -212,7 +213,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
             ))}
           </div>
         </div>
-        )}
+        )} */}
 
         {/* Loading State */}
         {isSearching && (
