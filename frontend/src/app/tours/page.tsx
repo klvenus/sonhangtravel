@@ -1,6 +1,7 @@
 import { getTours, getCategories, getImageUrl, Tour, Category } from '@/lib/strapi'
 import ToursPageClient from './ToursPageClient'
 import { Metadata } from 'next'
+import { Suspense } from 'react'
 
 // SEO Metadata for Tours page
 export const metadata: Metadata = {
@@ -72,5 +73,21 @@ export default async function ToursPage() {
     console.error('Error fetching tours data:', error)
   }
 
-  return <ToursPageClient initialTours={tours} initialCategories={categories} />
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-[#00CBA9] text-white py-8">
+          <div className="container-custom">
+            <h1 className="text-2xl md:text-3xl font-bold">Tất Cả Tour Du Lịch</h1>
+            <p className="mt-2 text-white/80">Đang tải...</p>
+          </div>
+        </div>
+        <div className="container-custom py-6 text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#00CBA9]"></div>
+        </div>
+      </div>
+    }>
+      <ToursPageClient initialTours={tours} initialCategories={categories} />
+    </Suspense>
+  )
 }

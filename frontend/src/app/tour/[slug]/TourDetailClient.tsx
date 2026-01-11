@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import DOMPurify from 'isomorphic-dompurify'
 
 interface TourDetailProps {
   tourData: {
@@ -299,12 +300,18 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                             <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
                             Giới thiệu chi tiết
                           </h3>
-                          <div 
+                          <div
                             className="text-gray-700 leading-relaxed"
-                            dangerouslySetInnerHTML={{ 
-                              __html: tourData.content
-                                .replace(/!\[.*?\]\((.*?)\)/g, '<img src="$1" class="rounded-xl my-4 max-w-full shadow-md" />')
-                                .replace(/\n/g, '<br/>') 
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(
+                                tourData.content
+                                  .replace(/!\[.*?\]\((.*?)\)/g, '<img src="$1" class="rounded-xl my-4 max-w-full shadow-md" />')
+                                  .replace(/\n/g, '<br/>'),
+                                {
+                                  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote'],
+                                  ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel']
+                                }
+                              )
                             }}
                           />
                         </div>

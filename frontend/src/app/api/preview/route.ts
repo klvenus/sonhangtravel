@@ -9,8 +9,13 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type') || 'tour';
 
   // Validate the secret token (should match STRAPI_PREVIEW_SECRET in Strapi)
-  const previewSecret = process.env.PREVIEW_SECRET || 'sonhangtravel-preview-2024';
-  
+  const previewSecret = process.env.PREVIEW_SECRET;
+
+  if (!previewSecret) {
+    console.error('PREVIEW_SECRET is not configured');
+    return new Response('Preview not configured', { status: 500 });
+  }
+
   if (secret !== previewSecret) {
     return new Response('Invalid token', { status: 401 });
   }

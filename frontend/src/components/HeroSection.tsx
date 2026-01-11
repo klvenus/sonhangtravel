@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const quickFilters = [
   { label: '🔥 Hot', value: 'hot' },
@@ -53,7 +54,9 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ bannerSlides }: HeroSectionProps) {
+  const router = useRouter()
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Use admin slides if provided, otherwise use defaults
   const slides = bannerSlides && bannerSlides.length > 0 ? bannerSlides : defaultSlides
@@ -65,6 +68,14 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
     }, 4000)
     return () => clearInterval(timer)
   }, [slides.length])
+
+  // Handle search
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/tours?q=${encodeURIComponent(searchQuery.trim())}`)
+    }
+  }
 
   return (
     <section>
@@ -190,6 +201,40 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
               />
             ))}
           </div>
+        </div>
+
+        {/* Search Bar - Desktop */}
+        <div className="container-custom -mt-12 relative z-10 px-4">
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm kiếm tour du lịch: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới..."
+                className="w-full pl-14 pr-32 py-4 border-2 border-gray-200 rounded-xl text-base focus:border-[#00CBA9] focus:ring-4 focus:ring-[#00CBA9]/20 outline-none transition-all"
+              />
+              <svg
+                className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#00CBA9] text-white px-8 py-3 rounded-lg text-base font-semibold hover:bg-[#00B399] transition-colors shadow-md"
+              >
+                Tìm kiếm
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </section>
