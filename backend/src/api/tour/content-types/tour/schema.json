@@ -101,17 +101,14 @@
     },
     "rating": {
       "type": "decimal",
-      "default": 5,
       "min": 0,
       "max": 5
     },
     "reviewCount": {
-      "type": "integer",
-      "default": 0
+      "type": "integer"
     },
     "bookingCount": {
-      "type": "integer",
-      "default": 0
+      "type": "integer"
     },
     "departureDates": {
       "type": "component",
