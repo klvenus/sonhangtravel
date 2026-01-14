@@ -147,8 +147,8 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidat
       headers: getHeaders(),
       signal: controller.signal,
       cache: 'force-cache', // Force cache for better performance
-      next: { 
-        revalidate: revalidate ?? 3600, // Default: cache 1 hour
+      next: {
+        revalidate: revalidate ?? 86400, // Default: cache 24 hours (aggressive caching)
         tags: ['strapi'] // Tag for on-demand revalidation
       },
     });

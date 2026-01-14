@@ -5,8 +5,9 @@ import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import { getCategories, getTours, getImageUrl, getSiteSettings, Category, Tour, BannerSlide } from '@/lib/strapi'
 
-// ISR - Revalidate every hour
-export const revalidate = 3600
+// ISR - Cache 5 phút (để content mới hiện nhanh)
+// Auto-revalidate khi có thay đổi qua Strapi lifecycle hooks
+export const revalidate = 300 // 5 phút
 
 // Transform functions
 function transformCategory(cat: Category) {

@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # Frontend tests and build
+  frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Run tests
+        run: npm test
+        env:
+          NEXT_PUBLIC_STRAPI_URL: http://localhost:1337
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_STRAPI_URL: http://localhost:1337
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          PREVIEW_SECRET: test-secret
+          REVALIDATE_SECRET: test-secret
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v5
+        if: always()
+        with:
+          files: ./frontend/coverage/lcov.info
+          flags: frontend
+        continue-on-error: true
+
+  # Backend tests and build
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Strapi
+        run: npm run build
+        env:
+          NODE_ENV: production
+          DATABASE_CLIENT: sqlite
+          APP_KEYS: testkey1,testkey2,testkey3,testkey4
+          API_TOKEN_SALT: testtokensalt
+          ADMIN_JWT_SECRET: testadminjwt
+          TRANSFER_TOKEN_SALT: testtransfer
+          JWT_SECRET: testjwt
+
+  # Security audit
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run npm audit (Frontend)
+        working-directory: ./frontend
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Run npm audit (Backend)
+        working-directory: ./backend
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
