@@ -8,9 +8,9 @@ const TourDetailClient = dynamic(() => import('./TourDetailClient'), {
   loading: () => null, // loading.tsx handles this
 })
 
-// SSG + ISR: Build HTML at deploy time, revalidate every 12 hours for updates
-// Aggressive caching for instant page loads - use on-demand revalidation for immediate updates
-export const revalidate = 43200 // 12 hours
+// SSG + ISR: Revalidate every 5 minutes (content updates nhanh)
+// Auto-revalidate khi có thay đổi qua Strapi lifecycle hooks
+export const revalidate = 300 // 5 phút
 
 // Allow new tours to be generated on-demand (not 404)
 export const dynamicParams = true

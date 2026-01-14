@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   },
 }
 
-// ISR - Revalidate every hour
-export const revalidate = 3600
+// ISR - Revalidate every 5 minutes
+export const revalidate = 300 // 5 phút
 
 // Transform tour for client component
 function transformTour(tour: Tour) {
