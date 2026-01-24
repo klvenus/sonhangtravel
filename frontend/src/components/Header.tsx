@@ -58,9 +58,9 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               {logoUrl ? (
-                <Image src={logoUrl} alt={siteName} width={36} height={36} className="w-9 h-9 rounded-xl object-contain" />
+                <Image src={logoUrl} alt={siteName} width={54} height={54} className="w-13.5 h-13.5 object-contain" />
               ) : (
-                <div className="w-9 h-9 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-xl flex items-center justify-center text-white font-bold shadow-md">
+                <div className="w-13.5 h-13.5 bg-linear-to-br from-[#00CBA9] to-[#00A88A] flex items-center justify-center text-white font-bold shadow-md">
                   SH
                 </div>
               )}
@@ -144,9 +144,9 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 shrink-0">
                 {logoUrl ? (
-                  <Image src={logoUrl} alt={siteName} width={44} height={44} className="w-11 h-11 rounded-xl object-contain" />
+                  <Image src={logoUrl} alt={siteName} width={57} height={57} className="w-14 h-14 object-contain" />
                 ) : (
-                  <div className="w-11 h-11 bg-linear-to-br from-[#00CBA9] to-[#00A88A] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+                  <div className="w-14 h-14 bg-linear-to-br from-[#00CBA9] to-[#00A88A] flex items-center justify-center text-white font-bold text-lg shadow-md">
                     SH
                   </div>
                 )}
