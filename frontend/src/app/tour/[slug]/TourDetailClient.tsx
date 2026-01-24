@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -48,6 +48,49 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
+  const [showLightbox, setShowLightbox] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index)
+    setShowLightbox(true)
+    document.body.style.overflow = 'hidden'
+  }
+
+  const closeLightbox = () => {
+    setShowLightbox(false)
+    document.body.style.overflow = ''
+  }
+
+  const goToNextImage = useCallback(() => {
+    setLightboxIndex((prev) => (prev + 1) % tourData.images.length)
+  }, [tourData.images.length])
+
+  const goToPrevImage = useCallback(() => {
+    setLightboxIndex((prev) => (prev - 1 + tourData.images.length) % tourData.images.length)
+  }, [tourData.images.length])
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!showLightbox) return
+      
+      switch (e.key) {
+        case 'Escape':
+          closeLightbox()
+          break
+        case 'ArrowRight':
+          goToNextImage()
+          break
+        case 'ArrowLeft':
+          goToPrevImage()
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showLightbox, goToNextImage, goToPrevImage])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price)
@@ -104,7 +147,10 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             </div>
           </div>
           
-          <div className="relative h-72 overflow-hidden">
+          <button 
+            onClick={() => openLightbox(currentImage)}
+            className="relative h-72 overflow-hidden w-full cursor-zoom-in"
+          >
             <Image
               src={tourData.images[currentImage]}
               alt={tourData.title}
@@ -122,11 +168,14 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   GIẢM {discountPercent}%
                 </span>
               )}
-              <div className="ml-auto bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+              <div className="ml-auto bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 {currentImage + 1}/{tourData.images.length}
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Thumbnail images */}
           <div className="flex gap-2 p-4 overflow-x-auto bg-white">
@@ -134,6 +183,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               <button
                 key={idx}
                 onClick={() => setCurrentImage(idx)}
+                onDoubleClick={() => openLightbox(idx)}
                 className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                   currentImage === idx ? 'border-[#00CBA9] scale-105' : 'border-gray-200'
                 }`}
@@ -147,18 +197,24 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
         {/* Desktop Gallery */}
         <div className="hidden md:block container mx-auto px-4 py-6 max-w-7xl">
           {tourData.images.length === 1 ? (
-            <div className="relative h-[450px] rounded-2xl overflow-hidden">
+            <button 
+              onClick={() => openLightbox(0)}
+              className="relative h-[450px] rounded-2xl overflow-hidden w-full cursor-zoom-in"
+            >
               <Image
                 src={tourData.images[0]}
                 alt={tourData.title}
                 fill
-                className="object-cover"
+                className="object-cover hover:scale-105 transition-transform duration-500"
                 priority
               />
-            </div>
+            </button>
           ) : (
-            <div className="grid grid-cols-4 gap-3 h-[450px]">
-              <div className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group">
+            <div className="grid grid-cols-4 gap-3 h-[450px] relative">
+              <button 
+                onClick={() => openLightbox(0)}
+                className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group cursor-zoom-in"
+              >
                 <Image
                   src={tourData.images[0]}
                   alt={tourData.title}
@@ -166,20 +222,34 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
                 />
-              </div>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+              </button>
               {tourData.images.slice(1, 5).map((img: string, idx: number) => (
-                <div key={idx} className="relative rounded-2xl overflow-hidden group">
+                <button 
+                  key={idx} 
+                  onClick={() => openLightbox(idx + 1)}
+                  className="relative rounded-2xl overflow-hidden group cursor-zoom-in"
+                >
                   <Image src={img} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-              ))}
-              {tourData.images.length > 5 && (
-                <button className="absolute bottom-6 right-6 bg-white hover:bg-gray-50 px-6 py-3 rounded-xl shadow-lg font-medium text-gray-700 flex items-center gap-2 transition-all">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  Xem tất cả {tourData.images.length} ảnh
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  {/* Show overlay on last visible image if more images exist */}
+                  {idx === 3 && tourData.images.length > 5 && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="text-white text-2xl font-bold">+{tourData.images.length - 5}</span>
+                    </div>
+                  )}
                 </button>
-              )}
+              ))}
+              {/* View all button */}
+              <button 
+                onClick={() => openLightbox(0)}
+                className="absolute bottom-4 right-4 bg-white hover:bg-gray-50 px-5 py-2.5 rounded-xl shadow-lg font-medium text-gray-700 flex items-center gap-2 transition-all hover:scale-105"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Xem tất cả {tourData.images.length} ảnh
+              </button>
             </div>
           )}
         </div>
@@ -645,6 +715,86 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
           </button>
         </div>
       </div>
+
+      {/* Lightbox Gallery Modal */}
+      {showLightbox && (
+        <div className="fixed inset-0 z-50 bg-black">
+          {/* Close button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 z-50 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all"
+          >
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Image counter */}
+          <div className="absolute top-4 left-4 z-50 bg-white/10 backdrop-blur-md text-white px-4 py-2 rounded-full font-medium">
+            {lightboxIndex + 1} / {tourData.images.length}
+          </div>
+
+          {/* Main image container */}
+          <div className="absolute inset-0 flex items-center justify-center p-4 md:p-16">
+            <div className="relative w-full h-full max-w-6xl max-h-[85vh]">
+              <Image
+                src={tourData.images[lightboxIndex]}
+                alt={`${tourData.title} - Ảnh ${lightboxIndex + 1}`}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Navigation arrows */}
+          {tourData.images.length > 1 && (
+            <>
+              <button
+                onClick={goToPrevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-50 w-14 h-14 bg-white/10 hover:bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
+              >
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={goToNextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-50 w-14 h-14 bg-white/10 hover:bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
+              >
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
+          )}
+
+          {/* Thumbnail strip at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent py-4">
+            <div className="flex justify-center gap-2 px-4 overflow-x-auto pb-2">
+              {tourData.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setLightboxIndex(idx)}
+                  className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden transition-all ${
+                    lightboxIndex === idx 
+                      ? 'ring-2 ring-[#00CBA9] ring-offset-2 ring-offset-black scale-110' 
+                      : 'opacity-50 hover:opacity-100'
+                  }`}
+                >
+                  <Image src={img} alt="" width={80} height={80} className="object-cover w-full h-full" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Keyboard navigation hint */}
+          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-white/50 text-sm hidden md:block">
+            Dùng phím ← → để chuyển ảnh • ESC để đóng
+          </div>
+        </div>
+      )}
     </div>
   )
 }
