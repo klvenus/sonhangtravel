@@ -146,11 +146,11 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidat
       ...fetchOptions,
       headers: getHeaders(),
       signal: controller.signal,
-      cache: 'force-cache', // Force cache for better performance
-      next: { 
-        revalidate: revalidate ?? 3600, // Default: cache 1 hour
-        tags: ['strapi'] // Tag for on-demand revalidation
-      },
+      cache: 'no-store', // Disable cache temporarily for faster updates
+      // next: { 
+      //   revalidate: revalidate ?? 3600, // Default: cache 1 hour
+      //   tags: ['strapi'] // Tag for on-demand revalidation
+      // },
     });
     
     clearTimeout(timeoutId);

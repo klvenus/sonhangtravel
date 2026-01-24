@@ -18,8 +18,9 @@ export const metadata: Metadata = {
   },
 }
 
-// ISR - Revalidate every hour
-export const revalidate = 3600
+// Disable cache temporarily - fetch fresh data every request
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // Transform tour for client component
 function transformTour(tour: Tour) {

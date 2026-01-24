@@ -5,8 +5,9 @@ import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import { getCategories, getTours, getImageUrl, getSiteSettings, Category, Tour, BannerSlide } from '@/lib/strapi'
 
-// ISR - Revalidate every hour
-export const revalidate = 3600
+// Disable cache temporarily - fetch fresh data every request
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // Transform functions
 function transformCategory(cat: Category) {

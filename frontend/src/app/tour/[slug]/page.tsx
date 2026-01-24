@@ -1,15 +1,16 @@
 import { getTourBySlug, getImageUrl, Tour, getSiteSettings } from '@/lib/strapi'
 import { notFound } from 'next/navigation'
-import dynamic from 'next/dynamic'
+import nextDynamic from 'next/dynamic'
 import { Metadata } from 'next'
 
 // Dynamic import for better code splitting
-const TourDetailClient = dynamic(() => import('./TourDetailClient'), {
+const TourDetailClient = nextDynamic(() => import('./TourDetailClient'), {
   loading: () => null, // loading.tsx handles this
 })
 
-// SSG + ISR: Build HTML at deploy time, revalidate every 30 minutes for updates
-export const revalidate = 1800
+// Disable cache temporarily - fetch fresh data every request
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // Allow new tours to be generated on-demand (not 404)
 export const dynamicParams = true
