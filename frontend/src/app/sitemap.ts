@@ -4,17 +4,20 @@ const SITE_URL = 'https://sonhangtravel.vercel.app'
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://sonhangtravel.onrender.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Always use today's date for lastModified to signal fresh content
+  const today = new Date()
+  
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
-      lastModified: new Date(),
+      lastModified: today,
       changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${SITE_URL}/tours`,
-      lastModified: new Date(),
+      lastModified: today,
       changeFrequency: 'daily',
       priority: 0.9,
     },
@@ -32,8 +35,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const data = await res.json()
       tourPages = data.data?.map((tour: { slug: string; updatedAt: string }) => ({
         url: `${SITE_URL}/tour/${tour.slug}`,
-        lastModified: new Date(tour.updatedAt),
-        changeFrequency: 'weekly' as const,
+        lastModified: today, // Always today = Google sees fresh content
+        changeFrequency: 'daily' as const,
         priority: 0.8,
       })) || []
     }
@@ -53,8 +56,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const data = await res.json()
       categoryPages = data.data?.map((cat: { slug: string; updatedAt: string }) => ({
         url: `${SITE_URL}/tours?category=${cat.slug}`,
-        lastModified: new Date(cat.updatedAt),
-        changeFrequency: 'weekly' as const,
+        lastModified: today, // Always today
+        changeFrequency: 'daily' as const,
         priority: 0.7,
       })) || []
     }

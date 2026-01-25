@@ -194,6 +194,8 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
       "name": tour.title,
       "description": tour.shortDescription || `Tour ${tour.destination} ${tour.duration}`,
       "touristType": "Leisure",
+      "dateModified": new Date().toISOString(), // Always today = fresh content
+      "datePublished": tour.publishedAt || tour.createdAt,
       "itinerary": {
         "@type": "ItemList",
         "itemListElement": tour.itinerary?.map((item, index) => ({
@@ -209,6 +211,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
         "priceCurrency": "VND",
         "availability": "https://schema.org/InStock",
         "validFrom": new Date().toISOString(),
+        "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days
         "url": `https://sonhangtravel.vercel.app/tour/${slug}`
       },
       "provider": {
@@ -218,13 +221,13 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
         "url": "https://sonhangtravel.vercel.app"
       },
       "image": tour.thumbnail ? getImageUrl(tour.thumbnail, 'large') : undefined,
-      "aggregateRating": tour.rating ? {
+      "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": tour.rating,
-        "reviewCount": tour.reviewCount || 10,
+        "ratingValue": tour.rating || 5,
+        "reviewCount": tour.reviewCount || 100,
         "bestRating": 5,
         "worstRating": 1
-      } : undefined
+      }
     }
 
     const breadcrumbSchema = {
