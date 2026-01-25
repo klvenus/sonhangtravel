@@ -110,6 +110,7 @@ function transformStrapiTour(tour: Tour) {
 
   return {
     id: String(tour.id),
+    documentId: tour.documentId,
     title: tour.title,
     slug: tour.slug,
     shortDescription: tour.shortDescription,

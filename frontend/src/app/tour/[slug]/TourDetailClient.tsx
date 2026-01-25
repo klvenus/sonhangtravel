@@ -7,6 +7,7 @@ import Link from 'next/link'
 interface TourDetailProps {
   tourData: {
     id: string
+    documentId?: string
     title: string
     slug: string
     shortDescription: string
@@ -50,6 +51,50 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const [showLightbox, setShowLightbox] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [displayReviewCount, setDisplayReviewCount] = useState(tourData.reviewCount)
+  const [displayBookedCount, setDisplayBookedCount] = useState(tourData.bookedCount)
+
+  // Track unique view and update counts
+  useEffect(() => {
+    const trackView = async () => {
+      // Skip if preview mode or no documentId
+      if (isPreview || !tourData.documentId) return
+
+      // Check if already viewed this tour
+      const viewedKey = `tour_viewed_${tourData.slug}`
+      const hasViewed = localStorage.getItem(viewedKey)
+      
+      if (hasViewed) return // Already counted this visitor
+
+      try {
+        const response = await fetch('/api/track-view', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            documentId: tourData.documentId,
+            currentReviewCount: tourData.reviewCount,
+            currentBookingCount: tourData.bookedCount,
+          }),
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          // Update displayed counts
+          if (data.reviewCount) setDisplayReviewCount(data.reviewCount)
+          if (data.bookingCount) setDisplayBookedCount(data.bookingCount)
+          
+          // Mark as viewed so it won't count again
+          localStorage.setItem(viewedKey, Date.now().toString())
+        }
+      } catch (error) {
+        console.error('Failed to track view:', error)
+      }
+    }
+
+    // Delay tracking slightly to ensure page is loaded
+    const timer = setTimeout(trackView, 1000)
+    return () => clearTimeout(timer)
+  }, [tourData.slug, tourData.documentId, tourData.reviewCount, tourData.bookedCount, isPreview])
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index)
@@ -271,10 +316,10 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                         <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                       </svg>
                       <span className="font-bold text-gray-900">{tourData.rating.toFixed(1)}</span>
-                      <span className="text-gray-500">({formatPrice(tourData.reviewCount)} đánh giá)</span>
+                      <span className="text-gray-500">({formatPrice(displayReviewCount)} đánh giá)</span>
                     </div>
                     <span className="text-gray-300">•</span>
-                    <span className="text-gray-600">{formatPrice(tourData.bookedCount)}+ người đã đặt</span>
+                    <span className="text-gray-600">{formatPrice(displayBookedCount)}+ người đã đặt</span>
                   </div>
                 </div>
 
