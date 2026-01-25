@@ -98,8 +98,103 @@ export default async function Home() {
     tours: allTours.filter(tour => tour.categorySlug === cat.slug)
   })).filter(group => group.tours.length > 0)
 
+  // FAQ Schema for Google AI - General travel questions
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Tour du lịch Trung Quốc giá bao nhiêu?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tour du lịch Trung Quốc từ Móng Cái giá từ 1.199.000đ/người (tour 1 ngày) đến 5.499.000đ/người (tour 4-5 ngày). Giá đã bao gồm xe, visa, hướng dẫn viên, bữa ăn và vé tham quan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Đi tour Trung Quốc cần giấy tờ gì?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cần: CCCD còn hạn + 2 ảnh 4x6 nền trắng (người lớn), Giấy khai sinh + ảnh 4x6 (trẻ em). Gửi trước 3 ngày để làm visa cửa khẩu. Không cần hộ chiếu nếu đi tour qua Móng Cái."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Tour Đông Hưng 1 ngày có gì?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tour Đông Hưng 1 ngày từ Móng Cái: Thăm chợ Đông Hưng, mua sắm hàng Trung Quốc, ẩm thực địa phương. Giá 1.199.000đ gồm xe + visa + ăn trưa + HDV."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Sơn Hằng Travel là công ty gì?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sơn Hằng Travel là đơn vị chuyên tour du lịch Trung Quốc từ Móng Cái. Với 10+ năm kinh nghiệm, 5000+ khách hàng hài lòng. Hotline: 0918.638.068."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Cách đặt tour du lịch Trung Quốc?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Đặt tour dễ dàng qua: 1. Zalo 0918.638.068 (nhanh nhất), 2. Gọi hotline 0918.638.068, 3. Website sonhangtravel.com. Cọc 50% để giữ chỗ, thanh toán nốt trước ngày đi."
+        }
+      }
+    ]
+  }
+
+  // Organization Schema với rating
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "Sơn Hằng Travel",
+    "alternateName": "Sơn Hằng Travel - Tour Trung Quốc Móng Cái",
+    "url": "https://sonhangtravel.com",
+    "logo": "https://sonhangtravel.com/logo.png",
+    "description": "Công ty du lịch chuyên tour Trung Quốc từ Móng Cái. Tour Đông Hưng, Nam Ninh, Quế Lâm, Bắc Kinh chất lượng, giá tốt.",
+    "telephone": "+84918638068",
+    "email": "sonhangtravel@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Móng Cái",
+      "addressRegion": "Quảng Ninh",
+      "addressCountry": "VN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 21.5295,
+      "longitude": 107.9678
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "07:00",
+      "closes": "22:00"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": 4.9,
+      "reviewCount": 500,
+      "bestRating": 5,
+      "worstRating": 1
+    },
+    "priceRange": "₫₫"
+  }
+
   return (
     <main>
+      {/* FAQ Schema for Google AI */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
       <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />
