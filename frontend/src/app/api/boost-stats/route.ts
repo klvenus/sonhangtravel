@@ -3,9 +3,28 @@ import { NextResponse } from 'next/server'
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN
 
+// Daily limit tracking (resets at midnight)
+const DAILY_LIMIT = 20
+let dailyCount = 0
+let lastResetDate = new Date().toDateString()
+
+function checkAndResetDaily() {
+  const today = new Date().toDateString()
+  if (today !== lastResetDate) {
+    dailyCount = 0
+    lastResetDate = today
+  }
+}
+
 // This API randomly increments counts for tours to make stats look organic
 export async function POST() {
   try {
+    // Check daily limit
+    checkAndResetDaily()
+    if (dailyCount >= DAILY_LIMIT) {
+      return NextResponse.json({ message: 'Daily limit reached', limit: DAILY_LIMIT })
+    }
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     }
@@ -31,43 +50,33 @@ export async function POST() {
       return NextResponse.json({ message: 'No tours found' })
     }
 
-    // Randomly select 1-2 tours to update
-    const numToUpdate = Math.random() > 0.5 ? 2 : 1
-    const shuffled = tours.sort(() => 0.5 - Math.random())
-    const selectedTours = shuffled.slice(0, numToUpdate)
+    // Randomly select 1 tour to update
+    const randomIndex = Math.floor(Math.random() * tours.length)
+    const tour = tours[randomIndex]
 
-    const updates = []
+    // Only increment by 1
+    const updateRes = await fetch(`${STRAPI_URL}/api/tours/${tour.documentId}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        data: {
+          reviewCount: (tour.reviewCount || 0) + 1,
+          bookingCount: (tour.bookingCount || 0) + 1,
+        }
+      }),
+    })
 
-    for (const tour of selectedTours) {
-      // Random increments: review +1-3, booking +1-5
-      const reviewIncrement = Math.floor(Math.random() * 3) + 1
-      const bookingIncrement = Math.floor(Math.random() * 5) + 1
-
-      const updateRes = await fetch(`${STRAPI_URL}/api/tours/${tour.documentId}`, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({
-          data: {
-            reviewCount: (tour.reviewCount || 0) + reviewIncrement,
-            bookingCount: (tour.bookingCount || 0) + bookingIncrement,
-          }
-        }),
+    if (updateRes.ok) {
+      dailyCount++
+      return NextResponse.json({ 
+        success: true, 
+        tourId: tour.id,
+        dailyCount,
+        remaining: DAILY_LIMIT - dailyCount
       })
-
-      if (updateRes.ok) {
-        updates.push({
-          id: tour.id,
-          reviewIncrement,
-          bookingIncrement,
-        })
-      }
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      updated: updates.length,
-      details: updates 
-    })
+    return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
 
   } catch (error) {
     console.error('Boost stats error:', error)
