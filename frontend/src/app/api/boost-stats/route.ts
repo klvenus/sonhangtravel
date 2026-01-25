@@ -16,7 +16,7 @@ function checkAndResetDaily() {
   }
 }
 
-// This API randomly increments counts for tours to make stats look organic
+// This API increments counts for ALL tours to make stats look organic
 export async function POST() {
   try {
     // Check daily limit
@@ -50,33 +50,32 @@ export async function POST() {
       return NextResponse.json({ message: 'No tours found' })
     }
 
-    // Randomly select 1 tour to update
-    const randomIndex = Math.floor(Math.random() * tours.length)
-    const tour = tours[randomIndex]
-
-    // Only increment by 1
-    const updateRes = await fetch(`${STRAPI_URL}/api/tours/${tour.documentId}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify({
-        data: {
-          reviewCount: (tour.reviewCount || 0) + 1,
-          bookingCount: (tour.bookingCount || 0) + 1,
-        }
-      }),
-    })
-
-    if (updateRes.ok) {
-      dailyCount++
-      return NextResponse.json({ 
-        success: true, 
-        tourId: tour.id,
-        dailyCount,
-        remaining: DAILY_LIMIT - dailyCount
+    // Update ALL tours, each +1
+    let updatedCount = 0
+    for (const tour of tours) {
+      const updateRes = await fetch(`${STRAPI_URL}/api/tours/${tour.documentId}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          data: {
+            reviewCount: (tour.reviewCount || 0) + 1,
+            bookingCount: (tour.bookingCount || 0) + 1,
+          }
+        }),
       })
+
+      if (updateRes.ok) {
+        updatedCount++
+      }
     }
 
-    return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
+    dailyCount++
+    return NextResponse.json({ 
+      success: true, 
+      toursUpdated: updatedCount,
+      dailyCount,
+      remaining: DAILY_LIMIT - dailyCount
+    })
 
   } catch (error) {
     console.error('Boost stats error:', error)
