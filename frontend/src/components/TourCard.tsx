@@ -104,10 +104,11 @@ export default function TourCard({
           <div className="relative w-32 h-32 shrink-0">
             <Image
               src={image}
-              alt={title}
+              alt={`Tour ${title} - ${location} ${duration} | Sơn Hằng Travel`}
               fill
               className="object-cover"
               sizes="128px"
+              loading="lazy"
             />
             {/* Hot/New badges */}
             {(isHot || discountPercent > 0) && (
@@ -199,13 +200,14 @@ export default function TourCard({
             <Image
               key={index}
               src={img}
-              alt={`${title} - ${index + 1}`}
+              alt={`Tour ${title} - Ảnh ${index + 1} - ${location} | Sơn Hằng Travel`}
               fill
               className={`object-cover transition-opacity duration-300 ${
                 index === currentImageIndex ? 'opacity-100' : 'opacity-0'
               }`}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               priority={index === 0}
+              loading={index === 0 ? "eager" : "lazy"}
             />
           ))}
           

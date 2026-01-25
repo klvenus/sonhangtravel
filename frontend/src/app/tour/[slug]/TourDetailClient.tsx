@@ -198,7 +198,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
           >
             <Image
               src={tourData.images[currentImage]}
-              alt={tourData.title}
+              alt={`Tour ${tourData.title} - ${tourData.destination} ${tourData.duration} | Sơn Hằng Travel`}
               fill
               className="object-cover"
               priority
@@ -233,7 +233,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   currentImage === idx ? 'border-[#00CBA9] scale-105' : 'border-gray-200'
                 }`}
               >
-                <Image src={img} alt="" width={64} height={64} className="object-cover w-full h-full" />
+                <Image src={img} alt={`Ảnh ${idx + 1} tour ${tourData.title}`} width={64} height={64} className="object-cover w-full h-full" loading="lazy" />
               </button>
             ))}
           </div>
@@ -248,7 +248,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             >
               <Image
                 src={tourData.images[0]}
-                alt={tourData.title}
+                alt={`Tour ${tourData.title} - ${tourData.destination} | Sơn Hằng Travel`}
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-500"
                 priority
@@ -262,7 +262,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               >
                 <Image
                   src={tourData.images[0]}
-                  alt={tourData.title}
+                  alt={`Tour ${tourData.title} - Ảnh chính | Sơn Hằng Travel`}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
@@ -275,7 +275,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   onClick={() => openLightbox(idx + 1)}
                   className="relative rounded-2xl overflow-hidden group cursor-zoom-in"
                 >
-                  <Image src={img} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={img} alt={`Tour ${tourData.title} - Ảnh ${idx + 2}`} fill className="object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   {/* Show overlay on last visible image if more images exist */}
                   {idx === 3 && tourData.images.length > 5 && (
@@ -770,7 +770,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             <div className="relative w-full h-full max-w-6xl max-h-[85vh]">
               <Image
                 src={tourData.images[lightboxIndex]}
-                alt={`${tourData.title} - Ảnh ${lightboxIndex + 1}`}
+                alt={`Tour ${tourData.title} - Ảnh ${lightboxIndex + 1}/${tourData.images.length} | Sơn Hằng Travel`}
                 fill
                 className="object-contain"
                 sizes="100vw"
@@ -814,7 +814,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       : 'opacity-50 hover:opacity-100'
                   }`}
                 >
-                  <Image src={img} alt="" width={80} height={80} className="object-cover w-full h-full" />
+                  <Image src={img} alt={`Thumbnail ${idx + 1} - ${tourData.title}`} width={80} height={80} className="object-cover w-full h-full" loading="lazy" />
                 </button>
               ))}
             </div>

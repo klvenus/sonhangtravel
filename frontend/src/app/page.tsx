@@ -184,6 +184,104 @@ export default async function Home() {
     "priceRange": "₫₫"
   }
 
+  // HowTo Schema - Hướng dẫn đặt tour chung (Google 2026)
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Cách đặt tour du lịch Trung Quốc tại Sơn Hằng Travel",
+    "description": "Hướng dẫn chi tiết 5 bước đặt tour Trung Quốc từ Móng Cái. Đơn giản, nhanh chóng, hỗ trợ 24/7.",
+    "image": "https://sonhangtravel.vercel.app/og-image.jpg",
+    "totalTime": "PT10M",
+    "supply": [
+      {
+        "@type": "HowToSupply",
+        "name": "CCCD còn hạn"
+      },
+      {
+        "@type": "HowToSupply",
+        "name": "Ảnh 4x6 nền trắng (2 tấm)"
+      },
+      {
+        "@type": "HowToSupply",
+        "name": "Giấy khai sinh (trẻ em)"
+      }
+    ],
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "Điện thoại di động"
+      },
+      {
+        "@type": "HowToTool",
+        "name": "Ứng dụng Zalo"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Chọn tour phù hợp",
+        "text": "Truy cập website sonhangtravel.com, xem danh sách tour và chọn tour phù hợp với nhu cầu.",
+        "url": "https://sonhangtravel.vercel.app/tours",
+        "image": "https://sonhangtravel.vercel.app/og-image.jpg"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Liên hệ đặt tour",
+        "text": "Gọi hotline 0918.638.068 hoặc nhắn Zalo để được tư vấn chi tiết về lịch trình và giá.",
+        "url": "https://sonhangtravel.vercel.app"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Gửi giấy tờ làm visa",
+        "text": "Gửi ảnh CCCD 2 mặt + ảnh 4x6 nền trắng qua Zalo trước 3 ngày làm việc. Trẻ em gửi thêm giấy khai sinh.",
+        "url": "https://sonhangtravel.vercel.app"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Đặt cọc giữ chỗ",
+        "text": "Chuyển khoản đặt cọc 50% giá tour để xác nhận chỗ. Nhận xác nhận qua Zalo/SMS.",
+        "url": "https://sonhangtravel.vercel.app"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 5,
+        "name": "Thanh toán và khởi hành",
+        "text": "Thanh toán 50% còn lại vào ngày khởi hành. Tập trung đúng giờ tại điểm hẹn để bắt đầu chuyến đi!",
+        "url": "https://sonhangtravel.vercel.app"
+      }
+    ]
+  }
+
+  // Event Schema - Upcoming tours (Google 2026)
+  const upcomingToursEvent = tours.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Tour Du Lịch Trung Quốc Hot Nhất 2026",
+    "description": "Danh sách tour du lịch Trung Quốc đang hot tại Sơn Hằng Travel",
+    "numberOfItems": tours.length,
+    "itemListElement": tours.slice(0, 6).map((tour, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "TouristTrip",
+        "name": tour.title,
+        "description": `${tour.duration} - ${tour.location}`,
+        "url": `https://sonhangtravel.vercel.app/tour/${tour.slug}`,
+        "image": tour.image,
+        "offers": {
+          "@type": "Offer",
+          "price": tour.price,
+          "priceCurrency": "VND",
+          "availability": "https://schema.org/InStock"
+        }
+      }
+    }))
+  } : null
+
   return (
     <main>
       {/* FAQ Schema for Google AI */}
@@ -195,6 +293,16 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+      />
+      {upcomingToursEvent && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(upcomingToursEvent) }}
+        />
+      )}
       <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />

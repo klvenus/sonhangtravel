@@ -394,6 +394,74 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
       ]
     }
 
+    // HowTo Schema - Hướng dẫn đặt tour step-by-step (Google 2026)
+    const howToSchema = {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": `Cách đặt tour ${tour.title}`,
+      "description": `Hướng dẫn chi tiết cách đặt tour ${tour.destination} tại Sơn Hằng Travel. Đơn giản, nhanh chóng, hỗ trợ 24/7.`,
+      "image": tour.thumbnail ? getImageUrl(tour.thumbnail, 'large') : undefined,
+      "totalTime": "PT10M",
+      "estimatedCost": {
+        "@type": "MonetaryAmount",
+        "currency": "VND",
+        "value": tour.price
+      },
+      "supply": [
+        {
+          "@type": "HowToSupply",
+          "name": "CCCD/Hộ chiếu còn hạn"
+        },
+        {
+          "@type": "HowToSupply",
+          "name": "Ảnh 4x6 nền trắng (2 tấm)"
+        }
+      ],
+      "tool": [
+        {
+          "@type": "HowToTool",
+          "name": "Điện thoại/Zalo"
+        }
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Liên hệ đặt tour",
+          "text": `Gọi hotline ${phoneNumber} hoặc nhắn Zalo để được tư vấn tour ${tour.title}`,
+          "url": `https://sonhangtravel.vercel.app/tour/${slug}#booking`
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Xác nhận thông tin",
+          "text": "Cung cấp số lượng khách, ngày khởi hành mong muốn. Nhân viên sẽ kiểm tra chỗ trống.",
+          "url": `https://sonhangtravel.vercel.app/tour/${slug}#booking`
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Gửi giấy tờ",
+          "text": "Gửi ảnh CCCD + ảnh 4x6 nền trắng qua Zalo. Trẻ em gửi thêm giấy khai sinh.",
+          "url": `https://sonhangtravel.vercel.app/tour/${slug}#documents`
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Đặt cọc 50%",
+          "text": `Chuyển khoản đặt cọc 50% (${new Intl.NumberFormat('vi-VN').format(tour.price * 0.5)}đ/người) để giữ chỗ.`,
+          "url": `https://sonhangtravel.vercel.app/tour/${slug}#payment`
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Thanh toán và khởi hành",
+          "text": "Thanh toán số tiền còn lại vào ngày khởi hành. Tập trung đúng giờ và có mặt để bắt đầu hành trình!",
+          "url": `https://sonhangtravel.vercel.app/tour/${slug}`
+        }
+      ]
+    }
+
     return (
       <>
         {/* JSON-LD Structured Data */}
@@ -412,6 +480,10 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
         />
         {relatedToursSchema && (
           <script
