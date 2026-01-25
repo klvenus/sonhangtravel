@@ -155,11 +155,39 @@ export default async function RootLayout({
     "@type": "WebSite",
     "name": siteName,
     "url": "https://sonhangtravel.vercel.app",
+    "dateModified": new Date().toISOString(),
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://sonhangtravel.vercel.app/tours?search={search_term_string}",
       "query-input": "required name=search_term_string"
-    }
+    },
+    // Sitelinks - Main tour categories
+    "hasPart": [
+      {
+        "@type": "WebPage",
+        "name": "Tour Đông Hưng",
+        "url": "https://sonhangtravel.vercel.app/tours?category=tour-dong-hung",
+        "description": "Tour du lịch Đông Hưng 1-2 ngày từ Móng Cái"
+      },
+      {
+        "@type": "WebPage",
+        "name": "Tour Nam Ninh",
+        "url": "https://sonhangtravel.vercel.app/tours?category=tour-nam-ninh",
+        "description": "Tour Nam Ninh shopping, mua sắm"
+      },
+      {
+        "@type": "WebPage",
+        "name": "Tour Quế Lâm",
+        "url": "https://sonhangtravel.vercel.app/tours?category=tour-que-lam",
+        "description": "Tour Quế Lâm - Dương Sóc"
+      },
+      {
+        "@type": "WebPage",
+        "name": "Tất cả Tour",
+        "url": "https://sonhangtravel.vercel.app/tours",
+        "description": "Danh sách tất cả tour du lịch Trung Quốc"
+      }
+    ]
   };
 
   return (

@@ -1,4 +1,4 @@
-import { getTourBySlug, getImageUrl, Tour, getSiteSettings } from '@/lib/strapi'
+import { getTourBySlug, getImageUrl, Tour, getSiteSettings, getTours } from '@/lib/strapi'
 import { notFound } from 'next/navigation'
 import nextDynamic from 'next/dynamic'
 import { Metadata } from 'next'
@@ -174,14 +174,26 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
   const isPreview = preview === 'true'
   
   try {
-    const [tour, siteSettings] = await Promise.all([
+    const [tour, siteSettings, toursResponse] = await Promise.all([
       getTourBySlug(slug, isPreview),
-      getSiteSettings()
+      getSiteSettings(),
+      getTours({ pageSize: 50 }) // Fetch tours for related tours schema
     ])
     
     if (!tour) {
       notFound()
     }
+
+    const allTours = toursResponse.data || []
+    
+    // Get related tours (same category or destination)
+    const relatedTours = allTours
+      .filter((t: Tour) => t.slug !== slug) // Exclude current tour
+      .filter((t: Tour) => 
+        t.category?.slug === tour.category?.slug || // Same category
+        t.destination === tour.destination // Same destination
+      )
+      .slice(0, 5) // Max 5 related tours
 
     const tourData = transformStrapiTour(tour)
     const phoneNumber = siteSettings?.phoneNumber || '0123456789'
@@ -255,6 +267,32 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
       ]
     }
 
+    // Related Tours Schema - Helps Google show sitelinks
+    const relatedToursSchema = relatedTours.length > 0 ? {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": `Tour liên quan đến ${tour.title}`,
+      "description": `Các tour du lịch ${tour.destination || 'Trung Quốc'} khác`,
+      "numberOfItems": relatedTours.length,
+      "itemListElement": relatedTours.map((t: Tour, index: number) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "name": t.title,
+        "url": `https://sonhangtravel.vercel.app/tour/${t.slug}`,
+        "item": {
+          "@type": "TouristTrip",
+          "name": t.title,
+          "description": t.shortDescription,
+          "url": `https://sonhangtravel.vercel.app/tour/${t.slug}`,
+          "offers": {
+            "@type": "Offer",
+            "price": t.price,
+            "priceCurrency": "VND"
+          }
+        }
+      }))
+    } : null
+
     return (
       <>
         {/* JSON-LD Structured Data */}
@@ -266,6 +304,12 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
+        {relatedToursSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(relatedToursSchema) }}
+          />
+        )}
         <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} isPreview={isPreview} />
       </>
     )
