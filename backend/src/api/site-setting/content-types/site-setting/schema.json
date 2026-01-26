@@ -28,6 +28,12 @@
       "required": false,
       "allowedTypes": ["images"]
     },
+    "favicon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
     "bannerSlides": {
       "type": "component",
       "repeatable": true,
