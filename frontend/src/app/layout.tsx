@@ -19,37 +19,47 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// SEO Metadata
-export const metadata: Metadata = {
-  metadataBase: new URL('https://sonhangtravel.vercel.app'),
-  title: {
-    default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
-    template: "%s | Sơn Hằng Travel"
-  },
-  description: "🌏 Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng 1-2 ngày, Nam Ninh, Quế Lâm, Trương Gia Giới, Phượng Hoàng Cổ Trấn. ✅ Giá tốt nhất ✅ Visa nhanh ✅ Hỗ trợ 24/7",
-  keywords: [
-    "tour trung quốc",
-    "du lịch trung quốc", 
-    "tour đông hưng",
-    "tour nam ninh",
-    "tour quế lâm",
-    "tour trương gia giới",
-    "tour phượng hoàng cổ trấn",
-    "tour trung quốc giá rẻ",
-    "tour trung quốc từ móng cái",
-    "du lịch đông hưng 1 ngày",
-    "tour trung quốc 2026",
-    "sơn hằng travel"
-  ],
-  authors: [{ name: "Sơn Hằng Travel" }],
-  creator: "Sơn Hằng Travel",
-  publisher: "Sơn Hằng Travel",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  openGraph: {
+// Generate dynamic metadata
+export async function generateMetadata(): Promise<Metadata> {
+  const siteSettings = await getSiteSettings();
+  const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : '/favicon.ico';
+  const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
+  
+  return {
+    metadataBase: new URL('https://sonhangtravel.vercel.app'),
+    title: {
+      default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
+      template: "%s | Sơn Hằng Travel"
+    },
+    description: "🌏 Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng 1-2 ngày, Nam Ninh, Quế Lâm, Trương Gia Giới, Phượng Hoàng Cổ Trấn. ✅ Giá tốt nhất ✅ Visa nhanh ✅ Hỗ trợ 24/7",
+    keywords: [
+      "tour trung quốc",
+      "du lịch trung quốc", 
+      "tour đông hưng",
+      "tour nam ninh",
+      "tour quế lâm",
+      "tour trương gia giới",
+      "tour phượng hoàng cổ trấn",
+      "tour trung quốc giá rẻ",
+      "tour trung quốc từ móng cái",
+      "du lịch đông hưng 1 ngày",
+      "tour trung quốc 2026",
+      "sơn hằng travel"
+    ],
+    authors: [{ name: "Sơn Hằng Travel" }],
+    creator: "Sơn Hằng Travel",
+    publisher: "Sơn Hằng Travel",
+    icons: {
+      icon: faviconUrl,
+      shortcut: faviconUrl,
+      apple: faviconUrl,
+    },
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    openGraph: {
     type: "website",
     locale: "vi_VN",
     url: "https://sonhangtravel.vercel.app",
@@ -89,7 +99,8 @@ export const metadata: Metadata = {
     canonical: "https://sonhangtravel.vercel.app",
   },
   category: "travel",
-};
+  };
+}
 
 // Viewport config
 export const viewport: Viewport = {
