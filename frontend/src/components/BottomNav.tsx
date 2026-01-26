@@ -83,14 +83,16 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               }`}
             >
               {pathname.startsWith('/tours') || pathname.startsWith('/tour') ? (
-                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
-                  <circle cx="24" cy="24" r="20"/>
-                  <path d="M20 18h8v3h-3v6h-3v-6h-2v-3zm6 12h-4v3h4v-3z" fill="white"/>
+                <svg className="w-6 h-6" viewBox="0 0 50 50" fill="currentColor">
+                  <path d="M25 2C12.3 2 2 12.3 2 25s10.3 23 23 23 23-10.3 23-23S37.7 2 25 2zm0 42c-10.5 0-19-8.5-19-19S14.5 6 25 6s19 8.5 19 19-8.5 19-19 19z"/>
+                  <path d="M25 10c-8.3 0-15 6.7-15 15s6.7 15 15 15 15-6.7 15-15-6.7-15-15-15zm0 26c-6.1 0-11-4.9-11-11s4.9-11 11-11 11 4.9 11 11-4.9 11-11 11z"/>
+                  <path d="M32 22l-5 3v6l5 3 5-3v-6z"/>
                 </svg>
               ) : (
-                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <circle cx="24" cy="24" r="20"/>
-                  <path d="M20 18h8v3h-3v6h-3v-6h-2v-3zm6 12h-4v3h4v-3z" stroke="none" fill="currentColor"/>
+                <svg className="w-6 h-6" viewBox="0 0 50 50" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="25" cy="25" r="19"/>
+                  <circle cx="25" cy="25" r="13"/>
+                  <path d="M32 22l-5 3v6l5 3 5-3v-6z" fill="currentColor" stroke="none"/>
                 </svg>
               )}
               <span className="text-[10px] font-medium">Tour</span>
@@ -133,12 +135,18 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               }`}
             >
               {showMenu ? (
-                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
-                  <path d="M6 10h36v4H6zm0 12h36v4H6zm0 12h36v4H6z"/>
+                <svg className="w-6 h-6" viewBox="0 0 50 50" fill="currentColor">
+                  <path d="M10 12h30v6H10zm0 10h30v6H10zm6 10h18v6H16z"/>
+                  <rect x="12" y="40" width="4" height="4"/>
+                  <rect x="34" y="40" width="4" height="4"/>
                 </svg>
               ) : (
-                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" d="M8 12h32M8 24h32M8 36h32"/>
+                <svg className="w-6 h-6" viewBox="0 0 50 50" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <rect x="10" y="12" width="30" height="6" rx="1"/>
+                  <rect x="10" y="22" width="30" height="6" rx="1"/>
+                  <rect x="16" y="32" width="18" height="6" rx="1"/>
+                  <circle cx="14" cy="42" r="2" fill="currentColor"/>
+                  <circle cx="36" cy="42" r="2" fill="currentColor"/>
                 </svg>
               )}
               <span className="text-[10px] font-medium">Menu</span>
