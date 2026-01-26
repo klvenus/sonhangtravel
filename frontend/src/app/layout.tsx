@@ -19,15 +19,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Generate dynamic metadata
-export async function generateMetadata(): Promise<Metadata> {
-  const siteSettings = await getSiteSettings();
-  const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : '/favicon.ico';
-  const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
-  
-  return {
-    metadataBase: new URL('https://sonhangtravel.vercel.app'),
-    title: {
+// Static metadata (for build time)
+export const metadata: Metadata = {
+  metadataBase: new URL('https://sonhangtravel.vercel.app'),
+  title: {
       default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
       template: "%s | Sơn Hằng Travel"
     },
@@ -49,11 +44,6 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: "Sơn Hằng Travel" }],
     creator: "Sơn Hằng Travel",
     publisher: "Sơn Hằng Travel",
-    icons: {
-      icon: faviconUrl,
-      shortcut: faviconUrl,
-      apple: faviconUrl,
-    },
     formatDetection: {
       email: false,
       address: false,
@@ -99,8 +89,7 @@ export async function generateMetadata(): Promise<Metadata> {
     canonical: "https://sonhangtravel.vercel.app",
   },
   category: "travel",
-  };
-}
+};
 
 // Viewport config
 export const viewport: Viewport = {
@@ -118,6 +107,7 @@ export default async function RootLayout({
   // Fetch site settings for Header and Footer
   const siteSettings = await getSiteSettings();
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
+  const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : '/favicon.ico';
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
   const phoneNumber = siteSettings?.phoneNumber || '0123456789';
   const zaloNumber = siteSettings?.zaloNumber || undefined;
@@ -204,6 +194,11 @@ export default async function RootLayout({
   return (
     <html lang="vi">
       <head>
+        {/* Dynamic Favicon */}
+        <link rel="icon" href={faviconUrl} type="image/png" />
+        <link rel="shortcut icon" href={faviconUrl} type="image/png" />
+        <link rel="apple-touch-icon" href={faviconUrl} />
+        
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
