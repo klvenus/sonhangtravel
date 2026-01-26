@@ -92,8 +92,9 @@ export default async function CategoryToursPage({
             {/* Left Sidebar */}
             <div className="lg:col-span-3">
               <div className="bg-white rounded-xl p-6 sticky top-6">
-                <h1 className="text-xl font-bold text-gray-900 mb-3">
-                  Tour {categoryName}
+                <h1 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="text-2xl">📍</span>
+                  <span>Tour {categoryName}</span>
                 </h1>
                 {category.description && (
                   <p className="text-sm text-gray-600 leading-relaxed">
