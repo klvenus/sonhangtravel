@@ -72,6 +72,7 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
                 fill
                 className="object-cover"
                 quality={100}
+                unoptimized
                 priority
               />
             </a>
@@ -82,6 +83,7 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
               fill
               className="object-cover"
               quality={100}
+              unoptimized
               priority
             />
           )}
@@ -99,6 +101,7 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
                 fill
                 className="object-cover"
                 quality={100}
+                unoptimized
                 priority
               />
             </a>
@@ -109,6 +112,7 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
               fill
               className="object-cover"
               quality={100}
+              unoptimized
               priority
             />
           )}
