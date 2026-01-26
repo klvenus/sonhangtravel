@@ -12,10 +12,11 @@ export const revalidate = 3600
 export async function generateMetadata({ 
   params 
 }: { 
-  params: { slug: string } 
+  params: Promise<{ slug: string }> 
 }): Promise<Metadata> {
   try {
-    const category = await getCategoryBySlug(params.slug)
+    const { slug } = await params
+    const category = await getCategoryBySlug(slug)
     
     if (!category) {
       return {
@@ -45,18 +46,19 @@ export async function generateMetadata({
 export default async function CategoryToursPage({ 
   params 
 }: { 
-  params: { slug: string } 
+  params: Promise<{ slug: string }> 
 }) {
   try {
-    console.log('[CategoryToursPage] Fetching data for slug:', params.slug)
+    const { slug } = await params
+    console.log('[CategoryToursPage] Fetching data for slug:', slug)
     
     // Fetch with longer timeout and retry
     const [toursRes, category] = await Promise.all([
-      getTours({ category: params.slug, pageSize: 20 }).catch(err => {
+      getTours({ category: slug, pageSize: 20 }).catch(err => {
         console.error('[CategoryToursPage] Error fetching tours:', err)
         return { data: [], meta: { pagination: { page: 1, pageSize: 20, pageCount: 0, total: 0 } } }
       }),
-      getCategoryBySlug(params.slug).catch(err => {
+      getCategoryBySlug(slug).catch(err => {
         console.error('[CategoryToursPage] Error fetching category:', err)
         return null
       })
@@ -67,7 +69,7 @@ export default async function CategoryToursPage({
 
     // If category not found, show 404
     if (!category) {
-      console.error('[CategoryToursPage] Category not found for slug:', params.slug)
+      console.error('[CategoryToursPage] Category not found for slug:', slug)
       notFound()
     }
 
