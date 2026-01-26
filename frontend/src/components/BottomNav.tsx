@@ -83,12 +83,14 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               }`}
             >
               {pathname.startsWith('/tours') || pathname.startsWith('/tour') ? (
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                  <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM8.547 4.505a8.25 8.25 0 1011.672 11.672 1 1 0 01-.242.18 8.25 8.25 0 01-11.43-11.43 1 1 0 01.18-.242l-.18.18zm.18-.18A8.22 8.22 0 0112 3.75c1.142 0 2.23.232 3.22.651a8.255 8.255 0 00-6.493 6.493A8.222 8.222 0 013.75 12c0-1.28.292-2.492.814-3.574l.163.179z" clipRule="evenodd"/>
+                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
+                  <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16zm-1-28h2v12h-2V12zm8 4h-6v2h4v2h-4v2h6v-6zm-14 0h6v6h-6v-6zm2 4v-2h2v2h-2zm12 6h-6v2h4v2h-4v2h6v-6z"/>
                 </svg>
               ) : (
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.919 17.919 0 01-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/>
+                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="24" cy="24" r="18" strokeLinecap="round"/>
+                  <path d="M24 6v36M6 24h36M9.88 9.88l28.24 28.24M38.12 9.88L9.88 38.12" strokeLinecap="round"/>
+                  <path d="M24 6c-4.97 0-9 8.06-9 18s4.03 18 9 18M24 6c4.97 0 9 8.06 9 18s-4.03 18-9 18" strokeLinecap="round"/>
                 </svg>
               )}
               <span className="text-[10px] font-medium">Tour</span>
@@ -131,12 +133,12 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               }`}
             >
               {showMenu ? (
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                  <path fillRule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clipRule="evenodd"/>
+                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
+                  <path d="M6 10h36v4H6zm0 12h36v4H6zm0 12h36v4H6z"/>
                 </svg>
               ) : (
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" d="M8 12h32M8 24h32M8 36h32"/>
                 </svg>
               )}
               <span className="text-[10px] font-medium">Menu</span>
