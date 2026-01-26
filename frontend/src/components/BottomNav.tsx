@@ -63,15 +63,11 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
                 pathname === '/' ? 'text-[#00CBA9]' : 'text-gray-400'
               }`}
             >
-              {pathname === '/' ? (
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12.97 2.59a1.5 1.5 0 00-1.94 0l-7.5 6.363A1.5 1.5 0 003 10.097V19.5A1.5 1.5 0 004.5 21h4.75a.75.75 0 00.75-.75v-4.5a2 2 0 014 0v4.5c0 .414.336.75.75.75h4.75a1.5 1.5 0 001.5-1.5v-9.403a1.5 1.5 0 00-.53-1.144l-7.5-6.363z"/>
-                </svg>
-              ) : (
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
-                </svg>
-              )}
+              <img 
+                src="/icons/home.png"
+                alt="Home"
+                className={`w-6 h-6 ${pathname === '/' ? '' : 'opacity-60'}`}
+              />
               <span className="text-[10px] font-medium">Trang chủ</span>
             </Link>
 
@@ -121,9 +117,11 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               rel="noopener noreferrer"
               className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 text-gray-400 transition-all active:opacity-50"
             >
-              <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
-                <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm9.6 28h-2.4c-.22 0-.4-.18-.4-.4V18.8L35.2 32zm-6-13.2v10.8c0 1.32-1.08 2.4-2.4 2.4h-.4a.4.4 0 01-.4-.4v-.2c-.8.56-1.74.86-2.7.86-2.76 0-5-2.24-5-5s2.24-5 5-5c.96 0 1.9.3 2.7.86v-.8c0-.22.18-.4.4-.4h2.4c.22 0 .4.18.4.4v.4zm-5.1 9.2c1.32 0 2.3-.8 2.3-1.8v-3.2c-.7-.6-1.44-1-2.3-1-1.54 0-2.8 1.26-2.8 3s1.26 3 2.8 3zM14.4 32H12c-.22 0-.4-.18-.4-.4V18.8L14.4 32z"/>
-              </svg>
+              <img 
+                src="/icons/zalo.png"
+                alt="Zalo"
+                className="w-6 h-6 opacity-60"
+              />
               <span className="text-[10px] font-medium">Zalo</span>
             </a>
 
