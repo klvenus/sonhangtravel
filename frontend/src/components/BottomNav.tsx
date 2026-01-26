@@ -117,8 +117,8 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               rel="noopener noreferrer"
               className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 text-gray-400 transition-all active:opacity-50"
             >
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.8 14h-1.2c-.11 0-.2-.09-.2-.2V9.4L17.6 16zm-3-6.6v5.4c0 .66-.54 1.2-1.2 1.2h-.2a.2.2 0 01-.2-.2v-.1c-.4.28-.87.43-1.35.43-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5c.48 0 .95.15 1.35.43V9.2c0-.11.09-.2.2-.2h1.2c.11 0 .2.09.2.2v.2zm-2.55 4.6c.66 0 1.15-.4 1.15-.9v-1.6c-.35-.3-.72-.5-1.15-.5-.77 0-1.4.63-1.4 1.5s.63 1.5 1.4 1.5zM7.2 16H6c-.11 0-.2-.09-.2-.2V9.4L7.2 16z"/>
+              <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
+                <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm9.6 28h-2.4c-.22 0-.4-.18-.4-.4V18.8L35.2 32zm-6-13.2v10.8c0 1.32-1.08 2.4-2.4 2.4h-.4a.4.4 0 01-.4-.4v-.2c-.8.56-1.74.86-2.7.86-2.76 0-5-2.24-5-5s2.24-5 5-5c.96 0 1.9.3 2.7.86v-.8c0-.22.18-.4.4-.4h2.4c.22 0 .4.18.4.4v.4zm-5.1 9.2c1.32 0 2.3-.8 2.3-1.8v-3.2c-.7-.6-1.44-1-2.3-1-1.54 0-2.8 1.26-2.8 3s1.26 3 2.8 3zM14.4 32H12c-.22 0-.4-.18-.4-.4V18.8L14.4 32z"/>
               </svg>
               <span className="text-[10px] font-medium">Zalo</span>
             </a>
