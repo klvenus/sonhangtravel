@@ -84,13 +84,13 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
             >
               {pathname.startsWith('/tours') || pathname.startsWith('/tour') ? (
                 <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
-                  <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16zm-1-28h2v12h-2V12zm8 4h-6v2h4v2h-4v2h6v-6zm-14 0h6v6h-6v-6zm2 4v-2h2v2h-2zm12 6h-6v2h4v2h-4v2h6v-6z"/>
+                  <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16z"/>
+                  <path d="M17 16h14v4h-4v8h-4v-8h-6v-4zm10 16h-6v4h6v-4z"/>
                 </svg>
               ) : (
-                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <circle cx="24" cy="24" r="18" strokeLinecap="round"/>
-                  <path d="M24 6v36M6 24h36M9.88 9.88l28.24 28.24M38.12 9.88L9.88 38.12" strokeLinecap="round"/>
-                  <path d="M24 6c-4.97 0-9 8.06-9 18s4.03 18 9 18M24 6c4.97 0 9 8.06 9 18s-4.03 18-9 18" strokeLinecap="round"/>
+                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <circle cx="24" cy="24" r="18"/>
+                  <path d="M17 16h14v4h-4v8h-4v-8h-6v-4zm10 16h-6v4h6v-4z" fill="currentColor" stroke="none"/>
                 </svg>
               )}
               <span className="text-[10px] font-medium">Tour</span>
