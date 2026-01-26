@@ -53,46 +53,132 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ bannerSlides }: HeroSectionProps) {
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  // Use admin slides if provided, otherwise use defaults
   const slides = bannerSlides && bannerSlides.length > 0 ? bannerSlides : defaultSlides
+
+  // Auto slide
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [slides.length])
 
   return (
     <section>
-      {/* Mobile & Desktop: Hiển thị từng ảnh banner, nếu có linkUrl thì bọc bằng <a> */}
-      <div className="w-full">
-        <div className="flex overflow-x-auto gap-2 md:gap-4">
-          {slides.map((slide) => (
-            slide.linkUrl ? (
-              <a
-                key={slide.id}
-                href={slide.linkUrl}
-                className="block min-w-full md:min-w-[600px] h-44 md:h-[450px] relative rounded-2xl overflow-hidden group"
-                target="_blank" rel="noopener noreferrer"
-              >
+      {/* Mobile Hero */}
+      <div className="md:hidden">
+        {/* Banner Carousel */}
+        <div className="relative h-44 overflow-hidden">
+          {slides.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-all duration-500 ${
+                index === currentSlide ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+              }`}
+            >
+              {slide.linkUrl ? (
+                <a href={slide.linkUrl} className="block w-full h-full">
+                  <Image
+                    src={slide.image}
+                    alt="Banner tour du lịch Trung Quốc"
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </a>
+              ) : (
                 <Image
                   src={slide.image}
                   alt="Banner tour du lịch Trung Quốc"
                   fill
-                  className="object-cover w-full h-full"
-                  sizes="(max-width: 768px) 100vw, 1200px"
-                  priority
+                  className="object-cover"
+                  priority={index === 0}
                 />
-              </a>
-            ) : (
-              <div
-                key={slide.id}
-                className="min-w-full md:min-w-[600px] h-44 md:h-[450px] relative rounded-2xl overflow-hidden"
-              >
-                <Image
-                  src={slide.image}
-                  alt="Banner tour du lịch Trung Quốc"
-                  fill
-                  className="object-cover w-full h-full"
-                  sizes="(max-width: 768px) 100vw, 1200px"
-                  priority
-                />
-              </div>
-            )
+              )}
+            </div>
           ))}
+
+          {/* Dots */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`h-1.5 rounded-full transition-all ${
+                  index === currentSlide ? 'w-4 bg-white' : 'w-1.5 bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Hero */}
+      <div className="hidden md:block">
+        {/* Banner Slider */}
+        <div className="relative h-[450px] overflow-hidden">
+          {slides.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-opacity duration-500 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+            >
+              {slide.linkUrl ? (
+                <a href={slide.linkUrl} className="block w-full h-full">
+                  <Image
+                    src={slide.image}
+                    alt="Banner tour du lịch Trung Quốc"
+                    fill
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </a>
+              ) : (
+                <Image
+                  src={slide.image}
+                  alt="Banner tour du lịch Trung Quốc"
+                  fill
+                  className="object-cover"
+                  priority={index === 0}
+                />
+              )}
+            </div>
+          ))}
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Dots */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-3 h-3 rounded-full transition-colors ${
+                  index === currentSlide ? 'bg-white' : 'bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
