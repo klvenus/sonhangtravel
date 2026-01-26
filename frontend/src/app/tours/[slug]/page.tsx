@@ -93,7 +93,7 @@ export default async function CategoryToursPage({
             <div className="lg:col-span-3">
               <div className="bg-white rounded-xl p-6 sticky top-6">
                 <h1 className="text-xl font-bold text-gray-900 mb-3">
-                  TOUR {categoryName}
+                  Tour {categoryName}
                 </h1>
                 {category.description && (
                   <p className="text-sm text-gray-600 leading-relaxed">
