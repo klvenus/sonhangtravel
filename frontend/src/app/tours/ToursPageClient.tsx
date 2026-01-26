@@ -39,13 +39,20 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
     ? initialTours.filter(tour => tour.categorySlug === activeCategory)
     : initialTours
 
+  // Tìm category đang active để hiển thị title và description
+  const activeCateg = initialCategories.find(cat => cat.slug === activeCategory)
+  const pageTitle = activeCateg ? `Tour ${activeCateg.name}` : 'Tất Cả Tour Du Lịch'
+  const pageDescription = activeCateg 
+    ? `Khám phá những địa điểm du lịch hấp dẫn tại ${activeCateg.name}` 
+    : 'Khám phá các tour du lịch Trung Quốc hấp dẫn'
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-[#00CBA9] text-white py-8">
         <div className="container-custom">
-          <h1 className="text-2xl md:text-3xl font-bold">Tất Cả Tour Du Lịch</h1>
-          <p className="mt-2 text-white/80">Khám phá các tour du lịch Trung Quốc hấp dẫn</p>
+          <h1 className="text-2xl md:text-3xl font-bold">{pageTitle}</h1>
+          <p className="mt-2 text-white/80">{pageDescription}</p>
         </div>
       </div>
 
