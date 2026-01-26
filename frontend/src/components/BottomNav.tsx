@@ -84,13 +84,13 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
             >
               {pathname.startsWith('/tours') || pathname.startsWith('/tour') ? (
                 <svg className="w-6 h-6" viewBox="0 0 48 48" fill="currentColor">
-                  <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm0 36c-8.82 0-16-7.18-16-16S15.18 8 24 8s16 7.18 16 16-7.18 16-16 16z"/>
-                  <path d="M17 16h14v4h-4v8h-4v-8h-6v-4zm10 16h-6v4h6v-4z"/>
+                  <circle cx="24" cy="24" r="20"/>
+                  <path d="M20 18h8v3h-3v6h-3v-6h-2v-3zm6 12h-4v3h4v-3z" fill="white"/>
                 </svg>
               ) : (
-                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <circle cx="24" cy="24" r="18"/>
-                  <path d="M17 16h14v4h-4v8h-4v-8h-6v-4zm10 16h-6v4h6v-4z" fill="currentColor" stroke="none"/>
+                <svg className="w-6 h-6" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="24" cy="24" r="20"/>
+                  <path d="M20 18h8v3h-3v6h-3v-6h-2v-3zm6 12h-4v3h4v-3z" stroke="none" fill="currentColor"/>
                 </svg>
               )}
               <span className="text-[10px] font-medium">Tour</span>
