@@ -200,7 +200,7 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
               </Link>
 
               {/* Category Grid - iOS App Grid style */}
-              <div className="grid grid-cols-4 gap-1">
+              <div className="grid grid-cols-4 gap-3">
                 {categories.map((cat) => {
                   const categoryImage = cat.image ? getImageUrl(cat.image, 'thumbnail') : null;
                   
@@ -209,22 +209,22 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
                       key={cat.id}
                       href={`/tours?category=${cat.slug}`}
                       onClick={() => setShowCategories(false)}
-                      className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl active:bg-gray-100/60 transition-all"
+                      className="flex flex-col items-center gap-2 py-2 rounded-xl active:bg-gray-100/60 transition-all"
                     >
-                      <div className="w-12 h-12 bg-gray-100/80 rounded-2xl flex items-center justify-center overflow-hidden">
+                      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-sm border border-gray-100">
                         {categoryImage ? (
                           <Image 
                             src={categoryImage}
                             alt={cat.ten || cat.name || 'Category'}
-                            width={48}
-                            height={48}
+                            width={56}
+                            height={56}
                             className="w-full h-full object-cover"
                           />
                         ) : (
                           <span className="text-2xl">{cat.icon || '🏯'}</span>
                         )}
                       </div>
-                      <span className="text-[11px] font-medium text-gray-600 text-center leading-tight line-clamp-2">
+                      <span className="text-[11px] font-medium text-gray-700 text-center leading-tight line-clamp-2 px-1">
                         {cat.ten || cat.name}
                       </span>
                     </Link>
