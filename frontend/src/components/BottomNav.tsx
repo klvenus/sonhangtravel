@@ -183,7 +183,7 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
                   background: 'linear-gradient(135deg, #00CBA9 0%, #00A88A 100%)'
                 }}>
                   <Image 
-                    src="/icons/tour.png" 
+                    src="/icons/travel.png" 
                     alt="Travel"
                     width={28}
                     height={28}
