@@ -1,17 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { getCategories } from '@/lib/strapi'
-
-interface Category {
-  id: number
-  name?: string
-  ten?: string
-  slug: string
-  icon?: string
-}
+import { getCategories, getImageUrl } from '@/lib/strapi'
+import type { Category } from '@/lib/strapi'
 
 interface BottomNavProps {
   phoneNumber?: string
@@ -185,12 +179,16 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
                 className="flex items-center gap-3 p-3 rounded-2xl active:bg-gray-100/80 transition-colors"
                 style={{ background: 'rgba(0, 203, 169, 0.08)' }}
               >
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden" style={{
                   background: 'linear-gradient(135deg, #00CBA9 0%, #00A88A 100%)'
                 }}>
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3" />
-                  </svg>
+                  <Image 
+                    src="/icons/tour.png" 
+                    alt="Travel"
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                  />
                 </div>
                 <div className="flex-1">
                   <p className="text-[15px] font-semibold text-gray-900">Tất cả Tour</p>
@@ -203,19 +201,35 @@ export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: Bo
 
               {/* Category Grid - iOS App Grid style */}
               <div className="grid grid-cols-4 gap-1">
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/tours?category=${cat.slug}`}
-                    onClick={() => setShowCategories(false)}
-                    className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl active:bg-gray-100/60 transition-all"
-                  >
-                    <div className="w-12 h-12 bg-gray-100/80 rounded-2xl flex items-center justify-center text-2xl">
-                      {cat.icon || '🏯'}
-                    </div>
-                    <span className="text-[11px] font-medium text-gray-600 text-center leading-tight line-clamp-2">{cat.ten || cat.name}</span>
-                  </Link>
-                ))}
+                {categories.map((cat) => {
+                  const categoryImage = cat.image ? getImageUrl(cat.image, 'thumbnail') : null;
+                  
+                  return (
+                    <Link
+                      key={cat.id}
+                      href={`/tours?category=${cat.slug}`}
+                      onClick={() => setShowCategories(false)}
+                      className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl active:bg-gray-100/60 transition-all"
+                    >
+                      <div className="w-12 h-12 bg-gray-100/80 rounded-2xl flex items-center justify-center overflow-hidden">
+                        {categoryImage ? (
+                          <Image 
+                            src={categoryImage}
+                            alt={cat.ten || cat.name || 'Category'}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-2xl">{cat.icon || '🏯'}</span>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-medium text-gray-600 text-center leading-tight line-clamp-2">
+                        {cat.ten || cat.name}
+                      </span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
