@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import StatsBooster from "@/components/StatsBooster";
+import { ZaloProvider } from "@/components/ZaloProvider";
 import { getSiteSettings, getImageUrl } from "@/lib/strapi";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
@@ -212,13 +213,15 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <StatsBooster />
-        <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
-        <div className="pb-16 md:pb-0">
-          {children}
-        </div>
-        <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
-        <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
+        <ZaloProvider oaId={zaloNumber}>
+          <StatsBooster />
+          <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
+          <div className="pb-16 md:pb-0">
+            {children}
+          </div>
+          <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
+          <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
+        </ZaloProvider>
         <SpeedInsights />
         <Analytics />
       </body>

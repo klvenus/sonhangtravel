@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ZaloBookingButton, ZaloShareButton } from '@/components/ZaloButtons'
 
 interface TourDetailProps {
   tourData: {
@@ -179,11 +180,16 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               </svg>
             </Link>
             <div className="flex gap-2">
-              <button className="w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
-                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-              </button>
+              <ZaloShareButton 
+                tour={{
+                  id: parseInt(tourData.id) || 0,
+                  title: tourData.title,
+                  slug: tourData.slug,
+                  shortDescription: tourData.shortDescription,
+                  thumbnail: tourData.images?.[0]
+                }}
+                className="w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
+              />
               <button className="w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -658,18 +664,23 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       )}
                     </div>
 
-                    {/* Book Button - Link to Zalo */}
-                    <a 
-                      href={`https://zalo.me/${zaloLink}?text=Xin chào, tôi muốn đặt tour: ${tourData.title}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    {/* Book Button - Zalo Integration */}
+                    <ZaloBookingButton 
+                      tour={{
+                        id: parseInt(tourData.id) || 0,
+                        title: tourData.title,
+                        slug: tourData.slug,
+                        shortDescription: tourData.shortDescription,
+                        thumbnail: tourData.images?.[0],
+                        price: tourData.price
+                      }}
                       className="w-full bg-linear-to-r from-[#00CBA9] to-[#00A88A] hover:from-[#00A88A] hover:to-[#00CBA9] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl mb-3 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-5.52-4.48-10-10-10zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.07-.05-.16-.03-.23-.02-.1.02-1.62 1.03-4.58 3.03-.43.3-.82.44-1.17.43-.39-.01-1.13-.22-1.68-.4-.68-.22-1.22-.34-1.17-.72.02-.2.31-.4.87-.6 3.42-1.49 5.7-2.47 6.84-2.95 3.26-1.36 3.94-1.6 4.38-1.6.1 0 .31.02.45.13.12.09.15.21.17.3-.01.06.01.24 0 .37z"/>
                       </svg>
-                      Đặt Tour Ngay qua Zalo
-                    </a>
+                      Đặt Tour Ngay
+                    </ZaloBookingButton>
 
                     {/* Contact */}
                     <div className="flex gap-2 mb-4">
