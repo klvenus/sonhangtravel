@@ -167,13 +167,23 @@ Vui lòng xác nhận và tư vấn thêm cho tôi!`;
   }
 }
 
-function fallbackBookingAlert(message: string, zaloLink?: string): void {
-  // Trên web thường: mở Zalo.me link
-  if (zaloLink) {
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://zalo.me/${zaloLink}?text=${encodedMessage}`, '_blank');
+function fallbackBookingAlert(message: string, zaloOaId?: string): void {
+  // Mở Zalo OA chat link
+  // Format cho OA: https://zalo.me/1217282493152188985
+  if (zaloOaId) {
+    // Với Zalo OA, không thể gửi message qua URL, nên chỉ mở chat
+    // User sẽ paste message thủ công hoặc copy từ clipboard
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(message);
+    }
+    // Mở Zalo OA
+    window.open(`https://zalo.me/${zaloOaId}`, '_blank');
+    // Thông báo đã copy
+    setTimeout(() => {
+      alert('Đã copy thông tin đặt tour!\n\nVui lòng dán (paste) vào chat Zalo để gửi.');
+    }, 500);
   } else {
-    // Nếu không có zaloLink, copy và alert
+    // Nếu không có OA ID, chỉ alert
     if (navigator.clipboard) {
       navigator.clipboard.writeText(message);
     }
