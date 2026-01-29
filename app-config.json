@@ -1,0 +1,16 @@
+{
+  "app": {
+    "title": "sonhangtravelminiapp",
+    "headerTitle": "sonhangtravelminiapp",
+    "headerColor": "#1843EF",
+    "textColor": "white",
+    "leftButton": "back",
+    "statusBar": "normal",
+    "actionBarHidden": false,
+    "hideAndroidBottomNavigationBar": false,
+    "hideIOSSafeAreaBottom": false
+  },
+  "listCSS": [],
+  "listSyncJS": [],
+  "listAsyncJS": []
+}
