@@ -110,8 +110,8 @@ export default async function RootLayout({
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
   const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : '/favicon.ico';
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
-  const phoneNumber = siteSettings?.phoneNumber || '0123456789';
-  const zaloNumber = siteSettings?.zaloNumber || undefined;
+  const phoneNumber = siteSettings?.phoneNumber || '0338239888';
+  const zaloNumber = siteSettings?.zaloNumber || '0338239888';
   const email = siteSettings?.email || 'info@sonhangtravel.com';
 
   // JSON-LD Structured Data for SEO

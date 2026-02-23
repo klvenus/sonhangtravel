@@ -36,19 +36,19 @@ export default function Footer({ logoUrl }: FooterProps) {
 
           {/* Hotline */}
           <a
-            href="tel:0986409633"
+            href="tel:0338239888"
             className="flex items-center justify-center gap-2 bg-[#00CBA9] text-white py-3 rounded-xl font-bold text-base w-full"
           >
-            HOTLINE 24/7: 0986 409 633
+            ☎️ HOTLINE 24/7: 0338 239 888
           </a>
 
           {/* Consultants */}
           <div className="grid grid-cols-2 gap-2">
-            <a href="https://zalo.me/0338239888" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-gray-800 text-gray-200 py-2.5 rounded-xl text-sm">
-              0338 239 888
+            <a href="tel:0986409633" className="flex items-center justify-center gap-1.5 bg-gray-800 text-gray-300 py-2.5 rounded-xl text-sm hover:bg-gray-700 transition-colors">
+              📞 0986 409 633
             </a>
-            <a href="https://zalo.me/0388091993" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-gray-800 text-gray-200 py-2.5 rounded-xl text-sm">
-              0388 091 993
+            <a href="https://zalo.me/0388091993" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-gray-800 text-gray-300 py-2.5 rounded-xl text-sm hover:bg-gray-700 transition-colors">
+              💬 0388 091 993
             </a>
           </div>
 
@@ -126,18 +126,20 @@ export default function Footer({ logoUrl }: FooterProps) {
               <ul className="space-y-3 text-sm">
                 <li>
                   <p className="text-gray-500 text-xs mb-1">HOTLINE 24/7</p>
-                  <a href="tel:0986409633" className="text-[#00CBA9] font-bold text-lg hover:text-[#00E6C0] transition-colors">
-                    0986 409 633
+                  <a href="tel:0338239888" className="text-[#00CBA9] font-bold text-lg hover:text-[#00E6C0] transition-colors">
+                    ☎️ 0338 239 888
                   </a>
                 </li>
                 <li className="pt-2">
                   <p className="text-gray-500 text-xs mb-2">CHUYÊN VIÊN TƯ VẤN (HOTLINE/ZALO)</p>
                   <div className="space-y-2">
-                    <a href="https://zalo.me/0338239888" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00CBA9] transition-colors">
-                      <span className="font-medium text-white">0338 239 888</span>
+                    <a href="tel:0986409633" className="flex items-center gap-2 hover:text-white transition-colors">
+                      <span>📞</span>
+                      <span className="text-gray-300">0986 409 633</span>
                     </a>
-                    <a href="https://zalo.me/0388091993" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-[#00CBA9] transition-colors">
-                      <span className="font-medium text-white">0388 091 993</span>
+                    <a href="https://zalo.me/0388091993" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
+                      <span>💬</span>
+                      <span className="text-gray-300">0388 091 993</span>
                     </a>
                   </div>
                 </li>

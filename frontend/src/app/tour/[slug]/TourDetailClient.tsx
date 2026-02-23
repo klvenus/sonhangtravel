@@ -45,7 +45,7 @@ interface TourDetailProps {
   isPreview?: boolean
 }
 
-export default function TourDetailClient({ tourData, phoneNumber = '0123456789', zaloNumber, isPreview = false }: TourDetailProps) {
+export default function TourDetailClient({ tourData, phoneNumber = '0338239888', zaloNumber, isPreview = false }: TourDetailProps) {
   const zaloLink = zaloNumber || phoneNumber
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)

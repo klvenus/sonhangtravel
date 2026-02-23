@@ -19,7 +19,7 @@ interface HeaderProps {
   zaloNumber?: string
 }
 
-export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789', zaloNumber }: HeaderProps) {
+export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0338239888', zaloNumber }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)

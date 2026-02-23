@@ -12,7 +12,7 @@ interface BottomNavProps {
   zaloNumber?: string
 }
 
-export default function BottomNav({ phoneNumber = '0123456789', zaloNumber }: BottomNavProps) {
+export default function BottomNav({ phoneNumber = '0338239888', zaloNumber }: BottomNavProps) {
   const pathname = usePathname()
   const [showCategories, setShowCategories] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
