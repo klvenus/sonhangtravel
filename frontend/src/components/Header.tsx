@@ -51,10 +51,10 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   return (
     <>
       {/* Main Header - Simplified for mobile */}
-      <header className={`sticky top-0 z-50 bg-white transition-shadow duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
+      <header className={`sticky top-0 z-50 bg-white transition-all duration-300 ${isScrolled ? 'shadow-sm' : ''} border-b border-gray-100`}>
         {/* Mobile Header */}
         <div className="md:hidden">
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center justify-between px-4 py-2">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               {logoUrl ? (
