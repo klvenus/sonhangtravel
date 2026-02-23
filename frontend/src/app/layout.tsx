@@ -219,7 +219,7 @@ export default async function RootLayout({
           <div className="pb-16 md:pb-0">
             {children}
           </div>
-          <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
+          <Footer />
           <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         </ZaloProvider>
         <SpeedInsights />

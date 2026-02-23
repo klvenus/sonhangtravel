@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 const reasons = [
   {
     icon: (
@@ -39,33 +37,6 @@ const reasons = [
   },
 ]
 
-const testimonials = [
-  {
-    id: 1,
-    name: 'Nguyễn Văn A',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
-    tour: 'Tour Đông Hưng 2 ngày',
-    rating: 5,
-    content: 'Chuyến đi rất tuyệt vời! Hướng dẫn viên nhiệt tình, chu đáo. Sẽ quay lại với Sơn Hằng Travel trong những chuyến sau.',
-  },
-  {
-    id: 2,
-    name: 'Trần Thị B',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80',
-    tour: 'Tour Nam Ninh - Quảng Châu',
-    rating: 5,
-    content: 'Tour mua sắm rất đáng tiền! Được đưa đến nhiều địa điểm mua sắm chất lượng, giá cả hợp lý. Recommend cho mọi người!',
-  },
-  {
-    id: 3,
-    name: 'Phạm Văn C',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80',
-    tour: 'Tour Bắc Kinh',
-    rating: 5,
-    content: 'Vạn Lý Trường Thành thật hùng vĩ! Cảm ơn Sơn Hằng Travel đã tổ chức tour rất chuyên nghiệp, đáng nhớ.',
-  },
-]
-
 export default function WhyChooseUs() {
   return (
     <section className="py-12 bg-gray-50">
@@ -80,7 +51,7 @@ export default function WhyChooseUs() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {reasons.map((reason, index) => (
             <div
               key={index}
@@ -91,55 +62,6 @@ export default function WhyChooseUs() {
               </div>
               <h3 className="font-bold text-gray-800 mb-2">{reason.title}</h3>
               <p className="text-gray-600 text-sm">{reason.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Testimonials */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-            Khách Hàng Nói Gì Về Chúng Tôi
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial) => (
-            <div
-              key={testimonial.id}
-              className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow"
-            >
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className="w-5 h-5 text-yellow-400 fill-current"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                  </svg>
-                ))}
-              </div>
-
-              {/* Content */}
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                "{testimonial.content}"
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                <Image
-                  src={testimonial.avatar}
-                  alt={testimonial.name}
-                  width={48}
-                  height={48}
-                  className="rounded-full object-cover"
-                />
-                <div>
-                  <div className="font-semibold text-gray-800">{testimonial.name}</div>
-                  <div className="text-sm text-gray-500">{testimonial.tour}</div>
-                </div>
-              </div>
             </div>
           ))}
         </div>
