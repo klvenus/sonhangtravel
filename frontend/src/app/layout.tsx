@@ -96,7 +96,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#22C55E',
+  themeColor: '#00CBA9',
 };
 
 export default async function RootLayout({
@@ -211,7 +211,7 @@ export default async function RootLayout({
         <div className="pb-16 md:pb-0">
           {children}
         </div>
-        <Footer logoUrl={logoUrl} />
+        <Footer phoneNumber={phoneNumber} zaloNumber={zaloNumber} email={email} />
         <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <SpeedInsights />
         <Analytics />
