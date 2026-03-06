@@ -17,7 +17,7 @@ const defaultSlides = [
     id: 1,
     title: 'Sơn Hằng Travel',
     subtitle: 'Tour Trung Quốc Uy Tín',
-    image: 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772779153/large_Web_2250c7f598.png',
+    image: 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772779153/Web_2250c7f598.png',
     linkText: 'Xem tour',
     linkUrl: '/tours',
   },
