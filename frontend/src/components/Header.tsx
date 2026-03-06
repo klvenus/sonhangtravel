@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { getCategories } from '@/lib/strapi'
 
 interface Category {
   id: number
@@ -31,7 +30,8 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const data = await getCategories()
+        const res = await fetch('/api/categories')
+        const data = res.ok ? await res.json() : []
         setCategories(data || [])
       } catch (error) {
         console.error('Error fetching categories:', error)

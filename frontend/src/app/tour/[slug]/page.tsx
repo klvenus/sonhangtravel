@@ -8,9 +8,8 @@ const TourDetailClient = nextDynamic(() => import('./TourDetailClient'), {
   loading: () => null, // loading.tsx handles this
 })
 
-// Disable cache temporarily - fetch fresh data every request
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// ISR - revalidate every hour
+export const revalidate = 3600
 
 // Allow new tours to be generated on-demand (not 404)
 export const dynamicParams = true
