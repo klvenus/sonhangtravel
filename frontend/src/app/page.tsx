@@ -75,12 +75,15 @@ export default async function Home() {
       categories = categoriesData.map(transformCategory)
     }
     
-    if (featuredToursData.data && featuredToursData.data.length > 0) {
-      tours = featuredToursData.data.map(transformTour)
-    }
-    
     if (allToursData.data && allToursData.data.length > 0) {
       allTours = allToursData.data.map(transformTour)
+    }
+
+    if (featuredToursData.data && featuredToursData.data.length > 0) {
+      tours = featuredToursData.data.map(transformTour)
+    } else {
+      // Fallback: show all tours if no featured tours
+      tours = allTours.slice(0, 6)
     }
 
     // Extract banner slides from site settings

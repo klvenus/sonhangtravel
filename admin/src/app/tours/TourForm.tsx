@@ -23,7 +23,7 @@ const defaultData: TourData = {
   destination: '', transportation: '', groupSize: '',
   thumbnail: '', gallery: [], itinerary: [],
   includes: [], excludes: [], notes: [], policy: '',
-  categoryId: null, featured: false, published: true,
+  categoryId: null, featured: true, published: true,
   rating: '5.0', reviewCount: 0, bookingCount: 0, departureDates: [],
 };
 
