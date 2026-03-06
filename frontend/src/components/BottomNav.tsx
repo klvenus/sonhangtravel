@@ -4,8 +4,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { getCategories, getImageUrl } from '@/lib/strapi'
-import type { Category } from '@/lib/strapi'
+
+
+
+interface Category {
+  id: number
+  name: string
+  ten?: string
+  slug: string
+  icon?: string
+  image?: { url: string } | null
+}
 
 interface BottomNavProps {
   phoneNumber?: string
@@ -23,8 +32,11 @@ export default function BottomNav({ phoneNumber = '0338239888', zaloNumber }: Bo
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const data = await getCategories()
-        setCategories(data || [])
+        const res = await fetch('/api/categories')
+        if (res.ok) {
+          const data = await res.json()
+          setCategories(data || [])
+        }
       } catch (error) {
         console.error('Error fetching categories:', error)
       }
@@ -202,7 +214,7 @@ export default function BottomNav({ phoneNumber = '0338239888', zaloNumber }: Bo
               {/* Category Grid - iOS App Grid style */}
               <div className="grid grid-cols-4 gap-3">
                 {categories.map((cat) => {
-                  const categoryImage = cat.image ? getImageUrl(cat.image, 'thumbnail') : null;
+                  const categoryImage = cat.image?.url || null;
                   
                   return (
                     <Link
