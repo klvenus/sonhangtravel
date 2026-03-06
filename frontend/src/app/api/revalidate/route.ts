@@ -2,7 +2,7 @@ import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Secret token to validate webhook requests
-const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET || 'your-secret-token'
+const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET || 'sonhang-revalidate-2026'
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,11 +53,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
   }
 
+  const path = request.nextUrl.searchParams.get('path')
+
+  if (path) {
+    // Revalidate specific path
+    revalidatePath(path, 'page')
+  }
+
+  // Always revalidate main pages
   revalidatePath('/', 'layout')
   revalidatePath('/tours', 'page')
 
   return NextResponse.json({ 
     revalidated: true, 
+    path: path || 'all',
     now: Date.now(),
     message: 'Cache cleared successfully'
   })
