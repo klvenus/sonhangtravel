@@ -15,6 +15,7 @@
     "bcryptjs": "^3.0.3",
     "drizzle-kit": "^0.31.9",
     "drizzle-orm": "^0.45.1",
+    "jose": "^6.2.0",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
