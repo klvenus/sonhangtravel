@@ -165,27 +165,33 @@ export default async function RootLayout({
     "hasPart": [
       {
         "@type": "WebPage",
-        "name": "Tour Đông Hưng",
-        "url": "https://sonhangtravel.vercel.app/tours?category=tour-dong-hung",
-        "description": "Tour du lịch Đông Hưng 1-2 ngày từ Móng Cái"
+        "name": "Đông Hưng",
+        "url": "https://sonhangtravel.vercel.app/tours?category=dong-hung",
+        "description": "Các tour Đông Hưng ngắn ngày và liên tuyến từ Móng Cái"
       },
       {
         "@type": "WebPage",
-        "name": "Tour Nam Ninh",
-        "url": "https://sonhangtravel.vercel.app/tours?category=tour-nam-ninh",
-        "description": "Tour Nam Ninh shopping, mua sắm"
+        "name": "Hà Khẩu",
+        "url": "https://sonhangtravel.vercel.app/tours?category=ha-khau",
+        "description": "Các tour Hà Khẩu và tuyến Châu Hồng Hà từ Lào Cai"
       },
       {
         "@type": "WebPage",
-        "name": "Tour Quế Lâm",
-        "url": "https://sonhangtravel.vercel.app/tours?category=tour-que-lam",
-        "description": "Tour Quế Lâm - Dương Sóc"
+        "name": "Vân Nam",
+        "url": "https://sonhangtravel.vercel.app/tours?category=van-nam",
+        "description": "Các hành trình sâu tuyến Vân Nam như Đại Lý, Lệ Giang, Côn Minh"
       },
       {
         "@type": "WebPage",
         "name": "Tất cả Tour",
         "url": "https://sonhangtravel.vercel.app/tours",
         "description": "Danh sách tất cả tour du lịch Trung Quốc"
+      },
+      {
+        "@type": "WebPage",
+        "name": "Blog Du Lịch",
+        "url": "https://sonhangtravel.vercel.app/blog",
+        "description": "Chia sẻ kinh nghiệm du lịch Trung Quốc, Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam"
       }
     ]
   };
