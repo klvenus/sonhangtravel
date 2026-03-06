@@ -7,7 +7,7 @@ interface FooterProps {
 
 export default function Footer({ logoUrl }: FooterProps) {
   return (
-    <footer className="bg-[#22C55E] text-white pb-20 md:pb-0">
+    <footer className="bg-[#059669] text-white pb-20 md:pb-0">
       {/* Mobile Footer */}
       <div className="md:hidden">
         <div className="px-4 py-6 space-y-4">
@@ -37,7 +37,7 @@ export default function Footer({ logoUrl }: FooterProps) {
           {/* Hotline */}
           <a
             href="tel:0338239888"
-            className="flex items-center justify-center gap-2 bg-white text-[#16A34A] py-3 rounded-xl font-bold text-base w-full"
+            className="flex items-center justify-center gap-2 bg-white text-[#047857] py-3 rounded-xl font-bold text-base w-full"
           >
             ☎️ HOTLINE 24/7: 0338 239 888
           </a>

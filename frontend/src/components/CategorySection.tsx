@@ -35,7 +35,7 @@ export default function CategorySection({ initialCategories }: Props) {
       <div className="md:hidden">
         <div className="flex items-center justify-between px-4 mb-4">
           <h2 className="text-base font-bold text-gray-800">Bạn muốn đi đâu chơi?</h2>
-          <Link href="/tours" className="text-[#22C55E] text-sm font-medium">
+          <Link href="/tours" className="text-[#059669] text-sm font-medium">
             Xem thêm
           </Link>
         </div>
@@ -90,7 +90,7 @@ export default function CategorySection({ initialCategories }: Props) {
                   <p className="text-white/80 text-sm">{category.tourCount} tours</p>
                 </div>
 
-                <div className="absolute inset-0 bg-[#22C55E]/0 group-hover:bg-[#22C55E]/20 transition-colors"></div>
+                <div className="absolute inset-0 bg-[#059669]/0 group-hover:bg-[#059669]/20 transition-colors"></div>
               </div>
             </Link>
           ))}
@@ -100,7 +100,7 @@ export default function CategorySection({ initialCategories }: Props) {
         <div className="text-center mt-8">
           <Link
             href="/tours"
-            className="inline-block px-12 py-3 border border-gray-300 text-gray-700 font-medium rounded-full hover:border-[#22C55E] hover:text-[#22C55E] transition-colors"
+            className="inline-block px-12 py-3 border border-gray-300 text-gray-700 font-medium rounded-full hover:border-[#059669] hover:text-[#059669] transition-colors"
           >
             Xem tất cả
           </Link>

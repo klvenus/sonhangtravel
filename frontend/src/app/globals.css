@@ -3,11 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #22C55E;
-  --primary-dark: #16A34A;
+  --primary: #059669;
+  --primary-dark: #047857;
   --primary-light: #F0FDF4;
   --secondary: #FF6B35;
-  --klook-green: #22C55E;
+  --klook-green: #059669;
 }
 
 body {
@@ -42,15 +42,15 @@ body {
 
 /* Buttons */
 .btn-primary {
-  @apply bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98];
+  @apply bg-[#059669] hover:bg-[#047857] active:bg-[#15803D] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98];
 }
 
 .btn-secondary {
-  @apply bg-white border-2 border-[#22C55E] text-[#22C55E] hover:bg-[#22C55E] hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 active:scale-[0.98];
+  @apply bg-white border-2 border-[#059669] text-[#059669] hover:bg-[#059669] hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 active:scale-[0.98];
 }
 
 .btn-outline {
-  @apply border border-gray-300 hover:border-[#22C55E] hover:text-[#22C55E] py-2 px-4 rounded-lg transition-all duration-200;
+  @apply border border-gray-300 hover:border-[#059669] hover:text-[#059669] py-2 px-4 rounded-lg transition-all duration-200;
 }
 
 /* Tour Cards - Mobile optimized */
@@ -93,11 +93,11 @@ body {
 }
 
 .badge-sale {
-  @apply bg-[#22C55E] text-white;
+  @apply bg-[#059669] text-white;
 }
 
 .badge-new {
-  @apply bg-[#22C55E] text-white;
+  @apply bg-[#059669] text-white;
 }
 
 /* Container */

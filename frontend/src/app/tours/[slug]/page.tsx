@@ -81,7 +81,7 @@ export default async function CategoryToursPage({
         {/* Breadcrumb */}
         <div className="bg-white border-b">
           <div className="container-custom py-3">
-            <Link href="/tours" className="text-gray-600 hover:text-[#22C55E] text-sm">
+            <Link href="/tours" className="text-gray-600 hover:text-[#059669] text-sm">
               ← Tất cả tour
             </Link>
           </div>
@@ -115,7 +115,7 @@ export default async function CategoryToursPage({
             <div className="lg:col-span-9">
               {/* Results count */}
               <p className="text-gray-600 mb-4">
-                Tìm thấy <span className="font-semibold text-[#22C55E]">{tours.length}+</span> kết quả
+                Tìm thấy <span className="font-semibold text-[#059669]">{tours.length}+</span> kết quả
               </p>
 
               {/* Tours Grid */}
@@ -145,7 +145,7 @@ export default async function CategoryToursPage({
                   <p className="text-gray-500 mb-4">Danh mục này đang được cập nhật</p>
                   <Link 
                     href="/tours" 
-                    className="inline-block bg-[#22C55E] text-white px-6 py-2 rounded-full hover:bg-[#16A34A] transition-colors"
+                    className="inline-block bg-[#059669] text-white px-6 py-2 rounded-full hover:bg-[#047857] transition-colors"
                   >
                     Xem tour khác
                   </Link>

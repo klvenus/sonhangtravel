@@ -230,7 +230,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                 onClick={() => setCurrentImage(idx)}
                 onDoubleClick={() => openLightbox(idx)}
                 className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                  currentImage === idx ? 'border-[#00CBA9] scale-105' : 'border-gray-200'
+                  currentImage === idx ? 'border-[#059669] scale-105' : 'border-gray-200'
                 }`}
               >
                 <Image src={img} alt={`Ảnh ${idx + 1} tour ${tourData.title}`} width={64} height={64} className="object-cover w-full h-full" loading="lazy" />
@@ -365,7 +365,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                 )}
 
                 {/* Mobile Price Card */}
-                <div className="md:hidden bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-2xl p-4 mb-6 border border-[#00CBA9]/20">
+                <div className="md:hidden bg-linear-to-r from-[#059669]/10 to-[#047857]/10 rounded-2xl p-4 mb-6 border border-[#059669]/20">
                   <div className="flex items-end gap-2 mb-2">
                     <span className="text-3xl font-bold text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
                     {tourData.originalPrice > tourData.price && (
@@ -389,8 +389,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                         onClick={() => setActiveTab(tab.id)}
                         className={`px-3 py-3 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-300 ${
                           activeTab === tab.id
-                            ? 'bg-linear-to-r from-[#00CBA9] to-[#00A88A] text-white shadow-lg'
-                            : 'text-gray-600 hover:text-[#00CBA9] hover:bg-white'
+                            ? 'bg-linear-to-r from-[#059669] to-[#047857] text-white shadow-lg'
+                            : 'text-gray-600 hover:text-[#059669] hover:bg-white'
                         }`}
                       >
                         {tab.label}
@@ -411,7 +411,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       {tourData.content && (
                         <div className="prose prose-sm max-w-none">
                           <h3 className="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
+                            <span className="w-1 h-6 bg-[#059669] rounded-full"></span>
                             Giới thiệu chi tiết
                           </h3>
                           <div 
@@ -428,13 +428,13 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       {tourData.highlights.length > 0 && (
                         <div>
                           <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
+                            <span className="w-1 h-6 bg-[#059669] rounded-full"></span>
                             Điểm đến nổi bật
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {tourData.highlights.map((highlight: string, idx: number) => (
-                              <div key={idx} className="flex items-center gap-3 bg-gradient-to-r from-[#00CBA9]/5 to-transparent p-3 rounded-xl">
-                                <svg className="w-5 h-5 text-[#00CBA9] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div key={idx} className="flex items-center gap-3 bg-gradient-to-r from-[#059669]/5 to-transparent p-3 rounded-xl">
+                                <svg className="w-5 h-5 text-[#059669] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
                                 <span className="text-gray-700 text-sm">{highlight}</span>
@@ -450,7 +450,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   {activeTab === 'itinerary' && tourData.itinerary.length > 0 && (
                     <div>
                       <h3 className="font-bold text-lg text-gray-900 mb-6 flex items-center gap-2">
-                        <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
+                        <span className="w-1 h-6 bg-[#059669] rounded-full"></span>
                         Lịch trình chi tiết
                       </h3>
                       <div className="space-y-6">
@@ -458,17 +458,17 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                           <div key={idx} className="flex gap-4">
                             {/* Timeline */}
                             <div className="flex flex-col items-center">
-                              <div className="w-12 h-12 bg-gradient-to-br from-[#00CBA9] to-[#00A88A] rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                              <div className="w-12 h-12 bg-gradient-to-br from-[#059669] to-[#047857] rounded-full flex items-center justify-center text-white font-bold shadow-lg">
                                 {idx + 1}
                               </div>
                               {idx < tourData.itinerary.length - 1 && (
-                                <div className="w-1 h-full bg-gradient-to-b from-[#00CBA9] to-[#00CBA9]/20 mt-2 rounded-full"></div>
+                                <div className="w-1 h-full bg-gradient-to-b from-[#059669] to-[#059669]/20 mt-2 rounded-full"></div>
                               )}
                             </div>
 
                             {/* Content */}
                             <div className="flex-1 pb-6">
-                              <div className="bg-white border-2 border-gray-100 hover:border-[#00CBA9]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                              <div className="bg-white border-2 border-gray-100 hover:border-[#059669]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
                                 {item.image && (
                                   <div className="relative h-48">
                                     <Image
@@ -478,7 +478,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                       className="object-cover"
                                     />
                                     {item.time && (
-                                      <div className="absolute top-3 left-3 bg-[#00CBA9] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                                      <div className="absolute top-3 left-3 bg-[#059669] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
@@ -500,7 +500,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       {tourData.itinerary.length > 4 && (
                         <button
                           onClick={() => setShowAllItinerary(!showAllItinerary)}
-                          className="w-full py-4 text-[#00CBA9] font-semibold border-2 border-[#00CBA9] rounded-xl mt-6 hover:bg-[#00CBA9] hover:text-white transition-all duration-300"
+                          className="w-full py-4 text-[#059669] font-semibold border-2 border-[#059669] rounded-xl mt-6 hover:bg-[#059669] hover:text-white transition-all duration-300"
                         >
                           {showAllItinerary ? 'Thu gọn' : `Xem thêm ${tourData.itinerary.length - 4} điểm đến →`}
                         </button>
@@ -643,7 +643,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     )}
 
                     {/* Price */}
-                    <div className="mb-6 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-xl p-4">
+                    <div className="mb-6 bg-linear-to-r from-[#059669]/10 to-[#047857]/10 rounded-xl p-4">
                       <div className="flex items-end gap-2 mb-2">
                         <span className="text-4xl font-bold text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
                         {tourData.originalPrice > tourData.price && (
@@ -663,7 +663,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       href={`https://zalo.me/${zaloLink}?text=Xin chào, tôi muốn đặt tour: ${tourData.title}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-linear-to-r from-[#00CBA9] to-[#00A88A] hover:from-[#00A88A] hover:to-[#00CBA9] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl mb-3 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                      className="w-full bg-linear-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#059669] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl mb-3 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-5.52-4.48-10-10-10zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.07-.05-.16-.03-.23-.02-.1.02-1.62 1.03-4.58 3.03-.43.3-.82.44-1.17.43-.39-.01-1.13-.22-1.68-.4-.68-.22-1.22-.34-1.17-.72.02-.2.31-.4.87-.6 3.42-1.49 5.7-2.47 6.84-2.95 3.26-1.36 3.94-1.6 4.38-1.6.1 0 .31.02.45.13.12.09.15.21.17.3-.01.06.01.24 0 .37z"/>
@@ -675,7 +675,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     <div className="flex gap-2 mb-4">
                       <a
                         href={`tel:${phoneNumber}`}
-                        className="flex-1 flex items-center justify-center gap-2 border-2 border-[#00CBA9] text-[#00CBA9] py-3 rounded-xl hover:bg-[#00CBA9]/10 transition-all font-medium"
+                        className="flex-1 flex items-center justify-center gap-2 border-2 border-[#059669] text-[#059669] py-3 rounded-xl hover:bg-[#059669]/10 transition-all font-medium"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -737,7 +737,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             href={`https://zalo.me/${zaloLink}?text=Xin chào, tôi muốn đặt tour: ${tourData.title}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-linear-to-r from-[#00CBA9] to-[#00A88A] text-white font-bold px-6 py-3.5 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center gap-2"
+            className="bg-linear-to-r from-[#059669] to-[#047857] text-white font-bold px-6 py-3.5 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center gap-2"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-5.52-4.48-10-10-10zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.07-.05-.16-.03-.23-.02-.1.02-1.62 1.03-4.58 3.03-.43.3-.82.44-1.17.43-.39-.01-1.13-.22-1.68-.4-.68-.22-1.22-.34-1.17-.72.02-.2.31-.4.87-.6 3.42-1.49 5.7-2.47 6.84-2.95 3.26-1.36 3.94-1.6 4.38-1.6.1 0 .31.02.45.13.12.09.15.21.17.3-.01.06.01.24 0 .37z"/>
@@ -810,7 +810,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   onClick={() => setLightboxIndex(idx)}
                   className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden transition-all ${
                     lightboxIndex === idx 
-                      ? 'ring-2 ring-[#00CBA9] ring-offset-2 ring-offset-black scale-110' 
+                      ? 'ring-2 ring-[#059669] ring-offset-2 ring-offset-black scale-110' 
                       : 'opacity-50 hover:opacity-100'
                   }`}
                 >
