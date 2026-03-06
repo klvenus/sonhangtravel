@@ -3,11 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #00CBA9;
-  --primary-dark: #00A88A;
-  --primary-light: #E8F8F5;
+  --primary: #22C55E;
+  --primary-dark: #16A34A;
+  --primary-light: #F0FDF4;
   --secondary: #FF6B35;
-  --klook-green: #00CBA9;
+  --klook-green: #22C55E;
 }
 
 body {
@@ -35,22 +35,22 @@ body {
 
 /* Touch feedback */
 .touch-feedback {
-  -webkit-tap-highlight-color: rgba(0, 203, 169, 0.1);
+  -webkit-tap-highlight-color: rgba(34, 197, 94, 0.1);
 }
 
 /* ========== KLOOK-STYLE COMPONENTS ========== */
 
 /* Buttons */
 .btn-primary {
-  @apply bg-[#00CBA9] hover:bg-[#00A88A] active:bg-[#008F76] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98];
+  @apply bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.98];
 }
 
 .btn-secondary {
-  @apply bg-white border-2 border-[#00CBA9] text-[#00CBA9] hover:bg-[#00CBA9] hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 active:scale-[0.98];
+  @apply bg-white border-2 border-[#22C55E] text-[#22C55E] hover:bg-[#22C55E] hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 active:scale-[0.98];
 }
 
 .btn-outline {
-  @apply border border-gray-300 hover:border-[#00CBA9] hover:text-[#00CBA9] py-2 px-4 rounded-lg transition-all duration-200;
+  @apply border border-gray-300 hover:border-[#22C55E] hover:text-[#22C55E] py-2 px-4 rounded-lg transition-all duration-200;
 }
 
 /* Tour Cards - Mobile optimized */
@@ -93,11 +93,11 @@ body {
 }
 
 .badge-sale {
-  @apply bg-[#00CBA9] text-white;
+  @apply bg-[#22C55E] text-white;
 }
 
 .badge-new {
-  @apply bg-[#00CBA9] text-white;
+  @apply bg-[#22C55E] text-white;
 }
 
 /* Container */

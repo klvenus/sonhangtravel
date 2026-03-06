@@ -57,7 +57,7 @@ export default function WhyChooseUs() {
               key={index}
               className="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-lg transition-shadow"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#00CBA9]/10 text-[#00CBA9] rounded-2xl mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#22C55E]/10 text-[#22C55E] rounded-2xl mb-4">
                 {reason.icon}
               </div>
               <h3 className="font-bold text-gray-800 mb-2">{reason.title}</h3>

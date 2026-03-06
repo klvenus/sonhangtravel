@@ -49,7 +49,7 @@ function transformTour(tour: Tour) {
 function transformBannerSlide(slide: BannerSlide) {
   return {
     id: slide.id,
-    image: getImageUrl(slide.image),
+    image: getImageUrl(slide.image, 'large'),
     title: slide.title,
     subtitle: slide.subtitle,
     linkUrl: slide.linkUrl,

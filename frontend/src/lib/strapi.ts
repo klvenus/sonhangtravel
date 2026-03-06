@@ -317,7 +317,6 @@ export interface SiteSettings {
   siteName: string;
   logo?: StrapiImage;
   logoDark?: StrapiImage;
-  favicon?: StrapiImage;
   bannerSlides?: BannerSlide[];
   phoneNumber?: string;
   zaloNumber?: string;
@@ -333,8 +332,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
     const searchParams = new URLSearchParams();
     searchParams.append('populate[0]', 'logo');
     searchParams.append('populate[1]', 'logoDark');
-    searchParams.append('populate[2]', 'favicon');
-    searchParams.append('populate[3]', 'bannerSlides.image');
+    searchParams.append('populate[2]', 'bannerSlides.image');
     
     const response = await fetchAPI<{ data: SiteSettings }>(`/site-setting?${searchParams.toString()}`);
     return response.data || null;

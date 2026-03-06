@@ -8,7 +8,7 @@ export default function NotFound() {
       <p className="text-gray-600 mb-6">Danh mục bạn tìm kiếm không tồn tại</p>
       <Link 
         href="/tours" 
-        className="bg-[#00CBA9] text-white px-6 py-3 rounded-full hover:bg-[#00A88A] transition-colors"
+        className="bg-[#22C55E] text-white px-6 py-3 rounded-full hover:bg-[#16A34A] transition-colors"
       >
         ← Quay lại danh sách tour
       </Link>

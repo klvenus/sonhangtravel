@@ -123,7 +123,7 @@ export default function FeaturedTours({ initialTours }: Props) {
         {/* Section Header */}
         <div className="flex items-center justify-between px-4 mb-3">
           <h2 className="text-lg font-bold text-gray-800">Tour Nổi Bật</h2>
-          <Link href="/tours" className="text-[#00CBA9] text-sm font-medium">
+          <Link href="/tours" className="text-[#22C55E] text-sm font-medium">
             Xem tất cả →
           </Link>
         </div>
@@ -169,7 +169,7 @@ export default function FeaturedTours({ initialTours }: Props) {
         <div className="mt-8 text-center">
           <Link
             href="/tours"
-            className="inline-block px-12 py-3 border border-gray-300 text-gray-700 font-medium rounded-full hover:border-[#00CBA9] hover:text-[#00CBA9] transition-colors"
+            className="inline-block px-12 py-3 border border-gray-300 text-gray-700 font-medium rounded-full hover:border-[#22C55E] hover:text-[#22C55E] transition-colors"
           >
             Xem tất cả
           </Link>

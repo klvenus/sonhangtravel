@@ -49,7 +49,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-[#00CBA9] text-white py-8">
+      <div className="bg-[#22C55E] text-white py-8">
         <div className="container-custom">
           <h1 className="text-2xl md:text-3xl font-bold">{pageTitle}</h1>
           <p className="mt-2 text-white/80">{pageDescription}</p>
@@ -65,8 +65,8 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
               onClick={() => setActiveCategory(null)}
               className={`shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 !activeCategory
-                  ? 'bg-[#00CBA9] text-white shadow-md'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:border-[#00CBA9] hover:text-[#00CBA9]'
+                  ? 'bg-[#22C55E] text-white shadow-md'
+                  : 'bg-white text-gray-700 border border-gray-200 hover:border-[#22C55E] hover:text-[#22C55E]'
               }`}
             >
               Tất cả
@@ -77,8 +77,8 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
                 onClick={() => setActiveCategory(cat.slug)}
                 className={`shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeCategory === cat.slug
-                    ? 'bg-[#00CBA9] text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-[#00CBA9] hover:text-[#00CBA9]'
+                    ? 'bg-[#22C55E] text-white shadow-md'
+                    : 'bg-white text-gray-700 border border-gray-200 hover:border-[#22C55E] hover:text-[#22C55E]'
                 }`}
               >
                 {cat.name}
@@ -110,7 +110,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
         ) : (
           <div className="text-center py-12">
             <p className="text-gray-500">Không có tour nào trong danh mục này</p>
-            <Link href="/tours" className="text-[#00CBA9] mt-2 inline-block">
+            <Link href="/tours" className="text-[#22C55E] mt-2 inline-block">
               Xem tất cả tour →
             </Link>
           </div>

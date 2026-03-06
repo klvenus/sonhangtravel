@@ -5,7 +5,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import StatsBooster from "@/components/StatsBooster";
-import { ZaloProvider } from "@/components/ZaloProvider";
 import { getSiteSettings, getImageUrl } from "@/lib/strapi";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
@@ -20,37 +19,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Static metadata (for build time)
+// SEO Metadata
 export const metadata: Metadata = {
   metadataBase: new URL('https://sonhangtravel.vercel.app'),
   title: {
-      default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
-      template: "%s | Sơn Hằng Travel"
-    },
-    description: "🌏 Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng 1-2 ngày, Nam Ninh, Quế Lâm, Trương Gia Giới, Phượng Hoàng Cổ Trấn. ✅ Giá tốt nhất ✅ Visa nhanh ✅ Hỗ trợ 24/7",
-    keywords: [
-      "tour trung quốc",
-      "du lịch trung quốc", 
-      "tour đông hưng",
-      "tour nam ninh",
-      "tour quế lâm",
-      "tour trương gia giới",
-      "tour phượng hoàng cổ trấn",
-      "tour trung quốc giá rẻ",
-      "tour trung quốc từ móng cái",
-      "du lịch đông hưng 1 ngày",
-      "tour trung quốc 2026",
-      "sơn hằng travel"
-    ],
-    authors: [{ name: "Sơn Hằng Travel" }],
-    creator: "Sơn Hằng Travel",
-    publisher: "Sơn Hằng Travel",
-    formatDetection: {
-      email: false,
-      address: false,
-      telephone: false,
-    },
-    openGraph: {
+    default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
+    template: "%s | Sơn Hằng Travel"
+  },
+  description: "🌏 Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng 1-2 ngày, Nam Ninh, Quế Lâm, Trương Gia Giới, Phượng Hoàng Cổ Trấn. ✅ Giá tốt nhất ✅ Visa nhanh ✅ Hỗ trợ 24/7",
+  keywords: [
+    "tour trung quốc",
+    "du lịch trung quốc", 
+    "tour đông hưng",
+    "tour nam ninh",
+    "tour quế lâm",
+    "tour trương gia giới",
+    "tour phượng hoàng cổ trấn",
+    "tour trung quốc giá rẻ",
+    "tour trung quốc từ móng cái",
+    "du lịch đông hưng 1 ngày",
+    "tour trung quốc 2026",
+    "sơn hằng travel"
+  ],
+  authors: [{ name: "Sơn Hằng Travel" }],
+  creator: "Sơn Hằng Travel",
+  publisher: "Sơn Hằng Travel",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
     type: "website",
     locale: "vi_VN",
     url: "https://sonhangtravel.vercel.app",
@@ -97,7 +96,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#00CBA9',
+  themeColor: '#22C55E',
 };
 
 export default async function RootLayout({
@@ -108,10 +107,9 @@ export default async function RootLayout({
   // Fetch site settings for Header and Footer
   const siteSettings = await getSiteSettings();
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
-  const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : '/favicon.ico';
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
-  const phoneNumber = siteSettings?.phoneNumber || '0338239888';
-  const zaloNumber = siteSettings?.zaloNumber || '0338239888';
+  const phoneNumber = siteSettings?.phoneNumber || '0123456789';
+  const zaloNumber = siteSettings?.zaloNumber || undefined;
   const email = siteSettings?.email || 'info@sonhangtravel.com';
 
   // JSON-LD Structured Data for SEO
@@ -195,11 +193,6 @@ export default async function RootLayout({
   return (
     <html lang="vi">
       <head>
-        {/* Dynamic Favicon */}
-        <link rel="icon" href={faviconUrl} type="image/png" />
-        <link rel="shortcut icon" href={faviconUrl} type="image/png" />
-        <link rel="apple-touch-icon" href={faviconUrl} />
-        
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
@@ -213,15 +206,13 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ZaloProvider oaId={zaloNumber}>
-          <StatsBooster />
-          <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
-          <div className="pb-16 md:pb-0">
-            {children}
-          </div>
-          <Footer logoUrl={logoUrl} />
-          <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
-        </ZaloProvider>
+        <StatsBooster />
+        <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
+        <div className="pb-16 md:pb-0">
+          {children}
+        </div>
+        <Footer logoUrl={logoUrl} />
+        <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <SpeedInsights />
         <Analytics />
       </body>
