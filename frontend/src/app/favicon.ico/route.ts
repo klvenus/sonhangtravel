@@ -9,13 +9,12 @@ export async function GET(request: NextRequest) {
     
     if (settings?.favicon) {
       const faviconUrl = getImageUrl(settings.favicon);
-      
-      return NextResponse.redirect(faviconUrl, {
-        status: 307,
-        headers: {
-          'Cache-Control': 'public, max-age=3600, immutable',
-        },
-      });
+      if (faviconUrl && faviconUrl !== '/images/placeholder-tour.jpg') {
+        return NextResponse.redirect(faviconUrl, {
+          status: 307,
+          headers: { 'Cache-Control': 'public, max-age=3600, immutable' },
+        });
+      }
     }
     
     return new NextResponse('Favicon not found', { status: 404 });
