@@ -55,19 +55,28 @@ export async function GET(request: NextRequest) {
 
   const path = request.nextUrl.searchParams.get('path')
 
-  if (path) {
-    // Revalidate specific path
-    revalidatePath(path, 'page')
+  // Revalidate everything aggressively
+  const paths = ['/', '/tours', '/tour']
+  if (path && !paths.includes(path)) {
+    paths.push(path)
   }
 
-  // Always revalidate main pages
+  for (const p of paths) {
+    try {
+      revalidatePath(p, 'layout')
+      revalidatePath(p, 'page')
+    } catch (e) {
+      console.error(`Failed to revalidate ${p}:`, e)
+    }
+  }
+
+  // Also revalidate root layout (catches everything)
   revalidatePath('/', 'layout')
-  revalidatePath('/tours', 'page')
 
   return NextResponse.json({ 
     revalidated: true, 
-    path: path || 'all',
+    paths,
     now: Date.now(),
-    message: 'Cache cleared successfully'
+    message: 'All caches cleared'
   })
 }
