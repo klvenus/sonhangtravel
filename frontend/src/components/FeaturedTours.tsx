@@ -21,91 +21,7 @@ interface TourCardData {
   category?: string
 }
 
-// Fallback data khi chưa có dữ liệu từ Strapi
-const fallbackTours: TourCardData[] = [
-  {
-    id: '1',
-    title: 'Tour Đông Hưng 2N1Đ - Khám phá thành phố biên giới',
-    slug: 'tour-dong-hung-2-ngay-1-dem',
-    image: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=600&q=80',
-    location: 'Đông Hưng',
-    duration: '2N1Đ',
-    price: 1990000,
-    originalPrice: 2500000,
-    rating: 4.8,
-    reviewCount: 256,
-    isHot: true,
-    category: 'Đông Hưng',
-  },
-  {
-    id: '2',
-    title: 'Tour Nam Ninh - Quảng Châu 4N3Đ mua sắm',
-    slug: 'tour-nam-ninh-quang-chau-4-ngay',
-    image: 'https://images.unsplash.com/photo-1537531383496-f4749b8032cf?w=600&q=80',
-    location: 'Nam Ninh - Quảng Châu',
-    duration: '4N3Đ',
-    price: 5990000,
-    originalPrice: 7500000,
-    rating: 4.9,
-    reviewCount: 189,
-    isHot: true,
-    category: 'Quảng Châu',
-  },
-  {
-    id: '3',
-    title: 'Tour Thượng Hải - Hàng Châu 5N4Đ',
-    slug: 'tour-thuong-hai-hang-chau-5-ngay',
-    image: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=600&q=80',
-    location: 'Thượng Hải',
-    duration: '5N4Đ',
-    price: 12990000,
-    rating: 4.7,
-    reviewCount: 143,
-    isNew: true,
-    category: 'Thượng Hải',
-  },
-  {
-    id: '4',
-    title: 'Tour Bắc Kinh - Vạn Lý Trường Thành 6N5Đ',
-    slug: 'tour-bac-kinh-van-ly-truong-thanh',
-    image: 'https://images.unsplash.com/photo-1584467541268-b040f83be3fd?w=600&q=80',
-    location: 'Bắc Kinh',
-    duration: '6N5Đ',
-    price: 15990000,
-    originalPrice: 18000000,
-    rating: 4.9,
-    reviewCount: 312,
-    isHot: true,
-    category: 'Bắc Kinh',
-  },
-  {
-    id: '5',
-    title: 'Tour Quảng Châu - Thâm Quyến 3N2Đ',
-    slug: 'tour-quang-chau-tham-quyen-3-ngay',
-    image: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=600&q=80',
-    location: 'Quảng Châu',
-    duration: '3N2Đ',
-    price: 4490000,
-    rating: 4.6,
-    reviewCount: 98,
-    isNew: true,
-    category: 'Quảng Châu',
-  },
-  {
-    id: '6',
-    title: 'Tour Phượng Hoàng Cổ Trấn 5N4Đ',
-    slug: 'tour-phuong-hoang-co-tran',
-    image: 'https://images.unsplash.com/photo-1513415277900-a62401e19be4?w=600&q=80',
-    location: 'Hồ Nam',
-    duration: '5N4Đ',
-    price: 11990000,
-    originalPrice: 14000000,
-    rating: 4.8,
-    reviewCount: 178,
-    isHot: true,
-    category: 'Hồ Nam',
-  },
-]
+// No fallback - only show real data from database
 
 interface Props {
   initialTours?: TourCardData[]
@@ -114,7 +30,12 @@ interface Props {
 export default function FeaturedTours({ initialTours }: Props) {
   const displayTours = initialTours && initialTours.length > 0 
     ? initialTours 
-    : fallbackTours
+    : []
+
+  // Don't render section if no tours
+  if (displayTours.length === 0) {
+    return null
+  }
 
   return (
     <section className="py-4 md:py-8">

@@ -11,31 +11,15 @@ const quickFilters = [
   { label: '🛍️ Mua sắm', value: 'shopping' },
 ]
 
-// Default slides - fallback when no admin slides
+// Default banner when no admin slides configured
 const defaultSlides = [
   {
     id: 1,
-    title: 'Tour Đông Hưng',
-    subtitle: 'Chỉ từ 1.990.000đ',
-    image: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80',
-    linkText: 'Đặt ngay',
-    linkUrl: '/tours/dong-hung',
-  },
-  {
-    id: 2,
-    title: 'Tour Nam Ninh',
-    subtitle: 'Thiên đường mua sắm',
-    image: 'https://images.unsplash.com/photo-1537531383496-f4749b8032cf?w=800&q=80',
-    linkText: 'Khám phá',
-    linkUrl: '/tours/nam-ninh',
-  },
-  {
-    id: 3,
-    title: 'Tour Thượng Hải',
-    subtitle: 'Thành phố không ngủ',
-    image: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=800&q=80',
+    title: 'Sơn Hằng Travel',
+    subtitle: 'Tour Trung Quốc Uy Tín',
+    image: 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772779153/large_Web_2250c7f598.png',
     linkText: 'Xem tour',
-    linkUrl: '/tours/thuong-hai',
+    linkUrl: '/tours',
   },
 ]
 

@@ -13,57 +13,7 @@ interface CategoryData {
   icon: string
 }
 
-// Fallback data
-const fallbackCategories: CategoryData[] = [
-  {
-    id: 1,
-    name: 'Đông Hưng',
-    slug: 'dong-hung',
-    image: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=80',
-    tourCount: 15,
-    icon: '🏯',
-  },
-  {
-    id: 2,
-    name: 'Nam Ninh',
-    slug: 'nam-ninh',
-    image: 'https://images.unsplash.com/photo-1537531383496-f4749b8032cf?w=400&q=80',
-    tourCount: 12,
-    icon: '🌆',
-  },
-  {
-    id: 3,
-    name: 'Thượng Hải',
-    slug: 'thuong-hai',
-    image: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=400&q=80',
-    tourCount: 20,
-    icon: '🌃',
-  },
-  {
-    id: 4,
-    name: 'Quảng Châu',
-    slug: 'quang-chau',
-    image: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400&q=80',
-    tourCount: 18,
-    icon: '🏙️',
-  },
-  {
-    id: 5,
-    name: 'Bắc Kinh',
-    slug: 'bac-kinh',
-    image: 'https://images.unsplash.com/photo-1584467541268-b040f83be3fd?w=400&q=80',
-    tourCount: 25,
-    icon: '🏛️',
-  },
-  {
-    id: 6,
-    name: 'Phượng Hoàng',
-    slug: 'phuong-hoang',
-    image: 'https://images.unsplash.com/photo-1513415277900-a62401e19be4?w=400&q=80',
-    tourCount: 10,
-    icon: '🏔️',
-  },
-]
+// No fallback - only show real data from database
 
 interface Props {
   initialCategories?: CategoryData[]
@@ -72,7 +22,12 @@ interface Props {
 export default function CategorySection({ initialCategories }: Props) {
   const displayCategories = initialCategories && initialCategories.length > 0 
     ? initialCategories 
-    : fallbackCategories
+    : []
+
+  // Don't render section if no categories
+  if (displayCategories.length === 0) {
+    return null
+  }
 
   return (
     <section className="py-4 md:py-8 bg-white md:bg-gray-50">
