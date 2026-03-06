@@ -31,20 +31,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       : 'https://sonhangtravel.vercel.app/og-image.jpg'
 
     const priceFormatted = new Intl.NumberFormat('vi-VN').format(tour.price)
+    const departure = tour.departure || 'Móng Cái'
+    const destination = tour.destination || 'Trung Quốc'
+    const metaTitle = `${tour.title} | ${tour.duration} | Giá từ ${priceFormatted}đ | Sơn Hằng Travel`
+    const metaDescription = tour.shortDescription
+      ? `${tour.shortDescription} Khởi hành từ ${departure}. Thời gian ${tour.duration}. Liên hệ Sơn Hằng Travel để được tư vấn và giữ chỗ nhanh chóng.`
+      : `${tour.title} khởi hành từ ${departure}, thời gian ${tour.duration}, điểm đến ${destination}. Giá từ ${priceFormatted}đ/người. Liên hệ Sơn Hằng Travel để được tư vấn chi tiết và đặt tour nhanh chóng.`
 
     return {
-      title: `${tour.title} - Giá ${priceFormatted}đ`,
-      description: tour.shortDescription || `Tour ${tour.destination} ${tour.duration}. Khởi hành từ ${tour.departure || 'Móng Cái'}. Giá chỉ ${priceFormatted}đ/người. Đặt tour ngay!`,
+      title: metaTitle,
+      description: metaDescription,
       keywords: [
         tour.title,
-        `tour ${tour.destination?.toLowerCase()}`,
-        `du lịch ${tour.destination?.toLowerCase()}`,
+        `tour ${destination.toLowerCase()}`,
+        `du lịch ${destination.toLowerCase()}`,
         `tour ${tour.duration}`,
-        'tour trung quốc giá rẻ',
+        `${tour.title.toLowerCase()} giá tốt`,
+        'tour trung quốc',
+        'son hằng travel',
       ],
       openGraph: {
         title: `${tour.title} | Sơn Hằng Travel`,
-        description: tour.shortDescription || `Tour ${tour.destination} ${tour.duration}. Giá ${priceFormatted}đ/người`,
+        description: metaDescription,
         url: `https://sonhangtravel.vercel.app/tour/${slug}`,
         type: 'article',
         images: [
@@ -58,8 +66,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       },
       twitter: {
         card: 'summary_large_image',
-        title: tour.title,
-        description: tour.shortDescription || `Tour ${tour.destination} - ${priceFormatted}đ`,
+        title: `${tour.title} | Sơn Hằng Travel`,
+        description: metaDescription,
         images: [imageUrl],
       },
       alternates: {
