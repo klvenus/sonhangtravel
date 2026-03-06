@@ -53,10 +53,13 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           <p className="text-lg text-gray-600 leading-8">{post.description}</p>
         </div>
 
-        <div className="prose prose-lg max-w-none prose-p:text-gray-700 prose-p:leading-8">
-          {post.content.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+        <div className="prose prose-lg max-w-none prose-p:text-gray-700 prose-p:leading-8 prose-h2:text-gray-900 prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4">
+          {post.content.map((block, index) => {
+            if (block.type === 'heading') {
+              return <h2 key={index}>{block.text}</h2>
+            }
+            return <p key={index}>{block.text}</p>
+          })}
         </div>
       </article>
     </main>
