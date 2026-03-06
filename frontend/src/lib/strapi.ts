@@ -1,5 +1,7 @@
 // Strapi API Configuration
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+const RAW_STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+// Ensure URL always has a protocol prefix
+const STRAPI_URL = RAW_STRAPI_URL.startsWith('http') ? RAW_STRAPI_URL : `https://${RAW_STRAPI_URL}`;
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 // Timeout config (longer for production cold starts on free tier hosting)
@@ -146,11 +148,10 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidat
       ...fetchOptions,
       headers: getHeaders(),
       signal: controller.signal,
-      cache: 'no-store', // Disable cache temporarily for faster updates
-      // next: { 
-      //   revalidate: revalidate ?? 3600, // Default: cache 1 hour
-      //   tags: ['strapi'] // Tag for on-demand revalidation
-      // },
+      next: { 
+        revalidate: revalidate ?? 3600, // Default: cache 1 hour
+        tags: ['strapi'] // Tag for on-demand revalidation
+      },
     });
     
     clearTimeout(timeoutId);

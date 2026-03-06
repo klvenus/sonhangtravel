@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next'
 
 const SITE_URL = 'https://sonhangtravel.vercel.app'
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://sonhangtravel.onrender.com'
+const RAW_STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://sonhangtravel-production-653f.up.railway.app'
+const STRAPI_URL = RAW_STRAPI_URL.startsWith('http') ? RAW_STRAPI_URL : `https://${RAW_STRAPI_URL}`
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Always use today's date for lastModified to signal fresh content
