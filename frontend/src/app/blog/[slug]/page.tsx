@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import BlogGalleryLightbox from '@/components/BlogGalleryLightbox'
 import BlogSalePageEnhancer from '@/components/BlogSalePageEnhancer'
+import SaleCountdown from '@/components/SaleCountdown'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 
 export async function generateStaticParams() {
@@ -101,6 +102,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   }
 
   const isSalePost = /thanh lý|suất cuối|ưu đãi|giảm còn|giá tốt|flash sale/i.test(`${post.title} ${post.excerpt} ${post.description}`)
+  const saleUntilIso = '2026-03-12T23:59:59+07:00'
 
   return (
     <main className={isSalePost ? "bg-gradient-to-b from-rose-50 via-white to-orange-50" : "bg-white"}>
@@ -116,14 +118,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           <h1 className={`leading-tight mb-4 font-bold ${isSalePost ? 'text-4xl md:text-6xl text-gray-900' : 'text-3xl md:text-5xl text-gray-900'}`}>{post.title}</h1>
           <p className={`leading-8 ${isSalePost ? 'text-xl md:text-2xl text-gray-700' : 'text-lg md:text-xl text-gray-600'}`}>{post.description}</p>
 
-          {isSalePost && (
-            <div className="mt-6 rounded-xl border border-orange-200 bg-white/80 backdrop-blur p-4 md:p-5 shadow-sm">
-              <div className="flex flex-wrap items-center gap-3 text-sm md:text-base">
-                <span className="rounded-lg bg-rose-100 text-rose-700 px-3 py-2 font-semibold animate-pulse">⏰ Số lượng có hạn</span>
-                <span className="rounded-lg bg-orange-100 text-orange-700 px-3 py-2 font-semibold">🔥 Giá đang tốt, nên chốt sớm</span>
-              </div>
-            </div>
-          )}
+          {isSalePost && <SaleCountdown untilIso={saleUntilIso} />}
         </div>
 
         {post.thumbnail && (
