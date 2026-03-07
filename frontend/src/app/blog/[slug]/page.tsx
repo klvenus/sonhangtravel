@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import BlogGalleryLightbox from '@/components/BlogGalleryLightbox'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
@@ -52,6 +53,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+function renderParagraph(text: string, key: number) {
+  const match = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
+  if (!match) return <p key={key}>{text}</p>
+
+  const [full, label, href] = match
+  const parts = text.split(full)
+
+  return (
+    <p key={key}>
+      {parts[0]}
+      <Link href={href} className="font-semibold text-emerald-700 underline underline-offset-4 hover:text-emerald-800">
+        {label}
+      </Link>
+      {parts[1]}
+    </p>
+  )
+}
+
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const post = await getBlogPostBySlug(slug)
@@ -92,7 +111,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             if (block.type === 'heading') {
               return <h2 key={index}>{block.text}</h2>
             }
-            return <p key={index}>{block.text}</p>
+            return renderParagraph(block.text, index)
           })}
         </div>
 
