@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import BlogGalleryLightbox from '@/components/BlogGalleryLightbox'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 
 export async function generateStaticParams() {
@@ -101,19 +102,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Album ảnh chuyến đi</h2>
               <p className="text-gray-600 mt-2">Xem thêm một vài khoảnh khắc để cảm nhận rõ hơn vibe của hành trình.</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {post.gallery.map((image, index) => (
-                <div key={index} className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm">
-                  <Image
-                    src={image}
-                    alt={`${post.title} - ảnh ${index + 1}`}
-                    fill
-                    className="object-cover transition-transform duration-500 hover:scale-105"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                  />
-                </div>
-              ))}
-            </div>
+            <BlogGalleryLightbox images={post.gallery} title={post.title} />
           </section>
         )}
       </article>
