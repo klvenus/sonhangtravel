@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { getAllBlogPosts } from '@/lib/blog'
 
@@ -25,28 +26,42 @@ export default async function BlogPage() {
           </p>
         </div>
 
-        <div className="grid gap-6">
+        <div className="grid gap-8">
           {posts.map((post) => (
-            <article key={post.slug} className="border border-gray-200 rounded-2xl p-6 md:p-8 hover:shadow-md transition-shadow">
-              <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-                <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 font-medium">
-                  {post.category}
-                </span>
-                <span>{new Date(post.publishedAt).toLocaleDateString('vi-VN')}</span>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3 leading-tight">
-                <Link href={`/blog/${post.slug}`} className="hover:text-emerald-700 transition-colors">
-                  {post.title}
+            <article key={post.slug} className="overflow-hidden border border-gray-200 rounded-3xl bg-white hover:shadow-lg transition-shadow">
+              {post.thumbnail && (
+                <Link href={`/blog/${post.slug}`} className="block relative aspect-[16/9] overflow-hidden bg-gray-100">
+                  <Image
+                    src={post.thumbnail}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 960px"
+                  />
                 </Link>
-              </h2>
-              <p className="text-gray-600 leading-7 mb-5">{post.excerpt}</p>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="inline-flex items-center gap-2 text-emerald-700 font-semibold hover:text-emerald-800"
-              >
-                Đọc bài viết
-                <span>→</span>
-              </Link>
+              )}
+
+              <div className="p-6 md:p-8">
+                <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+                  <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 font-medium">
+                    {post.category}
+                  </span>
+                  <span>{new Date(post.publishedAt).toLocaleDateString('vi-VN')}</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                  <Link href={`/blog/${post.slug}`} className="hover:text-emerald-700 transition-colors">
+                    {post.title}
+                  </Link>
+                </h2>
+                <p className="text-gray-600 leading-7 mb-5 text-base md:text-lg">{post.excerpt}</p>
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="inline-flex items-center gap-2 text-emerald-700 font-semibold hover:text-emerald-800"
+                >
+                  Đọc bài viết
+                  <span>→</span>
+                </Link>
+              </div>
             </article>
           ))}
         </div>

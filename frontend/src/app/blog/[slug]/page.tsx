@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 
@@ -50,9 +51,22 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             </span>
             <span>{new Date(post.publishedAt).toLocaleDateString('vi-VN')}</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">{post.title}</h1>
-          <p className="text-lg text-gray-600 leading-8">{post.description}</p>
+          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">{post.title}</h1>
+          <p className="text-lg md:text-xl text-gray-600 leading-8">{post.description}</p>
         </div>
+
+        {post.thumbnail && (
+          <div className="relative aspect-[16/9] overflow-hidden rounded-3xl mb-10 bg-gray-100 shadow-sm">
+            <Image
+              src={post.thumbnail}
+              alt={post.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 1024px"
+              priority
+            />
+          </div>
+        )}
 
         <div className="prose prose-lg max-w-none prose-p:text-gray-700 prose-p:leading-8 prose-h2:text-gray-900 prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4">
           {post.content.map((block, index) => {
