@@ -26,6 +26,7 @@ export default function BlogForm({ postId }: { postId?: string }) {
     excerpt: '',
     category: 'Blog',
     thumbnail: '',
+    galleryText: '',
     keywords: '',
     published: true,
     publishedAt: new Date().toISOString().slice(0, 16),
@@ -42,6 +43,7 @@ export default function BlogForm({ postId }: { postId?: string }) {
         excerpt: d.excerpt || '',
         category: d.category || 'Blog',
         thumbnail: d.thumbnail || '',
+        galleryText: Array.isArray(d.gallery) ? d.gallery.join('\n') : '',
         keywords: Array.isArray(d.keywords) ? d.keywords.join(', ') : '',
         published: d.published !== false,
         publishedAt: d.publishedAt ? new Date(d.publishedAt).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
@@ -73,6 +75,7 @@ export default function BlogForm({ postId }: { postId?: string }) {
       excerpt: form.excerpt,
       category: form.category,
       thumbnail: form.thumbnail || null,
+      gallery: form.galleryText.split('\n').map(x => x.trim()).filter(Boolean),
       keywords: form.keywords.split(',').map(x => x.trim()).filter(Boolean),
       published: form.published,
       publishedAt: form.publishedAt,
@@ -138,6 +141,10 @@ export default function BlogForm({ postId }: { postId?: string }) {
         <div>
           <label className="block text-sm font-medium mb-1">Keywords</label>
           <input value={form.keywords} onChange={e => setForm({ ...form, keywords: e.target.value })} placeholder="kw1, kw2, kw3" className="w-full border rounded-lg px-3 py-2" />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium mb-1">Gallery URLs</label>
+          <textarea value={form.galleryText} onChange={e => setForm({ ...form, galleryText: e.target.value })} rows={4} placeholder="Mỗi dòng 1 ảnh" className="w-full border rounded-lg px-3 py-2" />
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Ngày đăng</label>

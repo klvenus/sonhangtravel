@@ -19,6 +19,7 @@ export interface BlogPost {
   category: string
   keywords: string[]
   thumbnail?: string | null
+  gallery?: string[]
   published: boolean
 }
 
@@ -35,6 +36,7 @@ function mapRow(row: typeof blogPosts.$inferSelect): BlogPost {
     category: row.category,
     keywords: Array.isArray(row.keywords) ? row.keywords as string[] : [],
     thumbnail: row.thumbnail,
+    gallery: Array.isArray(row.gallery) ? row.gallery as string[] : [],
     published: Boolean(row.published),
   }
 }

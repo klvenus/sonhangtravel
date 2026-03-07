@@ -66,6 +66,7 @@ export const blogPosts = pgTable('blog_posts', {
   category: text('category').notNull().default('Blog'),
   keywords: jsonb('keywords').$type<string[]>().default([]),
   thumbnail: text('thumbnail'),
+  gallery: jsonb('gallery').$type<string[]>().default([]),
   published: boolean('published').default(true),
   publishedAt: timestamp('published_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

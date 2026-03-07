@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       category: body.category || 'Blog',
       keywords: body.keywords || [],
       thumbnail: body.thumbnail || null,
+      gallery: body.gallery || [],
       published: body.published !== false,
       publishedAt: body.publishedAt ? new Date(body.publishedAt) : new Date(),
       updatedAt: new Date(),

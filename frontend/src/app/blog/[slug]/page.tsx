@@ -94,6 +94,28 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             return <p key={index}>{block.text}</p>
           })}
         </div>
+
+        {post.gallery && post.gallery.length > 0 && (
+          <section className="mt-14 border-t border-gray-200 pt-10">
+            <div className="mb-5">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Album ảnh chuyến đi</h2>
+              <p className="text-gray-600 mt-2">Xem thêm một vài khoảnh khắc để cảm nhận rõ hơn vibe của hành trình.</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {post.gallery.map((image, index) => (
+                <div key={index} className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm">
+                  <Image
+                    src={image}
+                    alt={`${post.title} - ảnh ${index + 1}`}
+                    fill
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </article>
     </main>
   )
