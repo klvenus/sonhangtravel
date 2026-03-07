@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel",
     description: "Khám phá Trung Quốc với các tour chất lượng: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất thị trường!",
-    url: "https://sonhangtravel.vercel.app/tours",
+    url: "https://sonhangtravel.com/tours",
     type: "website",
   },
   alternates: {
-    canonical: "https://sonhangtravel.vercel.app/tours",
+    canonical: "https://sonhangtravel.com/tours",
   },
 }
 

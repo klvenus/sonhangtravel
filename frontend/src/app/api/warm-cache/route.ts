@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 // Vercel Cron: Add to vercel.json or use external service like cron-job.org
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sonhangtravel.vercel.app'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sonhangtravel.com'
   
   try {
     // Fetch main pages to warm up cache

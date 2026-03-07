@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { tours, categories } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 
-const SITE_URL = 'https://sonhangtravel.vercel.app'
+const SITE_URL = 'https://sonhangtravel.com'
 
 export const revalidate = 3600
 

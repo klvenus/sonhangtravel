@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     'Chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam và các tuyến du lịch Trung Quốc từ Móng Cái, Lào Cai.',
   alternates: {
-    canonical: 'https://sonhangtravel.vercel.app/blog',
+    canonical: 'https://sonhangtravel.com/blog',
   },
 }
 

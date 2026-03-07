@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/admin/'],
       },
     ],
-    sitemap: 'https://sonhangtravel.vercel.app/sitemap.xml',
+    sitemap: 'https://sonhangtravel.com/sitemap.xml',
   }
 }

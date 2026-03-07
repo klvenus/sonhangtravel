@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     const imageUrl = tour.thumbnail 
       ? getImageUrl(tour.thumbnail, 'large')
-      : 'https://sonhangtravel.vercel.app/og-image.jpg'
+      : 'https://sonhangtravel.com/og-image.jpg'
 
     const priceFormatted = new Intl.NumberFormat('vi-VN').format(tour.price)
     const departure = tour.departure || 'Móng Cái'
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       openGraph: {
         title: `${tour.title} | Sơn Hằng Travel`,
         description: metaDescription,
-        url: `https://sonhangtravel.vercel.app/tour/${slug}`,
+        url: `https://sonhangtravel.com/tour/${slug}`,
         type: 'article',
         images: [
           {
@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         images: [imageUrl],
       },
       alternates: {
-        canonical: `https://sonhangtravel.vercel.app/tour/${slug}`,
+        canonical: `https://sonhangtravel.com/tour/${slug}`,
       },
     }
   } catch {
@@ -231,13 +231,13 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
         "availability": "https://schema.org/InStock",
         "validFrom": new Date().toISOString(),
         "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days
-        "url": `https://sonhangtravel.vercel.app/tour/${slug}`
+        "url": `https://sonhangtravel.com/tour/${slug}`
       },
       "provider": {
         "@type": "TravelAgency",
         "name": "Sơn Hằng Travel",
         "telephone": phoneNumber,
-        "url": "https://sonhangtravel.vercel.app"
+        "url": "https://sonhangtravel.com"
       },
       "image": tour.thumbnail ? getImageUrl(tour.thumbnail, 'large') : undefined,
       "aggregateRating": {
@@ -257,19 +257,19 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
           "@type": "ListItem",
           "position": 1,
           "name": "Trang chủ",
-          "item": "https://sonhangtravel.vercel.app"
+          "item": "https://sonhangtravel.com"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Tour",
-          "item": "https://sonhangtravel.vercel.app/tours"
+          "item": "https://sonhangtravel.com/tours"
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": tour.title,
-          "item": `https://sonhangtravel.vercel.app/tour/${slug}`
+          "item": `https://sonhangtravel.com/tour/${slug}`
         }
       ]
     }
@@ -285,12 +285,12 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
         "@type": "ListItem",
         "position": index + 1,
         "name": t.title,
-        "url": `https://sonhangtravel.vercel.app/tour/${t.slug}`,
+        "url": `https://sonhangtravel.com/tour/${t.slug}`,
         "item": {
           "@type": "TouristTrip",
           "name": t.title,
           "description": t.shortDescription,
-          "url": `https://sonhangtravel.vercel.app/tour/${t.slug}`,
+          "url": `https://sonhangtravel.com/tour/${t.slug}`,
           "offers": {
             "@type": "Offer",
             "price": t.price,
@@ -436,35 +436,35 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
           "position": 1,
           "name": "Liên hệ đặt tour",
           "text": `Gọi hotline ${phoneNumber} hoặc nhắn Zalo để được tư vấn tour ${tour.title}`,
-          "url": `https://sonhangtravel.vercel.app/tour/${slug}#booking`
+          "url": `https://sonhangtravel.com/tour/${slug}#booking`
         },
         {
           "@type": "HowToStep",
           "position": 2,
           "name": "Xác nhận thông tin",
           "text": "Cung cấp số lượng khách, ngày khởi hành mong muốn. Nhân viên sẽ kiểm tra chỗ trống.",
-          "url": `https://sonhangtravel.vercel.app/tour/${slug}#booking`
+          "url": `https://sonhangtravel.com/tour/${slug}#booking`
         },
         {
           "@type": "HowToStep",
           "position": 3,
           "name": "Gửi giấy tờ",
           "text": "Gửi ảnh CCCD + ảnh 4x6 nền trắng qua Zalo. Trẻ em gửi thêm giấy khai sinh.",
-          "url": `https://sonhangtravel.vercel.app/tour/${slug}#documents`
+          "url": `https://sonhangtravel.com/tour/${slug}#documents`
         },
         {
           "@type": "HowToStep",
           "position": 4,
           "name": "Đặt cọc 50%",
           "text": `Chuyển khoản đặt cọc 50% (${new Intl.NumberFormat('vi-VN').format(tour.price * 0.5)}đ/người) để giữ chỗ.`,
-          "url": `https://sonhangtravel.vercel.app/tour/${slug}#payment`
+          "url": `https://sonhangtravel.com/tour/${slug}#payment`
         },
         {
           "@type": "HowToStep",
           "position": 5,
           "name": "Thanh toán và khởi hành",
           "text": "Thanh toán số tiền còn lại vào ngày khởi hành. Tập trung đúng giờ và có mặt để bắt đầu hành trình!",
-          "url": `https://sonhangtravel.vercel.app/tour/${slug}`
+          "url": `https://sonhangtravel.com/tour/${slug}`
         }
       ]
     }

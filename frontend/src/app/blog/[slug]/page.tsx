@@ -25,12 +25,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: post.description,
     keywords: post.keywords,
     alternates: {
-      canonical: `https://sonhangtravel.vercel.app/blog/${post.slug}`,
+      canonical: `https://sonhangtravel.com/blog/${post.slug}`,
     },
     openGraph: {
       title: `${post.title} | Sơn Hằng Travel`,
       description: post.description,
-      url: `https://sonhangtravel.vercel.app/blog/${post.slug}`,
+      url: `https://sonhangtravel.com/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.publishedAt,
       images: post.thumbnail
