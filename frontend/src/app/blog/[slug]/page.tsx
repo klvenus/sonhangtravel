@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import BlogGalleryLightbox from '@/components/BlogGalleryLightbox'
 import BlogSalePageEnhancer from '@/components/BlogSalePageEnhancer'
 import SaleCountdown from '@/components/SaleCountdown'
+import SaleActions from '@/components/SaleActions'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 
 export async function generateStaticParams() {
@@ -103,6 +104,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
   const isSalePost = /thanh lý|suất cuối|ưu đãi|giảm còn|giá tốt|flash sale/i.test(`${post.title} ${post.excerpt} ${post.description}`)
   const saleUntilIso = '2026-03-12T23:59:59+07:00'
+  const saleTourHref = 'https://sonhangtravel.com/tours'
+  const saleZaloHref = 'https://zalo.me/0338239888'
 
   return (
     <main className={isSalePost ? "bg-gradient-to-b from-rose-50 via-white to-orange-50" : "bg-white"}>
@@ -183,6 +186,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             )
           })()}
         </div>
+
+        {isSalePost && <SaleActions untilIso={saleUntilIso} tourHref={saleTourHref} zaloHref={saleZaloHref} />}
 
         {!isSalePost && post.gallery && post.gallery.length > 0 && (
           <section className="mt-14 border-t border-gray-200 pt-10">
