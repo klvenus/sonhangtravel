@@ -61,13 +61,17 @@ function renderParagraph(text: string, key: number) {
   const parts = text.split(full)
 
   return (
-    <p key={key}>
-      {parts[0]}
-      <Link href={href} className="font-semibold text-emerald-700 underline underline-offset-4 hover:text-emerald-800">
+    <div key={key} className="my-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 not-prose">
+      {parts[0] && <p className="mb-3 text-gray-700 leading-8">{parts[0].trim()}</p>}
+      <Link
+        href={href}
+        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 font-semibold text-white no-underline hover:bg-emerald-700 transition-colors"
+      >
         {label}
+        <span>→</span>
       </Link>
-      {parts[1]}
-    </p>
+      {parts[1] && <p className="mt-3 text-gray-700 leading-8">{parts[1].trim()}</p>}
+    </div>
   )
 }
 
