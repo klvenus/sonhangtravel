@@ -61,11 +61,11 @@ function renderParagraph(text: string, key: number) {
   const parts = text.split(full)
 
   return (
-    <div key={key} className="my-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 not-prose">
+    <div key={key} className="my-6 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 md:p-5 not-prose">
       {parts[0] && <p className="mb-3 text-gray-700 leading-8">{parts[0].trim()}</p>}
       <Link
         href={href}
-        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 font-semibold text-white no-underline hover:bg-emerald-700 transition-colors"
+        className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 font-semibold text-white no-underline hover:bg-emerald-700 transition-colors"
       >
         {label}
         <span>→</span>
@@ -111,12 +111,44 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         )}
 
         <div className="prose prose-lg max-w-none prose-p:text-gray-700 prose-p:leading-8 prose-h2:text-gray-900 prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4">
-          {post.content.map((block, index) => {
-            if (block.type === 'heading') {
-              return <h2 key={index}>{block.text}</h2>
-            }
-            return renderParagraph(block.text, index)
-          })}
+          {(() => {
+            const faqIndex = post.content.findIndex((block) => block.type === 'heading' && block.text.trim().toLowerCase() === 'faq nhanh')
+            const mainBlocks = faqIndex >= 0 ? post.content.slice(0, faqIndex) : post.content
+            const faqBlocks = faqIndex >= 0 ? post.content.slice(faqIndex + 1) : []
+
+            return (
+              <>
+                {mainBlocks.map((block, index) => {
+                  if (block.type === 'heading') {
+                    return <h2 key={index}>{block.text}</h2>
+                  }
+                  return renderParagraph(block.text, index)
+                })}
+
+                {faqBlocks.length > 0 && (
+                  <section className="not-prose mt-12 rounded-2xl border border-gray-200 bg-gray-50 p-5 md:p-7">
+                    <div className="mb-5">
+                      <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Câu hỏi thường gặp</h2>
+                      <p className="text-gray-600 mt-2">Một vài thắc mắc nhanh trước khi chọn tour.</p>
+                    </div>
+                    <div className="space-y-3">
+                      {faqBlocks.map((block, index) => {
+                        const parts = block.text.split('?')
+                        const question = parts[0]?.trim()
+                        const answer = parts.slice(1).join('?').trim()
+                        return (
+                          <div key={`faq-${index}`} className="rounded-xl bg-white border border-gray-200 p-4 md:p-5">
+                            <h3 className="font-semibold text-gray-900 leading-7">{question}?</h3>
+                            {answer && <p className="text-gray-600 mt-2 leading-7">{answer}</p>}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </section>
+                )}
+              </>
+            )
+          })()}
         </div>
 
         {post.gallery && post.gallery.length > 0 && (
