@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import BlogGalleryLightbox from '@/components/BlogGalleryLightbox'
+import BlogSalePageEnhancer from '@/components/BlogSalePageEnhancer'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 
 export async function generateStaticParams() {
@@ -53,12 +54,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-function renderParagraph(text: string, key: number) {
+function renderParagraph(text: string, key: number, isSalePost: boolean) {
   const match = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
   if (!match) return <p key={key}>{text}</p>
 
   const [full, label, href] = match
   const parts = text.split(full)
+
+  if (isSalePost) {
+    return (
+      <div key={key} className="my-6 rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50 p-4 md:p-5 not-prose shadow-sm">
+        {parts[0] && <p className="mb-3 text-gray-700 leading-8">{parts[0].trim()}</p>}
+        <Link
+          href={href}
+          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 font-semibold text-white no-underline shadow-md hover:opacity-95 transition-all animate-pulse"
+        >
+          {label}
+          <span>→</span>
+        </Link>
+        {parts[1] && <p className="mt-3 text-gray-700 leading-8">{parts[1].trim()}</p>}
+      </div>
+    )
+  }
 
   return (
     <div key={key} className="my-6 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 md:p-5 not-prose">
@@ -83,18 +100,30 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     notFound()
   }
 
+  const isSalePost = /thanh lý|suất cuối|ưu đãi|giảm còn|giá tốt|flash sale/i.test(`${post.title} ${post.excerpt} ${post.description}`)
+
   return (
-    <main className="bg-white">
+    <main className={isSalePost ? "bg-gradient-to-b from-rose-50 via-white to-orange-50" : "bg-white"}>
+      {isSalePost && <BlogSalePageEnhancer />}
       <article className="max-w-4xl mx-auto px-4 py-10 md:py-14">
         <div className="mb-8">
           <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
-            <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 font-medium">
-              {post.category}
+            <span className={`inline-flex items-center px-3 py-1 font-medium ${isSalePost ? 'rounded-lg bg-orange-100 text-orange-700' : 'rounded-full bg-emerald-50 text-emerald-700'}`}>
+              {isSalePost ? '⚡ Sale / Suất cuối' : post.category}
             </span>
             <span>{new Date(post.publishedAt).toLocaleDateString('vi-VN')}</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">{post.title}</h1>
-          <p className="text-lg md:text-xl text-gray-600 leading-8">{post.description}</p>
+          <h1 className={`leading-tight mb-4 font-bold ${isSalePost ? 'text-4xl md:text-6xl text-gray-900' : 'text-3xl md:text-5xl text-gray-900'}`}>{post.title}</h1>
+          <p className={`leading-8 ${isSalePost ? 'text-xl md:text-2xl text-gray-700' : 'text-lg md:text-xl text-gray-600'}`}>{post.description}</p>
+
+          {isSalePost && (
+            <div className="mt-6 rounded-xl border border-orange-200 bg-white/80 backdrop-blur p-4 md:p-5 shadow-sm">
+              <div className="flex flex-wrap items-center gap-3 text-sm md:text-base">
+                <span className="rounded-lg bg-rose-100 text-rose-700 px-3 py-2 font-semibold animate-pulse">⏰ Số lượng có hạn</span>
+                <span className="rounded-lg bg-orange-100 text-orange-700 px-3 py-2 font-semibold">🔥 Giá đang tốt, nên chốt sớm</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {post.thumbnail && (
@@ -120,16 +149,16 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               <>
                 {mainBlocks.map((block, index) => {
                   if (block.type === 'heading') {
-                    return <h2 key={index}>{block.text}</h2>
+                    return <h2 key={index} className={isSalePost ? 'text-gray-900 font-bold tracking-tight' : ''}>{block.text}</h2>
                   }
-                  return renderParagraph(block.text, index)
+                  return renderParagraph(block.text, index, isSalePost)
                 })}
 
                 {faqBlocks.length > 0 && (
-                  <section className="not-prose mt-12 rounded-2xl border border-gray-200 bg-gray-50 p-5 md:p-7">
+                  <section className={`not-prose mt-12 p-5 md:p-7 ${isSalePost ? 'rounded-2xl border border-orange-200 bg-gradient-to-b from-orange-50 to-white shadow-sm' : 'rounded-2xl border border-gray-200 bg-gray-50'}`}>
                     <div className="mb-5">
-                      <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Câu hỏi thường gặp</h2>
-                      <p className="text-gray-600 mt-2">Một vài thắc mắc nhanh trước khi chọn tour.</p>
+                      <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{isSalePost ? 'Cần chốt nhanh? Xem nhanh ở đây' : 'Câu hỏi thường gặp'}</h2>
+                      <p className="text-gray-600 mt-2">{isSalePost ? 'Những câu hỏi khách hay quan tâm trước khi giữ suất.' : 'Một vài thắc mắc nhanh trước khi chọn tour.'}</p>
                     </div>
                     <div className="space-y-3">
                       {faqBlocks.map((block, index) => {
@@ -137,7 +166,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                         const question = parts[0]?.trim()
                         const answer = parts.slice(1).join('?').trim()
                         return (
-                          <div key={`faq-${index}`} className="rounded-xl bg-white border border-gray-200 p-4 md:p-5">
+                          <div key={`faq-${index}`} data-sale-faq-card={isSalePost ? 'true' : undefined} className={`rounded-xl p-4 md:p-5 ${isSalePost ? 'bg-white border border-orange-100 shadow-sm animate-[fadeInUp_.45s_ease-out_both]' : 'bg-white border border-gray-200'}`}>
                             <h3 className="font-semibold text-gray-900 leading-7">{question}?</h3>
                             {answer && <p className="text-gray-600 mt-2 leading-7">{answer}</p>}
                           </div>
