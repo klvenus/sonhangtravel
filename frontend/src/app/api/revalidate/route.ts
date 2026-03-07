@@ -23,12 +23,16 @@ export async function POST(request: NextRequest) {
     revalidatePath('/', 'layout')
     revalidatePath('/tours', 'page')
     
-    // If specific tour/category was updated, revalidate that path too
+    // If specific tour/category/blog was updated, revalidate that path too
     if (body.model === 'tour' && body.entry?.slug) {
       revalidatePath(`/tour/${body.entry.slug}`, 'page')
     }
     if (body.model === 'category' && body.entry?.slug) {
       revalidatePath(`/tours/${body.entry.slug}`, 'page')
+    }
+    if ((body.model === 'blog' || body.model === 'blog_post') && body.entry?.slug) {
+      revalidatePath('/blog', 'page')
+      revalidatePath(`/blog/${body.entry.slug}`, 'page')
     }
 
     return NextResponse.json({ 
@@ -56,7 +60,7 @@ export async function GET(request: NextRequest) {
   const path = request.nextUrl.searchParams.get('path')
 
   // Revalidate everything aggressively
-  const paths = ['/', '/tours', '/tour']
+  const paths = ['/', '/tours', '/tour', '/blog']
   if (path && !paths.includes(path)) {
     paths.push(path)
   }

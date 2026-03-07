@@ -55,6 +55,23 @@ export const tours = pgTable('tours', {
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
+// ============ BLOG POSTS ============
+export const blogPosts = pgTable('blog_posts', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  slug: text('slug').notNull().unique(),
+  description: text('description').notNull(),
+  excerpt: text('excerpt').notNull(),
+  content: jsonb('content').$type<{ type: 'heading' | 'paragraph'; text: string }[]>().default([]),
+  category: text('category').notNull().default('Blog'),
+  keywords: jsonb('keywords').$type<string[]>().default([]),
+  thumbnail: text('thumbnail'),
+  published: boolean('published').default(true),
+  publishedAt: timestamp('published_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 // ============ SITE SETTINGS ============
 export const siteSettings = pgTable('site_settings', {
   id: serial('id').primaryKey(),

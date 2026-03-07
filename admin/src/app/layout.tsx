@@ -19,6 +19,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NavLink href="/" icon="📊" label="Dashboard" />
               <NavLink href="/tours" icon="🗺️" label="Tours" />
               <NavLink href="/tours/new" icon="➕" label="Thêm tour" />
+              <NavLink href="/blog" icon="📝" label="Blog" />
+              <NavLink href="/blog/new" icon="✍️" label="Thêm bài viết" />
               <NavLink href="/categories" icon="📁" label="Danh mục" />
               <NavLink href="/settings" icon="⚙️" label="Cài đặt" />
               <NavLink href="/upload" icon="🖼️" label="Upload ảnh" />
@@ -28,7 +30,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </nav>
           </aside>
-          {/* Main content */}
           <main className="flex-1 p-6 overflow-auto">
             {children}
           </main>
