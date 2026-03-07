@@ -127,15 +127,24 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         </div>
 
         {post.thumbnail && (
-          <div className="relative aspect-[16/9] overflow-hidden rounded-3xl mb-10 bg-gray-100 shadow-sm">
+          <div className={`relative overflow-hidden mb-10 bg-gray-100 shadow-sm ${isSalePost ? 'aspect-[4/5] md:aspect-[16/8] rounded-2xl ring-1 ring-orange-200' : 'aspect-[16/9] rounded-3xl'}`}>
             <Image
               src={post.thumbnail}
               alt={post.title}
               fill
-              className="object-cover"
+              className={`object-cover ${isSalePost ? 'scale-[1.02] transition-transform duration-700' : ''}`}
               sizes="(max-width: 768px) 100vw, 1024px"
               priority
             />
+            {isSalePost && (
+              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent">
+                <div className="absolute left-4 right-4 bottom-4 md:left-8 md:right-8 md:bottom-8">
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-rose-500 text-white px-3 py-2 text-sm md:text-base font-bold shadow-lg animate-pulse">
+                    🔥 ĐANG CÓ SUẤT GIÁ TỐT
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -180,7 +189,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           })()}
         </div>
 
-        {post.gallery && post.gallery.length > 0 && (
+        {!isSalePost && post.gallery && post.gallery.length > 0 && (
           <section className="mt-14 border-t border-gray-200 pt-10">
             <div className="mb-5">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Album ảnh chuyến đi</h2>
