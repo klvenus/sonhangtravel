@@ -5,10 +5,13 @@ import Image from 'next/image'
 
 export default function BlogGalleryLightbox({ images, title }: { images: string[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [previewIndex, setPreviewIndex] = useState(0)
 
   const close = () => setActiveIndex(null)
   const next = () => setActiveIndex((prev) => (prev === null ? null : (prev + 1) % images.length))
   const prev = () => setActiveIndex((prev) => (prev === null ? null : (prev - 1 + images.length) % images.length))
+  const nextPreview = () => setPreviewIndex((prev) => (prev + 1) % images.length)
+  const prevPreview = () => setPreviewIndex((prev) => (prev - 1 + images.length) % images.length)
 
   useEffect(() => {
     if (activeIndex === null) return
@@ -27,24 +30,69 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {images.map((image, index) => (
+      <div className="space-y-4">
+        <div className="relative overflow-hidden rounded-[28px] bg-gray-100 shadow-sm ring-1 ring-gray-200 aspect-[4/5] md:aspect-[16/10]">
           <button
-            key={`${image}-${index}`}
             type="button"
-            onClick={() => setActiveIndex(index)}
-            className="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm"
+            onClick={() => setActiveIndex(previewIndex)}
+            className="absolute inset-0 h-full w-full"
           >
             <Image
-              src={image}
-              alt={`${title} - ảnh ${index + 1}`}
+              src={images[previewIndex]}
+              alt={`${title} - ảnh ${previewIndex + 1}`}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 768px) 50vw, 33vw"
+              className="object-cover"
+              sizes="100vw"
+              priority
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
           </button>
-        ))}
+
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={prevPreview}
+                className="absolute left-3 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full bg-black/35 text-white text-2xl backdrop-blur-sm"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={nextPreview}
+                className="absolute right-3 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full bg-black/35 text-white text-2xl backdrop-blur-sm"
+              >
+                ›
+              </button>
+            </>
+          )}
+
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent p-4 md:p-6">
+            <div className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
+              Ảnh {previewIndex + 1} / {images.length}
+            </div>
+          </div>
+        </div>
+
+        {images.length > 1 && (
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {images.map((image, index) => (
+              <button
+                key={`${image}-${index}`}
+                type="button"
+                onClick={() => setPreviewIndex(index)}
+                className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl ring-2 transition-all ${previewIndex === index ? 'ring-emerald-500' : 'ring-transparent'}`}
+              >
+                <Image
+                  src={image}
+                  alt={`${title} - thumbnail ${index + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="80px"
+                />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {activeIndex !== null && (
