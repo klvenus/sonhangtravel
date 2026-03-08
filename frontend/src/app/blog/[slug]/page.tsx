@@ -57,11 +57,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 function renderParagraph(text: string, key: number, isSalePost: boolean) {
-  const match = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
+  const markdownMatch = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
+  const rawCtaMatch = text.match(/^(?:👉\s*)?(.+?):\s*(https?:\/\/\S+)$/)
+  const match = markdownMatch || rawCtaMatch
   if (!match) return <p key={key}>{text}</p>
 
-  const [full, label, href] = match
-  const parts = text.split(full)
+  const href = match[2]
+  const label = match[1].trim()
+  const full = match[0]
+  const parts = markdownMatch ? text.split(full) : ['']
 
   if (isSalePost) {
     return (
@@ -129,7 +133,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         </div>
 
         {post.thumbnail && (
-          <div className={`relative overflow-hidden mb-10 bg-gray-100 shadow-sm ${isSalePost ? 'aspect-[4/5] md:aspect-[16/8] rounded-2xl ring-1 ring-orange-200' : 'aspect-[16/9] rounded-3xl'}`}>
+          <div className={`relative overflow-hidden mb-10 bg-gray-100 shadow-sm ${isSalePost ? 'aspect-[4/5] md:aspect-[16/8] rounded-2xl ring-1 ring-orange-200' : 'aspect-[4/5] md:aspect-[16/10] rounded-3xl'}`}>
             <Image
               src={post.thumbnail}
               alt={post.title}
