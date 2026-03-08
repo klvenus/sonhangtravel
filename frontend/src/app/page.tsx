@@ -45,10 +45,21 @@ function transformTour(tour: Tour) {
   }
 }
 
+function getBannerImageUrl(image?: { url?: string; formats?: Record<string, { url: string }> } | string): string {
+  if (!image) return '/images/placeholder-tour.jpg';
+  // Get raw URL string
+  const url = typeof image === 'string' ? image : image.url || '/images/placeholder-tour.jpg';
+  // For Cloudinary images, ensure max quality and auto format
+  if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
+    return url.replace('/upload/', '/upload/q_100,f_auto/');
+  }
+  return url;
+}
+
 function transformBannerSlide(slide: BannerSlide) {
   return {
     id: slide.id,
-    image: getImageUrl(slide.image, 'large'),
+    image: getBannerImageUrl(slide.image),
     title: slide.title,
     subtitle: slide.subtitle,
     linkUrl: slide.linkUrl,

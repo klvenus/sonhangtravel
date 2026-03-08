@@ -60,6 +60,7 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
                 src={s.image}
                 alt={s.title || 'Banner tour du lịch Trung Quốc'}
                 fill
+                sizes="100vw"
                 className="object-cover"
                 quality={100}
                 unoptimized
@@ -71,6 +72,7 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
               src={s.image}
               alt={s.title || 'Banner tour du lịch Trung Quốc'}
               fill
+              sizes="100vw"
               className="object-cover"
               quality={100}
               unoptimized
