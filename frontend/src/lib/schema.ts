@@ -82,6 +82,7 @@ export const siteSettings = pgTable('site_settings', {
   favicon: text('favicon'),
   bannerSlides: jsonb('banner_slides').$type<{
     image: string;
+    imageMobile?: string;
     title?: string;
     subtitle?: string;
     linkUrl?: string;

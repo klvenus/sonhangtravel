@@ -6,7 +6,7 @@ interface Settings {
   siteName: string; logo: string; logoDark: string; favicon: string;
   phoneNumber: string; zaloNumber: string; email: string; address: string;
   facebookUrl: string; youtubeUrl: string; tiktokUrl: string;
-  bannerSlides: { image: string; title?: string; subtitle?: string; linkUrl?: string; linkText?: string }[];
+  bannerSlides: { image: string; imageMobile?: string; title?: string; subtitle?: string; linkUrl?: string; linkText?: string }[];
 }
 
 const defaultSettings: Settings = {
@@ -89,7 +89,7 @@ export default function SettingsPage() {
       <div className="bg-white border rounded-xl p-6 space-y-4">
         <div className="flex items-center justify-between border-b pb-2">
           <h3 className="font-semibold text-gray-700">🖼️ Banner trang chủ ({data.bannerSlides.length} slide)</h3>
-          <button onClick={() => set('bannerSlides', [...data.bannerSlides, { image: '', title: '', subtitle: '', linkUrl: '', linkText: '' }])}
+          <button onClick={() => set('bannerSlides', [...data.bannerSlides, { image: '', imageMobile: '', title: '', subtitle: '', linkUrl: '', linkText: '' }])}
             className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-lg hover:bg-green-200">+ Thêm slide</button>
         </div>
         {data.bannerSlides.length === 0 && (
@@ -102,10 +102,12 @@ export default function SettingsPage() {
               <button onClick={() => set('bannerSlides', data.bannerSlides.filter((_, idx) => idx !== i))}
                 className="text-red-500 text-xs hover:underline">Xóa</button>
             </div>
+
+            {/* Ảnh PC */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ảnh banner *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">🖥️ Ảnh PC * <span className="text-xs text-gray-400 font-normal">— Kích thước đề xuất: 1920×500px</span></label>
               <div className="flex items-start gap-3">
-                {slide.image && <img src={slide.image} alt="" className="w-40 h-20 rounded object-cover border flex-shrink-0" />}
+                {slide.image && <img src={slide.image} alt="" className="w-48 h-16 rounded object-cover border flex-shrink-0" />}
                 <div className="flex-1 space-y-1">
                   <input type="file" accept="image/*" onChange={async (e) => {
                     const file = e.target.files?.[0]; if (!file) return;
@@ -115,10 +117,30 @@ export default function SettingsPage() {
                     else alert('Upload thất bại');
                   }} className="text-sm" />
                   <input value={slide.image} onChange={e => { const newSlides = [...data.bannerSlides]; newSlides[i] = { ...newSlides[i], image: e.target.value }; set('bannerSlides', newSlides); }}
-                    placeholder="Hoặc dán URL ảnh..." className="w-full border rounded px-2 py-1 text-sm" />
+                    placeholder="Hoặc dán URL ảnh PC..." className="w-full border rounded px-2 py-1 text-sm" />
                 </div>
               </div>
             </div>
+
+            {/* Ảnh Mobile */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">📱 Ảnh Mobile <span className="text-xs text-gray-400 font-normal">— Kích thước đề xuất: 1080×600px (nếu bỏ trống sẽ dùng ảnh PC)</span></label>
+              <div className="flex items-start gap-3">
+                {slide.imageMobile && <img src={slide.imageMobile} alt="" className="w-24 h-16 rounded object-cover border flex-shrink-0" />}
+                <div className="flex-1 space-y-1">
+                  <input type="file" accept="image/*" onChange={async (e) => {
+                    const file = e.target.files?.[0]; if (!file) return;
+                    const fd = new FormData(); fd.append('file', file);
+                    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+                    if (res.ok) { const r = await res.json(); const newSlides = [...data.bannerSlides]; newSlides[i] = { ...newSlides[i], imageMobile: r.url }; set('bannerSlides', newSlides); }
+                    else alert('Upload thất bại');
+                  }} className="text-sm" />
+                  <input value={slide.imageMobile || ''} onChange={e => { const newSlides = [...data.bannerSlides]; newSlides[i] = { ...newSlides[i], imageMobile: e.target.value }; set('bannerSlides', newSlides); }}
+                    placeholder="Hoặc dán URL ảnh mobile..." className="w-full border rounded px-2 py-1 text-sm" />
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>

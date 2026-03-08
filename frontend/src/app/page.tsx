@@ -60,6 +60,7 @@ function transformBannerSlide(slide: BannerSlide) {
   return {
     id: slide.id,
     image: getBannerImageUrl(slide.image),
+    imageMobile: slide.imageMobile ? getBannerImageUrl(slide.imageMobile) : undefined,
     title: slide.title,
     subtitle: slide.subtitle,
     linkUrl: slide.linkUrl,

@@ -18,6 +18,7 @@ const defaultSlides = [
 interface BannerSlide {
   id: number
   image: string
+  imageMobile?: string
   title?: string
   subtitle?: string
   linkUrl?: string
@@ -47,72 +48,76 @@ export default function HeroSection({ bannerSlides }: HeroSectionProps) {
     return () => clearInterval(timer)
   }, [slides.length, next])
 
-  const slide = slides[current]
-
-  const SlideImage = ({ height }: { height: string }) => (
-    <div className={`relative ${height} overflow-hidden`}>
-      {/* All slides for smooth transition */}
-      {slides.map((s, i) => (
-        <div key={s.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          {s.linkUrl ? (
-            <a href={s.linkUrl} className="block w-full h-full">
-              <Image
-                src={s.image}
-                alt={s.title || 'Banner tour du lịch Trung Quốc'}
-                fill
-                sizes="100vw"
-                className="object-cover"
-                quality={100}
-                unoptimized
-                priority={i === 0}
-              />
-            </a>
-          ) : (
-            <Image
-              src={s.image}
-              alt={s.title || 'Banner tour du lịch Trung Quốc'}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              quality={100}
-              unoptimized
-              priority={i === 0}
-            />
-          )}
-        </div>
-      ))}
-
-      {/* Nav arrows - only show if multiple slides */}
+  // Navigation arrows + dots (shared)
+  const NavOverlay = () => (
+    <>
       {slides.length > 1 && (
         <>
-          <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm z-10 transition-colors" aria-label="Slide trước">‹</button>
-          <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm z-10 transition-colors" aria-label="Slide tiếp">›</button>
+          <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-sm md:text-lg z-10 transition-colors" aria-label="Slide trước">‹</button>
+          <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-sm md:text-lg z-10 transition-colors" aria-label="Slide tiếp">›</button>
+          <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            {slides.map((_, i) => (
+              <button key={i} onClick={() => setCurrent(i)}
+                className={`rounded-full transition-all ${i === current ? 'w-6 h-2 bg-white' : 'w-2 h-2 bg-white/50 hover:bg-white/75'}`}
+                aria-label={`Slide ${i + 1}`} />
+            ))}
+          </div>
         </>
       )}
+    </>
+  )
 
-      {/* Dots indicator */}
-      {slides.length > 1 && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-          {slides.map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)}
-              className={`rounded-full transition-all ${i === current ? 'w-6 h-2 bg-white' : 'w-2 h-2 bg-white/50 hover:bg-white/75'}`}
-              aria-label={`Slide ${i + 1}`} />
-          ))}
-        </div>
-      )}
-    </div>
+  // Render a single slide image with link wrapper
+  const SlideImg = ({ src, alt, priority, sizes }: { src: string; alt: string; priority: boolean; sizes: string }) => (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      className="object-cover"
+      quality={100}
+      unoptimized
+      priority={priority}
+    />
   )
 
   return (
     <section>
-      {/* Mobile Hero */}
-      <div className="md:hidden">
-        <SlideImage height="h-44" />
+      {/* ========== MOBILE: 9:16 → hiển thị ảnh mobile (hoặc fallback ảnh PC) ========== */}
+      {/* Kích thước đề xuất: 1080×1920 (tỷ lệ 9:16) hoặc 1080×1350 (4:5) */}
+      <div className="md:hidden relative h-[55vw] min-h-[200px] max-h-[280px] overflow-hidden">
+        {slides.map((s, i) => {
+          const mobileSrc = ('imageMobile' in s && s.imageMobile) ? s.imageMobile : s.image
+          return (
+            <div key={s.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+              {s.linkUrl ? (
+                <a href={s.linkUrl} className="block w-full h-full">
+                  <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
+                </a>
+              ) : (
+                <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
+              )}
+            </div>
+          )
+        })}
+        <NavOverlay />
       </div>
 
-      {/* Desktop Hero */}
-      <div className="hidden md:block">
-        <SlideImage height="h-[450px]" />
+      {/* ========== DESKTOP: hiển thị ảnh PC ========== */}
+      {/* Kích thước đề xuất: 1920×500 (tỷ lệ ~3.84:1) hoặc 2560×680 */}
+      <div className="hidden md:block relative h-[28vw] min-h-[350px] max-h-[550px] overflow-hidden">
+        {slides.map((s, i) => (
+          <div key={s.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+            {s.linkUrl ? (
+              <a href={s.linkUrl} className="block w-full h-full">
+                <SlideImg src={s.image} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
+              </a>
+            ) : (
+              <SlideImg src={s.image} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
+            )}
+          </div>
+        ))}
+        <NavOverlay />
       </div>
     </section>
   )

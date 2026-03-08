@@ -102,6 +102,7 @@ export interface StrapiResponse<T> {
 export interface BannerSlide {
   id: number;
   image: StrapiImage;
+  imageMobile?: StrapiImage;
   title?: string;
   subtitle?: string;
   linkUrl?: string;
@@ -431,6 +432,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       bannerSlides: (s.bannerSlides || []).map((slide, i) => ({
         id: i + 1,
         image: urlToStrapiImageRequired(slide.image, i + 1),
+        imageMobile: slide.imageMobile ? urlToStrapiImageRequired(slide.imageMobile, i + 100) : undefined,
         title: slide.title,
         subtitle: slide.subtitle,
         linkUrl: slide.linkUrl,
