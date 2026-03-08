@@ -54,7 +54,14 @@ sonhangtravel/
 | `app/page.tsx` | ~77 | Dashboard trang chủ admin | |
 | `app/settings/page.tsx` | ~160 | Cài đặt website + Banner slides | Thêm field settings → thêm vào interface Settings + JSX |
 | `app/tours/page.tsx` | ~103 | Danh sách tours (table) | |
-| `app/tours/TourForm.tsx` | **~551** | Form tạo/sửa tour (5 tabs) | ⚠️ FILE DÀI — đọc kỹ trước khi sửa |
+| `app/tours/TourForm.tsx` | ~138 | Form orchestrator — state, fetch, save, tab switching | Import từ các module bên dưới |
+| `app/tours/tourTypes.tsx` | ~110 | Shared types (TourData, CloudImage...) + helpers (slugify, Field, ListEditor) | ⚡ Sửa interface TourData ở đây |
+| `app/tours/ImagePickerModal.tsx` | ~96 | Modal chọn ảnh từ Cloudinary | |
+| `app/tours/tabs/BasicTab.tsx` | ~48 | Tab "Cơ bản": title, slug, price, category | |
+| `app/tours/tabs/DetailTab.tsx` | ~34 | Tab "Chi tiết": duration, destination, content | |
+| `app/tours/tabs/MediaTab.tsx` | ~179 | Tab "Ảnh": thumbnail + gallery upload | |
+| `app/tours/tabs/ItineraryTab.tsx` | ~47 | Tab "Lịch trình": CRUD itinerary items | |
+| `app/tours/tabs/ExtraTab.tsx` | ~34 | Tab "Thêm": includes, excludes, notes, rating | |
 | `app/tours/new/page.tsx` | ~10 | Wrapper cho TourForm (create mode) | |
 | `app/tours/[id]/page.tsx` | ~10 | Wrapper cho TourForm (edit mode) | |
 | `app/categories/page.tsx` | ~310 | CRUD danh mục (inline form + table) | |
@@ -194,10 +201,12 @@ curl "https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-
 
 ### Thêm field mới vào Tour
 1. `admin/src/lib/schema.ts` → Thêm column vào bảng `tours`
-2. `admin/src/app/tours/TourForm.tsx` → Thêm vào interface `TourData` + defaultData + JSX (chọn đúng tab)
-3. `admin/src/app/api/tours/route.ts` → Thêm field vào POST body mapping
-4. `admin/src/app/api/tours/[id]/route.ts` → Thêm field vào PUT body mapping
-5. Nếu frontend cần hiển thị → sửa component tương ứng
+2. `admin/src/app/tours/tourTypes.tsx` → Thêm vào interface `TourData` + `defaultTourData`
+3. `admin/src/app/tours/tabs/[TabName].tsx` → Thêm JSX input vào tab phù hợp (Basic/Detail/Extra)
+4. `admin/src/app/tours/TourForm.tsx` → Thêm field vào `useEffect` fetch mapping (dòng ~30-40)
+5. `admin/src/app/api/tours/route.ts` → Thêm field vào POST body mapping
+6. `admin/src/app/api/tours/[id]/route.ts` → Thêm field vào PUT body mapping
+7. Nếu frontend cần hiển thị → sửa component tương ứng
 
 ### Thêm trang admin mới
 1. Tạo `admin/src/app/[name]/page.tsx`
