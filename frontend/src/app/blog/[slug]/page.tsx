@@ -103,7 +103,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   }
 
   const isSalePost = /thanh lý|suất cuối|ưu đãi|giảm còn|giá tốt|flash sale/i.test(`${post.title} ${post.excerpt} ${post.description}`)
-  const saleUntilIso = '2026-03-12T23:59:59+07:00'
+  const publishedDate = new Date(post.publishedAt)
+  const yyyy = publishedDate.getFullYear()
+  const mm = String(publishedDate.getMonth() + 1).padStart(2, '0')
+  const dd = String(publishedDate.getDate()).padStart(2, '0')
+  const saleUntilIso = `${yyyy}-${mm}-${dd}T23:59:59+07:00`
   const saleTourHref = 'https://sonhangtravel.com/tours'
   const saleZaloHref = 'https://zalo.me/0338239888'
 
