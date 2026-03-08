@@ -6,7 +6,7 @@ interface Settings {
   siteName: string; logo: string; logoDark: string; favicon: string;
   phoneNumber: string; zaloNumber: string; email: string; address: string;
   facebookUrl: string; youtubeUrl: string; tiktokUrl: string;
-  bannerSlides: { image: string; title?: string; subtitle?: string }[];
+  bannerSlides: { image: string; title?: string; subtitle?: string; linkUrl?: string; linkText?: string }[];
 }
 
 const defaultSettings: Settings = {
@@ -83,6 +83,68 @@ export default function SettingsPage() {
           <Field label="YouTube" value={data.youtubeUrl} onChange={v => set('youtubeUrl', v)} />
           <Field label="TikTok" value={data.tiktokUrl} onChange={v => set('tiktokUrl', v)} />
         </div>
+      </div>
+
+      {/* Banner Slides */}
+      <div className="bg-white border rounded-xl p-6 space-y-4">
+        <div className="flex items-center justify-between border-b pb-2">
+          <h3 className="font-semibold text-gray-700">🖼️ Banner trang chủ ({data.bannerSlides.length} slide)</h3>
+          <button onClick={() => set('bannerSlides', [...data.bannerSlides, { image: '', title: '', subtitle: '', linkUrl: '', linkText: '' }])}
+            className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-lg hover:bg-green-200">+ Thêm slide</button>
+        </div>
+        {data.bannerSlides.length === 0 && (
+          <p className="text-sm text-gray-400 italic">Chưa có banner. Thêm slide để hiển thị banner trang chủ. Nếu không có, hệ thống dùng banner mặc định.</p>
+        )}
+        {data.bannerSlides.map((slide, i) => (
+          <div key={i} className="bg-gray-50 rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-gray-400">Slide {i + 1}</span>
+              <button onClick={() => set('bannerSlides', data.bannerSlides.filter((_, idx) => idx !== i))}
+                className="text-red-500 text-xs hover:underline">Xóa</button>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ảnh banner *</label>
+              <div className="flex items-start gap-3">
+                {slide.image && <img src={slide.image} alt="" className="w-40 h-20 rounded object-cover border flex-shrink-0" />}
+                <div className="flex-1 space-y-1">
+                  <input type="file" accept="image/*" onChange={async (e) => {
+                    const file = e.target.files?.[0]; if (!file) return;
+                    const fd = new FormData(); fd.append('file', file);
+                    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+                    if (res.ok) { const r = await res.json(); const newSlides = [...data.bannerSlides]; newSlides[i] = { ...newSlides[i], image: r.url }; set('bannerSlides', newSlides); }
+                    else alert('Upload thất bại');
+                  }} className="text-sm" />
+                  <input value={slide.image} onChange={e => { const newSlides = [...data.bannerSlides]; newSlides[i] = { ...newSlides[i], image: e.target.value }; set('bannerSlides', newSlides); }}
+                    placeholder="Hoặc dán URL ảnh..." className="w-full border rounded px-2 py-1 text-sm" />
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
+                <input value={slide.title || ''} onChange={e => { const s = [...data.bannerSlides]; s[i] = { ...s[i], title: e.target.value }; set('bannerSlides', s); }}
+                  placeholder="VD: Sơn Hằng Travel" className="w-full border rounded px-2 py-1 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phụ đề</label>
+                <input value={slide.subtitle || ''} onChange={e => { const s = [...data.bannerSlides]; s[i] = { ...s[i], subtitle: e.target.value }; set('bannerSlides', s); }}
+                  placeholder="VD: Tour Trung Quốc Uy Tín" className="w-full border rounded px-2 py-1 text-sm" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Link URL</label>
+                <input value={slide.linkUrl || ''} onChange={e => { const s = [...data.bannerSlides]; s[i] = { ...s[i], linkUrl: e.target.value }; set('bannerSlides', s); }}
+                  placeholder="VD: /tours" className="w-full border rounded px-2 py-1 text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nút bấm</label>
+                <input value={slide.linkText || ''} onChange={e => { const s = [...data.bannerSlides]; s[i] = { ...s[i], linkText: e.target.value }; set('bannerSlides', s); }}
+                  placeholder="VD: Xem tour" className="w-full border rounded px-2 py-1 text-sm" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
