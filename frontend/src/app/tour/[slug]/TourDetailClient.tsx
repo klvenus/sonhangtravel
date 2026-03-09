@@ -734,8 +734,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
         </div>
 
         {tourData.relatedTours && tourData.relatedTours.length > 0 && (
-          <section className="mt-14 border-t border-gray-100 pt-8">
-            <div className="flex items-end justify-between gap-4 mb-5 px-4 md:px-0">
+          <section className="mt-14 border-t border-gray-100 pt-8 px-4 md:px-0">
+            <div className="flex items-end justify-between gap-4 mb-5">
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">Một số tour cùng chuyên mục</h2>
                 <p className="text-sm text-gray-600 mt-1">Gợi ý thêm vài hành trình tương tự.</p>
