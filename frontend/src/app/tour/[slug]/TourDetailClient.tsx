@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import TourCard from '@/components/TourCard'
 
 interface TourDetailProps {
   tourData: {
@@ -39,12 +40,16 @@ interface TourDetailProps {
       notes: string[]
     }
     relatedTours?: Array<{
+      id: string
       title: string
       slug: string
       image?: string
       duration?: string
       destination?: string
       price?: number
+      originalPrice?: number
+      rating?: number
+      reviewCount?: number
     }>
   }
   phoneNumber?: string
@@ -730,7 +735,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
         {tourData.relatedTours && tourData.relatedTours.length > 0 && (
           <section className="mt-14 border-t border-gray-100 pt-8">
-            <div className="flex items-end justify-between gap-4 mb-5">
+            <div className="flex items-end justify-between gap-4 mb-5 px-4 md:px-0">
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">Một số tour cùng chuyên mục</h2>
                 <p className="text-sm text-gray-600 mt-1">Gợi ý thêm vài hành trình tương tự.</p>
@@ -740,33 +745,21 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               </Link>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {tourData.relatedTours.slice(0, 3).map((tour) => (
-                <Link
+                <TourCard
                   key={tour.slug}
-                  href={`/tour/${tour.slug}`}
-                  className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="flex gap-3 p-3 sm:p-4">
-                    <div className="relative h-20 w-24 sm:h-24 sm:w-28 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-                      {tour.image ? (
-                        <Image src={tour.image} alt={tour.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
-                      ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#059669]/15 to-gray-100" />
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-sm sm:text-base text-gray-900 leading-5 line-clamp-2 group-hover:text-[#059669] transition-colors">{tour.title}</h3>
-                      <div className="mt-2 space-y-1 text-xs sm:text-sm text-gray-600">
-                        {tour.duration && <p className="line-clamp-1">⏱️ {tour.duration}</p>}
-                        {tour.destination && <p className="line-clamp-1">📍 {tour.destination}</p>}
-                      </div>
-                      {typeof tour.price === 'number' && (
-                        <p className="mt-2 text-sm sm:text-base font-bold text-[#059669]">{new Intl.NumberFormat('vi-VN').format(tour.price)}đ</p>
-                      )}
-                    </div>
-                  </div>
-                </Link>
+                  id={tour.id}
+                  title={tour.title}
+                  slug={tour.slug}
+                  image={tour.image || '/images/placeholder-tour.jpg'}
+                  location={tour.destination || 'Trung Quốc'}
+                  duration={tour.duration || ''}
+                  price={tour.price || 0}
+                  originalPrice={tour.originalPrice}
+                  rating={tour.rating || 5}
+                  reviewCount={tour.reviewCount || 0}
+                />
               ))}
             </div>
           </section>

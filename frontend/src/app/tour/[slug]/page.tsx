@@ -502,12 +502,16 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
           tourData={{
             ...tourData,
             relatedTours: relatedTours.map((t: Tour) => ({
+              id: String(t.id),
               title: t.title,
               slug: t.slug,
               image: getImageUrl(t.thumbnail, 'medium') || undefined,
               duration: t.duration,
               destination: t.destination,
               price: t.price,
+              originalPrice: t.originalPrice,
+              rating: t.rating,
+              reviewCount: t.reviewCount,
             })),
           }}
           phoneNumber={phoneNumber}
