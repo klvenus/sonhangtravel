@@ -20,7 +20,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const body = await request.json();
     const updateData: Record<string, unknown> = { updatedAt: new Date() };
-    const fields = ['title', 'slug', 'description', 'excerpt', 'content', 'category', 'keywords', 'thumbnail', 'gallery', 'published'];
+    const fields = ['title', 'slug', 'description', 'excerpt', 'content', 'category', 'keywords', 'thumbnail', 'gallery', 'sourcePostKey', 'sourcePostUrl', 'sourceFingerprint', 'published'];
     for (const field of fields) {
       if (body[field] !== undefined) updateData[field] = body[field];
     }
