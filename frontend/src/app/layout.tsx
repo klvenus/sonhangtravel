@@ -107,6 +107,7 @@ export default async function RootLayout({
   // Fetch site settings for Header and Footer
   const siteSettings = await getSiteSettings();
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
+  const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : undefined;
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
   const phoneNumber = siteSettings?.phoneNumber || '0123456789';
   const zaloNumber = siteSettings?.zaloNumber || undefined;
@@ -199,6 +200,13 @@ export default async function RootLayout({
   return (
     <html lang="vi">
       <head>
+        {/* Favicon */}
+        {faviconUrl && (
+          <>
+            <link rel="icon" href={faviconUrl} sizes="any" />
+            <link rel="apple-touch-icon" href={faviconUrl} />
+          </>
+        )}
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"

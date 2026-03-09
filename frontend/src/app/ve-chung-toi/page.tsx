@@ -43,40 +43,34 @@ export default async function AboutPage() {
     .map(t => ({ url: t.thumbnail.url, title: t.title }))
 
   const zaloButtons = [
-    { label: 'Zalo OA', href: 'https://zalo.me/561113801789156735', icon: '🏢' },
-    { label: 'Tư vấn 1', href: 'https://zalo.me/0986409633', icon: '💬' },
-    { label: 'Tư vấn 2', href: 'https://zalo.me/0338239888', icon: '💬' },
-    { label: 'Tư vấn 3', href: 'https://zalo.me/0338091993', icon: '💬' },
+    { label: 'Zalo OA', href: 'https://zalo.me/561113801789156735' },
+    { label: 'Tư vấn 1', href: 'https://zalo.me/0986409633' },
+    { label: 'Tư vấn 2', href: 'https://zalo.me/0338239888' },
+    { label: 'Tư vấn 3', href: 'https://zalo.me/0338091993' },
   ]
 
   const strengths = [
     {
-      icon: '🗺️',
       title: 'Chuyên tuyến Trung Quốc',
       desc: 'Tập trung 100% vào tour Trung Quốc qua cửa khẩu Móng Cái — Đông Hưng, Nam Ninh, Hà Khẩu, Vân Nam và các tuyến hot nhất.',
     },
     {
-      icon: '📋',
       title: 'Lịch trình rõ ràng',
       desc: 'Mỗi tour đều công khai chi tiết: thời gian, điểm đến, bao gồm/không bao gồm, giá minh bạch — không phát sinh.',
     },
     {
-      icon: '🤝',
       title: 'Hỗ trợ xuyên suốt',
       desc: 'Từ tư vấn giấy tờ, hộ chiếu, visa đến hỗ trợ trong suốt hành trình — đội ngũ luôn theo sát khách.',
     },
     {
-      icon: '👨‍👩‍👧‍👦',
       title: 'Phù hợp mọi đối tượng',
       desc: 'Tour ngắn ngày cho người bận, tour gia đình cho nhóm lớn, tour trải nghiệm cho giới trẻ — đều có lịch phù hợp.',
     },
     {
-      icon: '📸',
       title: 'Ảnh thật - Tour thật',
       desc: 'Tất cả hình ảnh và review trên website đều từ khách đã đi thật — không dùng ảnh stock hay nội dung ảo.',
     },
     {
-      icon: '💰',
       title: 'Giá tốt nhất khu vực',
       desc: 'Là đơn vị tại Móng Cái, không qua trung gian, giá tour luôn cạnh tranh và rõ ràng nhất thị trường.',
     },
@@ -138,7 +132,7 @@ export default async function AboutPage() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <a href={phoneHref}
                   className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-emerald-800 shadow-lg transition hover:shadow-xl hover:scale-[1.02]">
-                  📞 Gọi ngay: {phone}
+                  Gọi ngay: {phone}
                 </a>
                 <Link href="/tours"
                   className="inline-flex items-center gap-2 rounded-full border-2 border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
@@ -196,8 +190,8 @@ export default async function AboutPage() {
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {strengths.map((item, i) => (
             <article key={i} className="group rounded-2xl border border-gray-200 bg-white p-6 transition hover:border-emerald-300 hover:shadow-lg">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-2xl group-hover:bg-emerald-100 transition">
-                {item.icon}
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-sm font-bold text-emerald-700 group-hover:bg-emerald-100 transition">
+                {String(i + 1).padStart(2, '0')}
               </div>
               <h3 className="mt-4 text-lg font-bold text-gray-900">{item.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-600">{item.desc}</p>
@@ -252,27 +246,18 @@ export default async function AboutPage() {
               </div>
 
               <div className="mt-6 space-y-3 text-sm">
-                <div className="flex items-start gap-3">
-                  <span className="text-lg">📍</span>
-                  <div>
-                    <p className="font-medium text-gray-900">Trụ sở</p>
-                    <p className="text-gray-600">{address}</p>
-                  </div>
+                <div>
+                  <p className="font-medium text-gray-900">Trụ sở</p>
+                  <p className="text-gray-600">{address}</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-lg">🏢</span>
-                  <div>
-                    <p className="font-medium text-gray-900">VP Đại diện</p>
-                    <p className="text-gray-600">01 Xuân Diệu - Trần Phú - Móng Cái - Quảng Ninh</p>
-                    <p className="text-xs text-emerald-600 mt-0.5">Cách cửa khẩu Quốc Tế Móng Cái 100m</p>
-                  </div>
+                <div>
+                  <p className="font-medium text-gray-900">VP Đại diện</p>
+                  <p className="text-gray-600">01 Xuân Diệu - Trần Phú - Móng Cái - Quảng Ninh</p>
+                  <p className="text-xs text-emerald-600 mt-0.5">Cách cửa khẩu Quốc Tế Móng Cái 100m</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-lg">🌐</span>
-                  <div>
-                    <p className="font-medium text-gray-900">Website</p>
-                    <a href="https://sonhangtravel.com" className="text-emerald-600 hover:underline">sonhangtravel.com</a>
-                  </div>
+                <div>
+                  <p className="font-medium text-gray-900">Website</p>
+                  <a href="https://sonhangtravel.com" className="text-emerald-600 hover:underline">sonhangtravel.com</a>
                 </div>
               </div>
             </div>
@@ -308,13 +293,13 @@ export default async function AboutPage() {
               <iframe
                 title="Bản đồ Sơn Hằng Travel"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3711.269687413462!2d107.9680239768471!3d21.536307670149814!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314b55e5e9ff096f%3A0x86d89d00998fb9a2!2zU8ahbiBI4bqxbmcgVHJhdmVs!5e0!3m2!1svi!2s!4v1773024857386!5m2!1svi!2s"
-                className="h-[280px] md:h-[320px] w-full border-0"
+                className="h-70 md:h-80 w-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
               />
               <div className="border-t border-gray-100 px-5 py-3 flex items-center justify-between">
-                <p className="text-sm text-gray-500">📍 Khu 5, Phường Móng Cái</p>
+                <p className="text-sm text-gray-500">Khu 5, Phường Móng Cái</p>
                 <a href="https://maps.app.goo.gl/B8Nrdag1zKA5KnUt9" target="_blank" rel="noreferrer"
                   className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
                   Mở Google Maps →
@@ -331,28 +316,25 @@ export default async function AboutPage() {
                 {zaloButtons.map((item) => (
                   <a key={item.label} href={item.href} target="_blank" rel="noreferrer"
                     className="flex items-center justify-center gap-2 rounded-xl bg-[#0068FF] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#0055DD] hover:scale-[1.02]">
-                    {item.icon} {item.label}
+                    {item.label}
                   </a>
                 ))}
               </div>
 
               <div className="mt-6 space-y-4 border-t border-gray-100 pt-5">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-lg">📞</div>
                   <div>
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Hotline 24/7</p>
                     <a href={phoneHref} className="text-lg font-bold text-emerald-700 hover:text-emerald-800">{phone}</a>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-lg">✉️</div>
                   <div>
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Email</p>
                     <a href={`mailto:${email}`} className="text-sm font-medium text-gray-800 hover:text-emerald-700">{email}</a>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-lg">📘</div>
                   <div>
                     <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Facebook</p>
                     <a href={facebookUrl} target="_blank" rel="noreferrer" className="text-sm font-medium text-gray-800 hover:text-emerald-700">
@@ -376,11 +358,11 @@ export default async function AboutPage() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <a href={phoneHref}
               className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-sm font-bold text-emerald-800 shadow-lg transition hover:shadow-xl hover:scale-[1.02]">
-              📞 Gọi ngay: {phone}
+              Gọi ngay: {phone}
             </a>
             <a href="https://zalo.me/0388091993" target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#0068FF] px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-[#0055DD] hover:scale-[1.02]">
-              💬 Nhắn Zalo tư vấn
+              Nhắn Zalo tư vấn
             </a>
             <Link href="/tours"
               className="inline-flex items-center gap-2 rounded-full border-2 border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10">
