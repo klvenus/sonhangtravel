@@ -28,6 +28,12 @@ export default async function AboutPage() {
 
   const phoneHref = `tel:${normalizePhone(phone)}`
   const zaloHref = `https://zalo.me/${normalizePhone(zalo)}`
+  const zaloButtons = [
+    { label: 'Zalo OA', href: 'https://zalo.me/561113801789156735' },
+    { label: 'Zalo 1', href: 'https://zalo.me/0986409633' },
+    { label: 'Zalo 2', href: 'https://zalo.me/0338239888' },
+    { label: 'Zalo 3', href: 'https://zalo.me/0338091993' },
+  ]
 
   const organizationSchema = {
     '@context': 'https://schema.org',
@@ -137,12 +143,6 @@ export default async function AboutPage() {
               >
                 Xem danh sách tour
               </Link>
-              <Link
-                href="/blog"
-                className="inline-flex items-center rounded-full border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-100"
-              >
-                Xem bài viết mới
-              </Link>
             </div>
           </div>
 
@@ -174,7 +174,7 @@ export default async function AboutPage() {
             <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200">
               <iframe
                 title="Bản đồ Sơn Hằng Travel"
-                src="https://www.google.com/maps?q=https://maps.app.goo.gl/B8Nrdag1zKA5KnUt9&output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3711.269687413462!2d107.9680239768471!3d21.536307670149814!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314b55e5e9ff096f%3A0x86d89d00998fb9a2!2zU8ahbiBI4bqxbmcgVHJhdmVs!5e0!3m2!1svi!2s!4v1773024857386!5m2!1svi!2s"
                 className="h-72 w-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -189,6 +189,20 @@ export default async function AboutPage() {
             >
               Mở Google Maps →
             </a>
+
+            <div className="mt-6 grid gap-3">
+              {zaloButtons.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
           </aside>
         </div>
       </section>
