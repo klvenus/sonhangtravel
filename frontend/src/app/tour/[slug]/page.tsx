@@ -498,7 +498,22 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
             dangerouslySetInnerHTML={{ __html: JSON.stringify(relatedToursSchema) }}
           />
         )}
-        <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} isPreview={isPreview} />
+        <TourDetailClient
+          tourData={{
+            ...tourData,
+            relatedTours: relatedTours.map((t: Tour) => ({
+              title: t.title,
+              slug: t.slug,
+              image: getImageUrl(t.thumbnail, 'medium') || undefined,
+              duration: t.duration,
+              destination: t.destination,
+              price: t.price,
+            })),
+          }}
+          phoneNumber={phoneNumber}
+          zaloNumber={zaloNumber}
+          isPreview={isPreview}
+        />
       </>
     )
   } catch (error) {

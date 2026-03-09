@@ -38,6 +38,14 @@ interface TourDetailProps {
       documents: string[]
       notes: string[]
     }
+    relatedTours?: Array<{
+      title: string
+      slug: string
+      image?: string
+      duration?: string
+      destination?: string
+      price?: number
+    }>
   }
   phoneNumber?: string
   zaloNumber?: string
@@ -719,6 +727,48 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             </div>
           </div>
         </div>
+
+        {tourData.relatedTours && tourData.relatedTours.length > 0 && (
+          <section className="mt-16 px-4 md:px-0">
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Một số tour cùng chuyên mục</h2>
+                <p className="text-gray-600 mt-1">Gợi ý thêm vài hành trình tương tự để khách dễ chọn hơn.</p>
+              </div>
+              <Link href="/tours" className="hidden md:inline-flex text-sm font-semibold text-[#059669] hover:text-[#047857]">
+                Xem tất cả tour →
+              </Link>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {tourData.relatedTours.slice(0, 3).map((tour) => (
+                <Link
+                  key={tour.slug}
+                  href={`/tour/${tour.slug}`}
+                  className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="relative aspect-[4/3] bg-gray-100">
+                    {tour.image ? (
+                      <Image src={tour.image} alt={tour.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#059669]/15 to-gray-100" />
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-gray-900 leading-6 group-hover:text-[#059669] transition-colors">{tour.title}</h3>
+                    <div className="mt-3 space-y-1 text-sm text-gray-600">
+                      {tour.duration && <p>⏱️ {tour.duration}</p>}
+                      {tour.destination && <p>📍 {tour.destination}</p>}
+                    </div>
+                    {typeof tour.price === 'number' && (
+                      <p className="mt-4 text-lg font-bold text-[#059669]">{new Intl.NumberFormat('vi-VN').format(tour.price)}đ</p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       {/* Mobile Fixed Bottom Bar */}
