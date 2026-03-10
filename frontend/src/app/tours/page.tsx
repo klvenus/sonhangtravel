@@ -3,7 +3,7 @@ import ToursPageClient from './ToursPageClient'
 import { Metadata } from 'next'
 import { Suspense } from 'react'
 
-const SITE_URL = 'https://sonhangtravel.vercel.app'
+const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
 // SEO Metadata for Tours page

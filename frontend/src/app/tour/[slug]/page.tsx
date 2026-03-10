@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Metadata } from 'next'
 
-const SITE_URL = 'https://sonhangtravel.vercel.app'
+const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
 // Dynamic import for better code splitting

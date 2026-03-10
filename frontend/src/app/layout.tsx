@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 // SEO Metadata
-const SITE_URL = 'https://sonhangtravel.vercel.app'
+const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
 export const metadata: Metadata = {
@@ -99,7 +99,7 @@ export const metadata: Metadata = {
     google: "your-google-verification-code", // Thay bằng code thật từ Google Search Console
   },
   alternates: {
-    canonical: "https://sonhangtravel.vercel.app",
+    canonical: "https://sonhangtravel.com",
   },
   category: "travel",
 };
@@ -144,8 +144,8 @@ export default async function RootLayout({
     "@type": "TravelAgency",
     "name": siteName,
     "description": "Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới",
-    "url": "https://sonhangtravel.vercel.app",
-    "logo": logoUrl || "https://sonhangtravel.vercel.app/logo.png",
+    "url": "https://sonhangtravel.com",
+    "logo": logoUrl || "https://sonhangtravel.com/logo.png",
     "telephone": phoneNumber,
     "email": email,
     "address": {
@@ -180,10 +180,10 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": siteName,
-    "url": "https://sonhangtravel.vercel.app",
+    "url": "https://sonhangtravel.com",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://sonhangtravel.vercel.app/tours?search={search_term_string}",
+      "target": "https://sonhangtravel.com/tours?search={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };

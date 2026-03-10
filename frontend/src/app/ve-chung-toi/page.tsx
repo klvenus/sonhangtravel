@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getSiteSettings, getTours } from '@/lib/data'
 
-const SITE_URL = 'https://sonhangtravel.vercel.app'
+const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
 export const revalidate = 3600

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getCategories, getTours } from '@/lib/data'
 
-const SITE_URL = 'https://sonhangtravel.vercel.app'
+const SITE_URL = 'https://sonhangtravel.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
