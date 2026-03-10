@@ -144,9 +144,9 @@ export default async function AboutPage() {
                 Đang hoạt động • Móng Cái, Quảng Ninh
               </div>
               <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-white md:text-5xl lg:text-[3.25rem] lg:leading-[1.15]">
-                Chuyên tour<br />
-                <span className="text-emerald-300">Trung Quốc</span> khởi hành<br />
-                từ Móng Cái
+                Chuyên tour <span className="text-emerald-300">Trung Quốc</span>
+                <br />
+                khởi hành từ Móng Cái
               </h1>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-emerald-100/80 md:text-lg">
                 Sơn Hằng Travel tập trung vào các tuyến Đông Hưng, Nam Ninh, Hà Khẩu, Vân Nam — lịch trình rõ ràng, 

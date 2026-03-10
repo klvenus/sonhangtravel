@@ -76,7 +76,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
   const activeCateg = initialCategories.find(cat => cat.slug === activeCategory)
   const pageTitle = searchQuery
     ? `Kết quả tìm kiếm: "${searchQuery}"`
-    : activeCateg ? `Tour ${activeCateg.name}` : 'Tất Cả Tour Du Lịch'
+    : activeCateg ? `Tour ${activeCateg.name}` : 'Tour Du Lịch Trung Quốc'
   const pageDescription = searchQuery
     ? `Tìm thấy ${filteredTours.length} tour phù hợp`
     : activeCateg
@@ -88,7 +88,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
       {/* Header */}
       <div className="bg-[#059669] text-white py-8">
         <div className="container-custom">
-          <h1 className="text-2xl md:text-3xl font-bold">{pageTitle}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{pageTitle}</h1>
           <p className="mt-2 text-white/80">{pageDescription}</p>
         </div>
       </div>
