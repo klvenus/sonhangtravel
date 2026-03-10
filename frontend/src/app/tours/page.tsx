@@ -1,4 +1,4 @@
-import { getTours, getCategories, getImageUrl, Tour, Category } from '@/lib/strapi'
+import { getTours, getCategories, TourData, CategoryData } from '@/lib/data'
 import ToursPageClient from './ToursPageClient'
 import { Metadata } from 'next'
 import { Suspense } from 'react'
@@ -23,32 +23,30 @@ export const metadata: Metadata = {
 export const revalidate = 3600
 
 // Transform tour for client component
-function transformTour(tour: Tour) {
-  const galleryImages = tour.gallery?.map(img => getImageUrl(img, 'medium')).filter(Boolean) || []
-  
+function transformTour(tour: TourData) {
   return {
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
-    image: getImageUrl(tour.thumbnail, 'medium'),
-    gallery: galleryImages,
+    image: tour.thumbnail || tour.gallery?.[0] || '/images/placeholder-tour.jpg',
+    gallery: tour.gallery || [],
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,
-    originalPrice: tour.originalPrice,
-    rating: tour.rating || 5,
+    originalPrice: tour.originalPrice || undefined,
+    rating: Number(tour.rating || 5),
     reviewCount: tour.reviewCount || 0,
-    isHot: tour.featured,
-    categorySlug: tour.category?.slug || null,
-    category: tour.category?.ten || tour.category?.name || undefined,
+    isHot: Boolean(tour.featured),
+    categorySlug: tour.categorySlug || null,
+    category: tour.categoryName || undefined,
   }
 }
 
 // Transform category for client component
-function transformCategory(cat: Category) {
+function transformCategory(cat: CategoryData) {
   return {
     id: cat.id,
-    name: cat.ten || cat.name || 'Danh mục',
+    name: cat.name || 'Danh mục',
     slug: cat.slug,
   }
 }
@@ -59,10 +57,10 @@ export default async function ToursPage() {
 
   try {
     const [toursRes, categoriesData] = await Promise.all([
-      getTours({ pageSize: 50 }),
+      getTours({ pageSize: 200 }),
       getCategories()
     ])
-    
+
     if (toursRes.data) {
       tours = toursRes.data.map(transformTour)
     }
