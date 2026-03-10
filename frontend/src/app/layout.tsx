@@ -21,6 +21,16 @@ const geistMono = Geist_Mono({
 // SEO Metadata
 export const metadata: Metadata = {
   metadataBase: new URL('https://sonhangtravel.vercel.app'),
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', type: 'image/png' },
+    ],
+    shortcut: ['/favicon.ico'],
+  },
   title: {
     default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
     template: "%s | Sơn Hằng Travel"
@@ -109,6 +119,7 @@ export default async function RootLayout({
     getTours({ pageSize: 50 })
   ]);
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
+  const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : logoUrl;
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
   const phoneNumber = siteSettings?.phoneNumber || '0123456789';
   const zaloNumber = siteSettings?.zaloNumber || undefined;
@@ -176,6 +187,13 @@ export default async function RootLayout({
   return (
     <html lang="vi">
       <head>
+        {faviconUrl && (
+          <>
+            <link rel="icon" href={faviconUrl} />
+            <link rel="shortcut icon" href={faviconUrl} />
+            <link rel="apple-touch-icon" href={faviconUrl} />
+          </>
+        )}
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
