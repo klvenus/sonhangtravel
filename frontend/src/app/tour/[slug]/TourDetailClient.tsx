@@ -638,23 +638,23 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
       </main>
 
       {/* Mobile Fixed Bottom Bar */}
-      <div className="md:hidden fixed bottom-16 left-0 right-0 bg-white border-t-2 border-gray-200 p-4 z-40 shadow-2xl">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <div className="flex items-end gap-1.5">
-              <span className="text-2xl font-bold text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
+      <div className="md:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 px-3 py-2 z-40 shadow-xl">
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-end gap-1">
+              <span className="text-xl font-bold leading-none text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
               {tourData.originalPrice > tourData.price && (
-                <span className="text-xs text-gray-400 line-through">{formatPrice(tourData.originalPrice)}đ</span>
+                <span className="text-[10px] leading-none text-gray-400 line-through">{formatPrice(tourData.originalPrice)}đ</span>
               )}
             </div>
-            <p className="text-xs text-gray-500">Giá/khách</p>
+            <p className="mt-0.5 text-[11px] leading-none text-gray-500">Giá/khách</p>
           </div>
           <a
             href={zaloBookingUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Đặt tour ${tourData.title} qua Zalo`}
-            className="bg-linear-to-r from-[#00CBA9] to-[#00A88A] text-white font-bold px-8 py-3.5 rounded-xl shadow-lg active:scale-95 transition-transform"
+            className="inline-flex items-center justify-center rounded-lg bg-linear-to-r from-[#00CBA9] to-[#00A88A] px-6 py-3 text-sm font-bold text-white shadow-md active:scale-95 transition-transform"
           >
             Đặt Tour
           </a>
