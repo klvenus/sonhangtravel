@@ -104,55 +104,6 @@ export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSect
 
   return (
     <section>
-      <div className="container-custom pt-4 pb-2">
-        <div className="relative max-w-2xl">
-          <div className="flex items-center bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm focus-within:border-[#059669] transition-colors">
-            <svg className="w-5 h-5 text-gray-400 ml-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Tìm tour, điểm đến..."
-              className="flex-1 bg-transparent py-3 px-3 text-sm outline-none"
-              value={searchQuery}
-              onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Link href={searchQuery.trim() ? `/tours?search=${encodeURIComponent(searchQuery.trim())}` : '/tours'} className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-4 md:px-6 py-3 text-sm font-medium transition-colors">
-              Tìm kiếm
-            </Link>
-          </div>
-
-          {normalizedQuery && (
-            <div className="absolute z-30 mt-2 w-full rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden">
-              {liveResults.length > 0 ? (
-                <div className="divide-y divide-gray-100">
-                  {liveResults.map((tour) => (
-                    <Link key={tour.id} href={`/tour/${tour.slug}`} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
-                      <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                        <Image src={tour.image} alt={tour.title} fill className="object-cover" sizes="80px" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="line-clamp-1 text-sm font-semibold text-gray-900">{tour.title}</p>
-                        <p className="line-clamp-1 text-xs text-gray-500">{tour.location} • {tour.duration}</p>
-                        <p className="mt-1 text-sm font-bold text-[#FF6B35]">{new Intl.NumberFormat('vi-VN').format(tour.price)}đ</p>
-                      </div>
-                    </Link>
-                  ))}
-                  <Link href={`/tours?search=${encodeURIComponent(searchQuery.trim())}`} className="block px-4 py-3 text-sm font-medium text-[#059669] hover:bg-emerald-50">
-                    Xem tất cả kết quả cho “{searchQuery.trim()}” →
-                  </Link>
-                </div>
-              ) : (
-                <div className="px-4 py-4 text-sm text-gray-500">
-                  Không tìm thấy tour nào cho “{searchQuery.trim()}”
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* ========== MOBILE: 9:16 → hiển thị ảnh mobile (hoặc fallback ảnh PC) ========== */}
       {/* Kích thước đề xuất: 1080×1920 (tỷ lệ 9:16) hoặc 1080×1350 (4:5) */}
       <div className="md:hidden relative h-[55vw] min-h-[200px] max-h-[280px] overflow-hidden">
