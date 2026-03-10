@@ -638,7 +638,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
       </main>
 
       {/* Mobile Fixed Bottom Bar */}
-      <div className="md:hidden fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 px-3 py-2 z-40 shadow-xl">
+      <div className="md:hidden fixed bottom-[3.6rem] left-0 right-0 bg-white border-t border-gray-200 px-3 py-2 z-40 shadow-xl">
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex items-end gap-1">
