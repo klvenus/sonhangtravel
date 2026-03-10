@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
+import { getCategories, getTours } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.vercel.app'
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://sonhangtravel.onrender.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
@@ -20,23 +20,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Fetch all tours from Strapi
+  // Fetch all tours from Neon DB
   let tourPages: MetadataRoute.Sitemap = []
   try {
-    const res = await fetch(
-      `${STRAPI_URL}/api/tours?fields[0]=slug&fields[1]=updatedAt&pagination[pageSize]=100`,
-      { next: { revalidate: 3600 } }
-    )
-    
-    if (res.ok) {
-      const data = await res.json()
-      tourPages = data.data?.map((tour: { slug: string; updatedAt: string }) => ({
-        url: `${SITE_URL}/tour/${tour.slug}`,
-        lastModified: new Date(tour.updatedAt),
-        changeFrequency: 'weekly' as const,
-        priority: 0.8,
-      })) || []
-    }
+    const tours = await getTours({ pageSize: 500 })
+    tourPages = (tours.data || []).map((tour) => ({
+      url: `${SITE_URL}/tour/${tour.slug}`,
+      lastModified: tour.updatedAt || new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }))
   } catch (error) {
     console.error('Error fetching tours for sitemap:', error)
   }
@@ -44,20 +37,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all categories
   let categoryPages: MetadataRoute.Sitemap = []
   try {
-    const res = await fetch(
-      `${STRAPI_URL}/api/categories?fields[0]=slug&fields[1]=updatedAt&pagination[pageSize]=50`,
-      { next: { revalidate: 3600 } }
-    )
-    
-    if (res.ok) {
-      const data = await res.json()
-      categoryPages = data.data?.map((cat: { slug: string; updatedAt: string }) => ({
-        url: `${SITE_URL}/tours?category=${cat.slug}`,
-        lastModified: new Date(cat.updatedAt),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-      })) || []
-    }
+    const categories = await getCategories()
+    categoryPages = (categories || []).map((cat) => ({
+      url: `${SITE_URL}/tours?category=${cat.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
   } catch (error) {
     console.error('Error fetching categories for sitemap:', error)
   }

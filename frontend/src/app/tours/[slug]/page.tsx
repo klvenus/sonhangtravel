@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import TourCard from '@/components/TourCard'
-import { getTours, getCategoryBySlug, getImageUrl } from '@/lib/strapi'
+import { getTours, getCategoryBySlug, getImageUrl } from '@/lib/data'
 
 // Enable ISR - revalidate every 1 hour
 export const revalidate = 3600
@@ -24,7 +24,7 @@ export async function generateMetadata({
       }
     }
 
-    const categoryName = category.ten || category.name || 'Danh mục'
+    const categoryName = category.name || 'Danh mục'
     
     return {
       title: `Tour ${categoryName} | Sơn Hằng Travel`,
@@ -74,7 +74,7 @@ export default async function CategoryToursPage({
     }
 
     const tours = toursRes.data || []
-    const categoryName = category.ten || category.name || 'Danh mục'
+    const categoryName = category.name || 'Danh mục'
 
     return (
       <div className="min-h-screen bg-gray-50">
@@ -131,10 +131,10 @@ export default async function CategoryToursPage({
                       location={tour.destination}
                       duration={tour.duration}
                       price={tour.price}
-                      originalPrice={tour.originalPrice}
-                      rating={tour.rating || 5}
+                      originalPrice={tour.originalPrice || undefined}
+                      rating={Number(tour.rating || 5)}
                       reviewCount={tour.reviewCount || 0}
-                      isHot={tour.featured}
+                      isHot={tour.featured || undefined}
                     />
                   ))}
                 </div>

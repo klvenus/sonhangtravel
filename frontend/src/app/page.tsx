@@ -3,29 +3,26 @@ import CategorySection from '@/components/CategorySection'
 import FeaturedTours from '@/components/FeaturedTours'
 import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
-import { getCategories, getTours, getImageUrl, getSiteSettings, Category, Tour, BannerSlide } from '@/lib/strapi'
+import { getCategories, getTours, getImageUrl, getSiteSettings, CategoryData, TourData, BannerSlide } from '@/lib/data'
 
 // ISR - Revalidate every hour
 export const revalidate = 3600
 
 // Transform functions
-function transformCategory(cat: Category) {
-  const tourCount = Array.isArray(cat.tours) ? cat.tours.length : 0
-  const categoryName = cat.ten || cat.name || 'Danh mục'
+function transformCategory(cat: CategoryData) {
   return {
     id: cat.id,
-    name: categoryName,
+    name: cat.name || 'Danh mục',
     slug: cat.slug,
     image: getImageUrl(cat.image, 'medium') || `https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=80`,
-    tourCount: tourCount,
+    tourCount: cat.tourCount || 0,
     icon: cat.icon || '🏯',
   }
 }
 
-function transformTour(tour: Tour) {
-  // Get gallery images
-  const galleryImages = tour.gallery?.map(img => getImageUrl(img, 'medium')).filter(Boolean) || []
-  
+function transformTour(tour: TourData) {
+  const galleryImages = (tour.gallery || []).map(img => getImageUrl(img, 'medium')).filter(Boolean)
+
   return {
     id: String(tour.id),
     title: tour.title,
@@ -35,19 +32,19 @@ function transformTour(tour: Tour) {
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,
-    originalPrice: tour.originalPrice,
-    rating: tour.rating || 5,
+    originalPrice: tour.originalPrice || undefined,
+    rating: Number(tour.rating || 5),
     reviewCount: tour.reviewCount || 0,
-    isHot: tour.featured,
+    isHot: Boolean(tour.featured),
     isNew: false,
-    category: tour.category?.ten || tour.category?.name || undefined,
-    categorySlug: tour.category?.slug || undefined,
+    category: tour.categoryName || undefined,
+    categorySlug: tour.categorySlug || undefined,
   }
 }
 
-function transformBannerSlide(slide: BannerSlide) {
+function transformBannerSlide(slide: BannerSlide, index: number) {
   return {
-    id: slide.id,
+    id: index + 1,
     image: getImageUrl(slide.image, 'large'),
     title: slide.title,
     subtitle: slide.subtitle,
@@ -85,7 +82,7 @@ export default async function Home() {
 
     // Extract banner slides from site settings
     if (siteSettings?.bannerSlides && siteSettings.bannerSlides.length > 0) {
-      bannerSlides = siteSettings.bannerSlides.map(transformBannerSlide)
+      bannerSlides = siteSettings.bannerSlides.map((slide, index) => transformBannerSlide(slide, index))
     }
   } catch (error) {
     console.error('Error fetching home data:', error)

@@ -1,4 +1,4 @@
-import { getTourBySlug, getImageUrl, Tour, getSiteSettings } from '@/lib/strapi'
+import { getTourBySlug, getImageUrl, TourData, getSiteSettings, getTours } from '@/lib/data'
 import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Metadata } from 'next'
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       }
     }
 
-    const imageUrl = tour.thumbnail 
+    const imageUrl = tour.thumbnail
       ? getImageUrl(tour.thumbnail, 'large')
       : 'https://sonhangtravel.vercel.app/og-image.jpg'
 
@@ -93,8 +93,7 @@ const fallbackPolicies = {
 }
 
 // Transform Strapi tour to page data
-function transformStrapiTour(tour: Tour) {
-  // Get images array from thumbnail and gallery
+function transformStrapiTour(tour: TourData) {
   const images: string[] = []
   if (tour.thumbnail) {
     images.push(getImageUrl(tour.thumbnail, 'large'))
@@ -102,7 +101,6 @@ function transformStrapiTour(tour: Tour) {
   if (tour.gallery && tour.gallery.length > 0) {
     tour.gallery.forEach(img => images.push(getImageUrl(img, 'large')))
   }
-  // Add fallback if no images
   if (images.length === 0) {
     images.push('https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80')
   }
@@ -119,27 +117,25 @@ function transformStrapiTour(tour: Tour) {
     departure: tour.departure || 'Móng Cái',
     destination: tour.destination,
     schedule: '',
-    rating: tour.rating || 5,
+    rating: Number(tour.rating || 5),
     reviewCount: tour.reviewCount || 0,
     bookedCount: tour.bookingCount || 0,
     images,
     highlights: [],
-    tourFileUrl: tour.tourFile?.url 
-      ? (tour.tourFile.url.startsWith('http') ? tour.tourFile.url : `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}${tour.tourFile.url}`)
-      : undefined,
+    tourFileUrl: undefined,
     itinerary: tour.itinerary?.map(item => ({
       time: item.time || '',
       title: item.title,
       description: item.description || '',
       image: item.image ? getImageUrl(item.image, 'medium') : '',
     })) || [],
-    includes: tour.includes?.map(item => item.text) || [],
-    excludes: tour.excludes?.map(item => item.text) || [],
+    includes: tour.includes || [],
+    excludes: tour.excludes || [],
     policies: {
       children: fallbackPolicies.children,
       surcharge: fallbackPolicies.surcharge,
       documents: fallbackPolicies.documents,
-      notes: tour.notes?.map(item => item.text) || fallbackPolicies.notes,
+      notes: tour.notes || fallbackPolicies.notes,
     },
   }
 }
@@ -147,16 +143,13 @@ function transformStrapiTour(tour: Tour) {
 // Generate static params for common tours (pre-render at build time)
 export async function generateStaticParams() {
   try {
-    // Fetch ALL tours to pre-generate at build time for instant loading
-    const { getTours } = await import('@/lib/strapi')
     const response = await getTours({ pageSize: 100, sort: 'bookingCount:desc' })
-    
+
     return response.data.map((tour) => ({
       slug: tour.slug,
     }))
   } catch (error) {
     console.error('Error generating static params:', error)
-    // Return empty array if Strapi is not available at build time
     return []
   }
 }
@@ -173,7 +166,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
   
   try {
     const [tour, siteSettings] = await Promise.all([
-      getTourBySlug(slug, isPreview),
+      getTourBySlug(slug),
       getSiteSettings()
     ])
     
