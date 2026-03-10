@@ -1,7 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import TourCard from '@/components/TourCard'
+
+const SEARCH_STOP_WORDS = ['tour', 'du', 'lịch', 'du lịch', 'combo', 'gia', 'giá', 're', 'rẻ', 'di', 'đi', 'den', 'đến']
+
+function normalizeVietnamese(text: string) {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .trim()
+}
+
+function tokenizeSearch(text: string) {
+  return normalizeVietnamese(text)
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean)
+    .filter((token) => !SEARCH_STOP_WORDS.includes(token))
+}
 
 interface TourData {
   id: string
@@ -32,18 +53,24 @@ interface Props {
 }
 
 export default function ToursPageClient({ initialTours, initialCategories }: Props) {
+  const searchParams = useSearchParams()
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
+  useEffect(() => {
+    const search = searchParams.get('search') || ''
+    setSearchQuery(search)
+  }, [searchParams])
+
+  const queryTokens = tokenizeSearch(searchQuery)
   const filteredTours = initialTours.filter((tour) => {
     const matchCategory = !activeCategory || tour.categorySlug === activeCategory
-    const q = searchQuery.trim().toLowerCase()
-    const haystack = [tour.title, tour.location, tour.category || '']
-      .join(' ')
-      .toLowerCase()
+    if (!matchCategory) return false
 
-    const matchSearch = !q || haystack.includes(q)
-    return matchCategory && matchSearch
+    if (searchQuery.trim() === '') return true
+
+    const searchable = normalizeVietnamese([tour.title, tour.location, tour.category || ''].join(' '))
+    return queryTokens.length > 0 && queryTokens.every((token) => searchable.includes(token))
   })
 
   const activeCateg = initialCategories.find(cat => cat.slug === activeCategory)
