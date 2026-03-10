@@ -226,7 +226,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
               </Link>
 
               {/* Search Bar */}
-              <div className="flex-1 max-w-lg">
+              <div className="flex-1 max-w-lg relative">
                 <div className="flex items-center bg-gray-100 rounded-full overflow-hidden border-2 border-transparent focus-within:border-[#00CBA9] focus-within:bg-white transition-colors">
                   <svg className="w-5 h-5 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -234,15 +234,44 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   <input
                     type="text"
                     placeholder="Tìm tour, điểm đến..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={handleSearchKeyDown}
+                    value={searchQuery}
+                    onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearchKeyDown}
                     className="flex-1 bg-transparent py-3 px-3 outline-none"
                   />
                   <button onClick={handleSearch} className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-6 py-3 font-medium transition-colors">
                     Tìm kiếm
                   </button>
                 </div>
+
+                {normalizedQuery && (
+                  <div className="absolute z-40 mt-2 w-full rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden">
+                    {liveResults.length > 0 ? (
+                      <div className="divide-y divide-gray-100">
+                        {liveResults.map((tour) => (
+                          <Link key={tour.id} href={`/tour/${tour.slug}`} onClick={() => setSearchQuery('')} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
+                            <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                              <Image src={tour.image} alt={tour.title} fill className="object-cover" sizes="80px" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="line-clamp-1 text-sm font-semibold text-gray-900">{tour.title}</p>
+                              <p className="line-clamp-1 text-xs text-gray-500">{tour.location} • {tour.duration}</p>
+                              <p className="mt-1 text-sm font-bold text-[#FF6B35]">{new Intl.NumberFormat('vi-VN').format(tour.price)}đ</p>
+                            </div>
+                          </Link>
+                        ))}
+                        <Link href={`/tours?search=${encodeURIComponent(searchQuery.trim())}`} onClick={() => setSearchQuery('')} className="block px-4 py-3 text-sm font-medium text-[#059669] hover:bg-emerald-50">
+                          Xem tất cả kết quả cho “{searchQuery.trim()}” →
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="px-4 py-4 text-sm text-gray-500">
+                        Không tìm thấy tour nào cho “{searchQuery.trim()}”
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Navigation */}
