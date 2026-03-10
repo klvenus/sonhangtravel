@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
-import { getSiteSettings, getImageUrl } from "@/lib/data";
+import { getSiteSettings, getImageUrl, getTours } from "@/lib/data";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -104,12 +104,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Fetch site settings for Header and Footer
-  const siteSettings = await getSiteSettings();
+  const [siteSettings, searchToursData] = await Promise.all([
+    getSiteSettings(),
+    getTours({ pageSize: 50 })
+  ]);
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
   const phoneNumber = siteSettings?.phoneNumber || '0123456789';
   const zaloNumber = siteSettings?.zaloNumber || undefined;
   const email = siteSettings?.email || 'info@sonhangtravel.com';
+  const searchTours = (searchToursData.data || []).map((tour) => ({
+    id: String(tour.id),
+    title: tour.title,
+    slug: tour.slug,
+    image: getImageUrl(tour.thumbnail),
+    location: tour.destination,
+    duration: tour.duration,
+    price: tour.price,
+  }));
 
   // JSON-LD Structured Data for SEO
   const organizationSchema = {
@@ -177,7 +189,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
+        <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} searchTours={searchTours} />
         <div className="pb-16 md:pb-0">
           {children}
         </div>
