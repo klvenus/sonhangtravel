@@ -5,6 +5,26 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
+const SEARCH_STOP_WORDS = ['tour', 'du', 'lịch', 'du lịch', 'combo', 'gia', 'giá', 're', 'rẻ', 'di', 'đi', 'den', 'đến']
+
+function normalizeVietnamese(text: string) {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .trim()
+}
+
+function tokenizeSearch(text: string) {
+  return normalizeVietnamese(text)
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean)
+    .filter((token) => !SEARCH_STOP_WORDS.includes(token))
+}
+
 interface Category {
   id: number
   name: string
@@ -40,12 +60,20 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   const [categories, setCategories] = useState<Category[]>([])
 
   const zaloLink = zaloNumber || phoneNumber
-  const normalizedQuery = searchQuery.trim().toLowerCase()
+  const normalizedQuery = searchQuery.trim()
+  const queryTokens = tokenizeSearch(searchQuery)
   const liveResults = normalizedQuery
-    ? searchTours.filter((tour) => {
-        const haystack = [tour.title, tour.location, tour.duration].join(' ').toLowerCase()
-        return haystack.includes(normalizedQuery)
-      }).slice(0, 6)
+    ? searchTours
+        .map((tour) => {
+          const searchable = normalizeVietnamese([tour.title, tour.location, tour.duration].join(' '))
+          const score = queryTokens.reduce((total, token) => total + (searchable.includes(token) ? 1 : 0), 0)
+          const titleScore = queryTokens.reduce((total, token) => total + (normalizeVietnamese(tour.title).includes(token) ? 2 : 0), 0)
+          return { tour, score: score + titleScore }
+        })
+        .filter(({ score }) => (queryTokens.length === 0 ? false : score >= queryTokens.length))
+        .sort((a, b) => b.score - a.score)
+        .map(({ tour }) => tour)
+        .slice(0, 6)
     : []
 
   const handleSearch = () => {
