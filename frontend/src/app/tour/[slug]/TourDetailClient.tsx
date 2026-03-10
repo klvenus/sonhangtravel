@@ -1,14 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import TourCard from '@/components/TourCard'
 
 interface TourDetailProps {
   tourData: {
     id: string
-    documentId?: string
     title: string
     slug: string
     shortDescription: string
@@ -39,18 +37,6 @@ interface TourDetailProps {
       documents: string[]
       notes: string[]
     }
-    relatedTours?: Array<{
-      id: string
-      title: string
-      slug: string
-      image?: string
-      duration?: string
-      destination?: string
-      price?: number
-      originalPrice?: number
-      rating?: number
-      reviewCount?: number
-    }>
   }
   phoneNumber?: string
   zaloNumber?: string
@@ -62,93 +48,6 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
-  const [showLightbox, setShowLightbox] = useState(false)
-  const [lightboxIndex, setLightboxIndex] = useState(0)
-  const [displayReviewCount, setDisplayReviewCount] = useState(tourData.reviewCount)
-  const [displayBookedCount, setDisplayBookedCount] = useState(tourData.bookedCount)
-
-  // Track unique view and update counts
-  useEffect(() => {
-    const trackView = async () => {
-      // Skip if preview mode or no documentId
-      if (isPreview || !tourData.documentId) return
-
-      // Check if already viewed this tour
-      const viewedKey = `tour_viewed_${tourData.slug}`
-      const hasViewed = localStorage.getItem(viewedKey)
-      
-      if (hasViewed) return // Already counted this visitor
-
-      try {
-        const response = await fetch('/api/track-view', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            documentId: tourData.documentId,
-            currentReviewCount: tourData.reviewCount,
-            currentBookingCount: tourData.bookedCount,
-          }),
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          // Update displayed counts
-          if (data.reviewCount) setDisplayReviewCount(data.reviewCount)
-          if (data.bookingCount) setDisplayBookedCount(data.bookingCount)
-          
-          // Mark as viewed so it won't count again
-          localStorage.setItem(viewedKey, Date.now().toString())
-        }
-      } catch (error) {
-        console.error('Failed to track view:', error)
-      }
-    }
-
-    // Delay tracking slightly to ensure page is loaded
-    const timer = setTimeout(trackView, 1000)
-    return () => clearTimeout(timer)
-  }, [tourData.slug, tourData.documentId, tourData.reviewCount, tourData.bookedCount, isPreview])
-
-  const openLightbox = (index: number) => {
-    setLightboxIndex(index)
-    setShowLightbox(true)
-    document.body.style.overflow = 'hidden'
-  }
-
-  const closeLightbox = () => {
-    setShowLightbox(false)
-    document.body.style.overflow = ''
-  }
-
-  const goToNextImage = useCallback(() => {
-    setLightboxIndex((prev) => (prev + 1) % tourData.images.length)
-  }, [tourData.images.length])
-
-  const goToPrevImage = useCallback(() => {
-    setLightboxIndex((prev) => (prev - 1 + tourData.images.length) % tourData.images.length)
-  }, [tourData.images.length])
-
-  // Keyboard navigation for lightbox
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!showLightbox) return
-      
-      switch (e.key) {
-        case 'Escape':
-          closeLightbox()
-          break
-        case 'ArrowRight':
-          goToNextImage()
-          break
-        case 'ArrowLeft':
-          goToPrevImage()
-          break
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [showLightbox, goToNextImage, goToPrevImage])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price)
@@ -205,13 +104,10 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             </div>
           </div>
           
-          <button 
-            onClick={() => openLightbox(currentImage)}
-            className="relative h-72 overflow-hidden w-full cursor-zoom-in"
-          >
+          <div className="relative h-72 overflow-hidden">
             <Image
               src={tourData.images[currentImage]}
-              alt={`Tour ${tourData.title} - ${tourData.destination} ${tourData.duration} | Sơn Hằng Travel`}
+              alt={tourData.title}
               fill
               className="object-cover"
               priority
@@ -226,14 +122,11 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   GIẢM {discountPercent}%
                 </span>
               )}
-              <div className="ml-auto bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full flex items-center gap-1">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+              <div className="ml-auto bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
                 {currentImage + 1}/{tourData.images.length}
               </div>
             </div>
-          </button>
+          </div>
 
           {/* Thumbnail images */}
           <div className="flex gap-2 p-4 overflow-x-auto bg-white">
@@ -241,12 +134,11 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               <button
                 key={idx}
                 onClick={() => setCurrentImage(idx)}
-                onDoubleClick={() => openLightbox(idx)}
                 className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                  currentImage === idx ? 'border-[#059669] scale-105' : 'border-gray-200'
+                  currentImage === idx ? 'border-[#00CBA9] scale-105' : 'border-gray-200'
                 }`}
               >
-                <Image src={img} alt={`Ảnh ${idx + 1} tour ${tourData.title}`} width={64} height={64} className="object-cover w-full h-full" loading="lazy" />
+                <Image src={img} alt="" width={64} height={64} className="object-cover w-full h-full" />
               </button>
             ))}
           </div>
@@ -255,59 +147,39 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
         {/* Desktop Gallery */}
         <div className="hidden md:block container mx-auto px-4 py-6 max-w-7xl">
           {tourData.images.length === 1 ? (
-            <button 
-              onClick={() => openLightbox(0)}
-              className="relative h-[450px] rounded-2xl overflow-hidden w-full cursor-zoom-in"
-            >
+            <div className="relative h-[450px] rounded-2xl overflow-hidden">
               <Image
                 src={tourData.images[0]}
-                alt={`Tour ${tourData.title} - ${tourData.destination} | Sơn Hằng Travel`}
+                alt={tourData.title}
                 fill
-                className="object-cover hover:scale-105 transition-transform duration-500"
+                className="object-cover"
                 priority
               />
-            </button>
+            </div>
           ) : (
-            <div className="grid grid-cols-4 gap-3 h-[450px] relative">
-              <button 
-                onClick={() => openLightbox(0)}
-                className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group cursor-zoom-in"
-              >
+            <div className="grid grid-cols-4 gap-3 h-[450px]">
+              <div className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group">
                 <Image
                   src={tourData.images[0]}
-                  alt={`Tour ${tourData.title} - Ảnh chính | Sơn Hằng Travel`}
+                  alt={tourData.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-              </button>
+              </div>
               {tourData.images.slice(1, 5).map((img: string, idx: number) => (
-                <button 
-                  key={idx} 
-                  onClick={() => openLightbox(idx + 1)}
-                  className="relative rounded-2xl overflow-hidden group cursor-zoom-in"
-                >
-                  <Image src={img} alt={`Tour ${tourData.title} - Ảnh ${idx + 2}`} fill className="object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                  {/* Show overlay on last visible image if more images exist */}
-                  {idx === 3 && tourData.images.length > 5 && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <span className="text-white text-2xl font-bold">+{tourData.images.length - 5}</span>
-                    </div>
-                  )}
-                </button>
+                <div key={idx} className="relative rounded-2xl overflow-hidden group">
+                  <Image src={img} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
               ))}
-              {/* View all button */}
-              <button 
-                onClick={() => openLightbox(0)}
-                className="absolute bottom-4 right-4 bg-white hover:bg-gray-50 px-5 py-2.5 rounded-xl shadow-lg font-medium text-gray-700 flex items-center gap-2 transition-all hover:scale-105"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Xem tất cả {tourData.images.length} ảnh
-              </button>
+              {tourData.images.length > 5 && (
+                <button className="absolute bottom-6 right-6 bg-white hover:bg-gray-50 px-6 py-3 rounded-xl shadow-lg font-medium text-gray-700 flex items-center gap-2 transition-all">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Xem tất cả {tourData.images.length} ảnh
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -329,10 +201,10 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                         <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                       </svg>
                       <span className="font-bold text-gray-900">{tourData.rating.toFixed(1)}</span>
-                      <span className="text-gray-500">({formatPrice(displayReviewCount)} đánh giá)</span>
+                      <span className="text-gray-500">({formatPrice(tourData.reviewCount)} đánh giá)</span>
                     </div>
                     <span className="text-gray-300">•</span>
-                    <span className="text-gray-600">{formatPrice(displayBookedCount)}+ người đã đặt</span>
+                    <span className="text-gray-600">{formatPrice(tourData.bookedCount)}+ người đã đặt</span>
                   </div>
                 </div>
 
@@ -378,7 +250,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                 )}
 
                 {/* Mobile Price Card */}
-                <div className="md:hidden bg-linear-to-r from-[#059669]/10 to-[#047857]/10 rounded-2xl p-4 mb-6 border border-[#059669]/20">
+                <div className="md:hidden bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-2xl p-4 mb-6 border border-[#00CBA9]/20">
                   <div className="flex items-end gap-2 mb-2">
                     <span className="text-3xl font-bold text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
                     {tourData.originalPrice > tourData.price && (
@@ -402,8 +274,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                         onClick={() => setActiveTab(tab.id)}
                         className={`px-3 py-3 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-300 ${
                           activeTab === tab.id
-                            ? 'bg-linear-to-r from-[#059669] to-[#047857] text-white shadow-lg'
-                            : 'text-gray-600 hover:text-[#059669] hover:bg-white'
+                            ? 'bg-linear-to-r from-[#00CBA9] to-[#00A88A] text-white shadow-lg'
+                            : 'text-gray-600 hover:text-[#00CBA9] hover:bg-white'
                         }`}
                       >
                         {tab.label}
@@ -424,7 +296,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       {tourData.content && (
                         <div className="prose prose-sm max-w-none">
                           <h3 className="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-[#059669] rounded-full"></span>
+                            <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
                             Giới thiệu chi tiết
                           </h3>
                           <div 
@@ -441,13 +313,13 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       {tourData.highlights.length > 0 && (
                         <div>
                           <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-[#059669] rounded-full"></span>
+                            <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
                             Điểm đến nổi bật
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {tourData.highlights.map((highlight: string, idx: number) => (
-                              <div key={idx} className="flex items-center gap-3 bg-gradient-to-r from-[#059669]/5 to-transparent p-3 rounded-xl">
-                                <svg className="w-5 h-5 text-[#059669] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div key={idx} className="flex items-center gap-3 bg-gradient-to-r from-[#00CBA9]/5 to-transparent p-3 rounded-xl">
+                                <svg className="w-5 h-5 text-[#00CBA9] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
                                 <span className="text-gray-700 text-sm">{highlight}</span>
@@ -463,7 +335,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   {activeTab === 'itinerary' && tourData.itinerary.length > 0 && (
                     <div>
                       <h3 className="font-bold text-lg text-gray-900 mb-6 flex items-center gap-2">
-                        <span className="w-1 h-6 bg-[#059669] rounded-full"></span>
+                        <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
                         Lịch trình chi tiết
                       </h3>
                       <div className="space-y-6">
@@ -471,17 +343,17 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                           <div key={idx} className="flex gap-4">
                             {/* Timeline */}
                             <div className="flex flex-col items-center">
-                              <div className="w-12 h-12 bg-gradient-to-br from-[#059669] to-[#047857] rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                              <div className="w-12 h-12 bg-gradient-to-br from-[#00CBA9] to-[#00A88A] rounded-full flex items-center justify-center text-white font-bold shadow-lg">
                                 {idx + 1}
                               </div>
                               {idx < tourData.itinerary.length - 1 && (
-                                <div className="w-1 h-full bg-gradient-to-b from-[#059669] to-[#059669]/20 mt-2 rounded-full"></div>
+                                <div className="w-1 h-full bg-gradient-to-b from-[#00CBA9] to-[#00CBA9]/20 mt-2 rounded-full"></div>
                               )}
                             </div>
 
                             {/* Content */}
                             <div className="flex-1 pb-6">
-                              <div className="bg-white border-2 border-gray-100 hover:border-[#059669]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                              <div className="bg-white border-2 border-gray-100 hover:border-[#00CBA9]/30 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
                                 {item.image && (
                                   <div className="relative h-48">
                                     <Image
@@ -491,7 +363,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                       className="object-cover"
                                     />
                                     {item.time && (
-                                      <div className="absolute top-3 left-3 bg-[#059669] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                                      <div className="absolute top-3 left-3 bg-[#00CBA9] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
                                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
@@ -513,7 +385,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       {tourData.itinerary.length > 4 && (
                         <button
                           onClick={() => setShowAllItinerary(!showAllItinerary)}
-                          className="w-full py-4 text-[#059669] font-semibold border-2 border-[#059669] rounded-xl mt-6 hover:bg-[#059669] hover:text-white transition-all duration-300"
+                          className="w-full py-4 text-[#00CBA9] font-semibold border-2 border-[#00CBA9] rounded-xl mt-6 hover:bg-[#00CBA9] hover:text-white transition-all duration-300"
                         >
                           {showAllItinerary ? 'Thu gọn' : `Xem thêm ${tourData.itinerary.length - 4} điểm đến →`}
                         </button>
@@ -656,7 +528,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     )}
 
                     {/* Price */}
-                    <div className="mb-6 bg-linear-to-r from-[#059669]/10 to-[#047857]/10 rounded-xl p-4">
+                    <div className="mb-6 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-xl p-4">
                       <div className="flex items-end gap-2 mb-2">
                         <span className="text-4xl font-bold text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
                         {tourData.originalPrice > tourData.price && (
@@ -671,24 +543,48 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       )}
                     </div>
 
-                    {/* Book Button - Link to Zalo */}
-                    <a 
-                      href={`https://zalo.me/${zaloLink}?text=Xin chào, tôi muốn đặt tour: ${tourData.title}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full bg-linear-to-r from-[#059669] to-[#047857] hover:from-[#047857] hover:to-[#059669] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl mb-3 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
-                    >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-5.52-4.48-10-10-10zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.07-.05-.16-.03-.23-.02-.1.02-1.62 1.03-4.58 3.03-.43.3-.82.44-1.17.43-.39-.01-1.13-.22-1.68-.4-.68-.22-1.22-.34-1.17-.72.02-.2.31-.4.87-.6 3.42-1.49 5.7-2.47 6.84-2.95 3.26-1.36 3.94-1.6 4.38-1.6.1 0 .31.02.45.13.12.09.15.21.17.3-.01.06.01.24 0 .37z"/>
-                      </svg>
-                      Đặt Tour Ngay qua Zalo
-                    </a>
+                    {/* Date Selection */}
+                    <div className="mb-4">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Chọn ngày khởi hành</label>
+                      <input
+                        type="date"
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#00CBA9] focus:border-transparent transition-all"
+                      />
+                    </div>
+
+                    {/* Quantity */}
+                    <div className="mb-6">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Số lượng khách</label>
+                      <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden">
+                        <button className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                          </svg>
+                        </button>
+                        <input
+                          type="number"
+                          defaultValue="1"
+                          min="1"
+                          className="flex-1 text-center border-x-2 border-gray-200 py-3 text-sm font-semibold"
+                        />
+                        <button className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Book Button */}
+                    <button className="w-full bg-linear-to-r from-[#00CBA9] to-[#00A88A] hover:from-[#00A88A] hover:to-[#00CBA9] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl mb-3 transform hover:scale-[1.02] active:scale-[0.98]">
+                      Đặt Tour Ngay
+                    </button>
 
                     {/* Contact */}
                     <div className="flex gap-2 mb-4">
                       <a
                         href={`tel:${phoneNumber}`}
-                        className="flex-1 flex items-center justify-center gap-2 border-2 border-[#059669] text-[#059669] py-3 rounded-xl hover:bg-[#059669]/10 transition-all font-medium"
+                        className="flex-1 flex items-center justify-center gap-2 border-2 border-[#00CBA9] text-[#00CBA9] py-3 rounded-xl hover:bg-[#00CBA9]/10 transition-all font-medium"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -697,8 +593,6 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       </a>
                       <a
                         href={`https://zalo.me/${zaloLink}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="flex-1 flex items-center justify-center gap-2 border-2 border-blue-500 text-blue-500 py-3 rounded-xl hover:bg-blue-50 transition-all font-medium"
                       >
                         <span className="text-sm">Chat Zalo</span>
@@ -732,38 +626,6 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             </div>
           </div>
         </div>
-
-        {tourData.relatedTours && tourData.relatedTours.length > 0 && (
-          <section className="mt-14 border-t border-gray-100 pt-8 px-4 md:px-0">
-            <div className="flex items-end justify-between gap-4 mb-5">
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Một số tour cùng chuyên mục</h2>
-                <p className="text-sm text-gray-600 mt-1">Gợi ý thêm vài hành trình tương tự.</p>
-              </div>
-              <Link href="/tours" className="hidden md:inline-flex text-sm font-semibold text-[#059669] hover:text-[#047857]">
-                Xem tất cả →
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {tourData.relatedTours.slice(0, 3).map((tour) => (
-                <TourCard
-                  key={tour.slug}
-                  id={tour.id}
-                  title={tour.title}
-                  slug={tour.slug}
-                  image={tour.image || '/images/placeholder-tour.jpg'}
-                  location={tour.destination || 'Trung Quốc'}
-                  duration={tour.duration || ''}
-                  price={tour.price || 0}
-                  originalPrice={tour.originalPrice}
-                  rating={tour.rating || 5}
-                  reviewCount={tour.reviewCount || 0}
-                />
-              ))}
-            </div>
-          </section>
-        )}
       </main>
 
       {/* Mobile Fixed Bottom Bar */}
@@ -778,99 +640,11 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             </div>
             <p className="text-xs text-gray-500">Giá/khách</p>
           </div>
-          <a 
-            href={`https://zalo.me/${zaloLink}?text=Xin chào, tôi muốn đặt tour: ${tourData.title}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-linear-to-r from-[#059669] to-[#047857] text-white font-bold px-6 py-3.5 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center gap-2"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-5.52-4.48-10-10-10zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.05-.2-.07-.05-.16-.03-.23-.02-.1.02-1.62 1.03-4.58 3.03-.43.3-.82.44-1.17.43-.39-.01-1.13-.22-1.68-.4-.68-.22-1.22-.34-1.17-.72.02-.2.31-.4.87-.6 3.42-1.49 5.7-2.47 6.84-2.95 3.26-1.36 3.94-1.6 4.38-1.6.1 0 .31.02.45.13.12.09.15.21.17.3-.01.06.01.24 0 .37z"/>
-            </svg>
+          <button className="bg-linear-to-r from-[#00CBA9] to-[#00A88A] text-white font-bold px-8 py-3.5 rounded-xl shadow-lg active:scale-95 transition-transform">
             Đặt Tour
-          </a>
+          </button>
         </div>
       </div>
-
-      {/* Lightbox Gallery Modal */}
-      {showLightbox && (
-        <div className="fixed inset-0 z-50 bg-black">
-          {/* Close button */}
-          <button
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 z-50 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all"
-          >
-            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Image counter */}
-          <div className="absolute top-4 left-4 z-50 bg-white/10 backdrop-blur-md text-white px-4 py-2 rounded-full font-medium">
-            {lightboxIndex + 1} / {tourData.images.length}
-          </div>
-
-          {/* Main image container */}
-          <div className="absolute inset-0 flex items-center justify-center p-4 md:p-16">
-            <div className="relative w-full h-full max-w-6xl max-h-[85vh]">
-              <Image
-                src={tourData.images[lightboxIndex]}
-                alt={`Tour ${tourData.title} - Ảnh ${lightboxIndex + 1}/${tourData.images.length} | Sơn Hằng Travel`}
-                fill
-                className="object-contain"
-                sizes="100vw"
-                priority
-              />
-            </div>
-          </div>
-
-          {/* Navigation arrows */}
-          {tourData.images.length > 1 && (
-            <>
-              <button
-                onClick={goToPrevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-50 w-14 h-14 bg-white/10 hover:bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
-              >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                onClick={goToNextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-50 w-14 h-14 bg-white/10 hover:bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
-              >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </>
-          )}
-
-          {/* Thumbnail strip at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent py-4">
-            <div className="flex justify-center gap-2 px-4 overflow-x-auto pb-2">
-              {tourData.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setLightboxIndex(idx)}
-                  className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden transition-all ${
-                    lightboxIndex === idx 
-                      ? 'ring-2 ring-[#059669] ring-offset-2 ring-offset-black scale-110' 
-                      : 'opacity-50 hover:opacity-100'
-                  }`}
-                >
-                  <Image src={img} alt={`Thumbnail ${idx + 1} - ${tourData.title}`} width={80} height={80} className="object-cover w-full h-full" loading="lazy" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Keyboard navigation hint */}
-          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-white/50 text-sm hidden md:block">
-            Dùng phím ← → để chuyển ảnh • ESC để đóng
-          </div>
-        </div>
-      )}
     </div>
   )
 }

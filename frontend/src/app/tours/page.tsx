@@ -1,6 +1,7 @@
 import { getTours, getCategories, getImageUrl, Tour, Category } from '@/lib/strapi'
 import ToursPageClient from './ToursPageClient'
 import { Metadata } from 'next'
+import { Suspense } from 'react'
 
 // SEO Metadata for Tours page
 export const metadata: Metadata = {
@@ -10,15 +11,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel",
     description: "Khám phá Trung Quốc với các tour chất lượng: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất thị trường!",
-    url: "https://sonhangtravel.com/tours",
+    url: "https://sonhangtravel.vercel.app/tours",
     type: "website",
   },
   alternates: {
-    canonical: "https://sonhangtravel.com/tours",
+    canonical: "https://sonhangtravel.vercel.app/tours",
   },
 }
 
-// ISR - revalidate every hour
+// ISR - Revalidate every hour
 export const revalidate = 3600
 
 // Transform tour for client component
@@ -72,5 +73,5 @@ export default async function ToursPage() {
     console.error('Error fetching tours data:', error)
   }
 
-  return <ToursPageClient initialTours={tours} initialCategories={categories} />
+  return <Suspense><ToursPageClient initialTours={tours} initialCategories={categories} /></Suspense>
 }

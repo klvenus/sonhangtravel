@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import TourCard from '@/components/TourCard'
 
 interface TourData {
@@ -33,18 +33,39 @@ interface Props {
 }
 
 export default function ToursPageClient({ initialTours, initialCategories }: Props) {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const searchParams = useSearchParams()
+  const searchFromUrl = searchParams.get('search') || ''
+  const categoryFromUrl = searchParams.get('category') || null
 
-  const filteredTours = activeCategory
-    ? initialTours.filter(tour => tour.categorySlug === activeCategory)
-    : initialTours
+  const [activeCategory, setActiveCategory] = useState<string | null>(categoryFromUrl)
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl)
 
-  // Tìm category đang active để hiển thị title và description
+  // Sync with URL params
+  useEffect(() => {
+    setSearchQuery(searchParams.get('search') || '')
+    setActiveCategory(searchParams.get('category') || null)
+  }, [searchParams])
+
+  // Filter by category + search
+  const filteredTours = initialTours.filter(tour => {
+    const matchCategory = !activeCategory || tour.categorySlug === activeCategory
+    const q = searchQuery.toLowerCase().trim()
+    const matchSearch = !q ||
+      tour.title.toLowerCase().includes(q) ||
+      tour.location.toLowerCase().includes(q) ||
+      (tour.category && tour.category.toLowerCase().includes(q))
+    return matchCategory && matchSearch
+  })
+
   const activeCateg = initialCategories.find(cat => cat.slug === activeCategory)
-  const pageTitle = activeCateg ? `Tour ${activeCateg.name}` : 'Tất Cả Tour Du Lịch'
-  const pageDescription = activeCateg 
-    ? `Khám phá những địa điểm du lịch hấp dẫn tại ${activeCateg.name}` 
-    : 'Khám phá các tour du lịch Trung Quốc hấp dẫn'
+  const pageTitle = searchQuery
+    ? `Kết quả tìm kiếm: "${searchQuery}"`
+    : activeCateg ? `Tour ${activeCateg.name}` : 'Tất Cả Tour Du Lịch'
+  const pageDescription = searchQuery
+    ? `Tìm thấy ${filteredTours.length} tour phù hợp`
+    : activeCateg
+      ? `Khám phá những địa điểm du lịch hấp dẫn tại ${activeCateg.name}`
+      : 'Khám phá các tour du lịch Trung Quốc hấp dẫn'
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -57,6 +78,29 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
       </div>
 
       <div className="container-custom py-6">
+        {/* Search bar */}
+        <div className="mb-5">
+          <div className="flex items-center bg-white rounded-xl overflow-hidden border border-gray-200 focus-within:border-[#059669] transition-colors max-w-lg">
+            <svg className="w-5 h-5 text-gray-400 ml-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Tìm tour, điểm đến..."
+              className="flex-1 bg-transparent py-3 px-3 text-sm outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="px-3 text-gray-400 hover:text-gray-600">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Category Filter */}
         <div className="mb-6">
           <h2 className="text-lg font-bold text-gray-800 mb-3">Điểm đến</h2>
@@ -109,10 +153,12 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-500">Không có tour nào trong danh mục này</p>
-            <Link href="/tours" className="text-[#059669] mt-2 inline-block">
+            <p className="text-gray-500">
+              {searchQuery ? `Không tìm thấy tour nào cho "${searchQuery}"` : 'Không có tour nào trong danh mục này'}
+            </p>
+            <button onClick={() => { setSearchQuery(''); setActiveCategory(null) }} className="text-[#059669] mt-2 inline-block hover:underline">
               Xem tất cả tour →
-            </Link>
+            </button>
           </div>
         )}
       </div>

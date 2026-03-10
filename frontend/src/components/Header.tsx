@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { getCategories } from '@/lib/strapi'
 
 interface Category {
   id: number
@@ -19,6 +21,9 @@ interface HeaderProps {
 }
 
 export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789', zaloNumber }: HeaderProps) {
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState('')
+
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
@@ -27,11 +32,23 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
 
   const zaloLink = zaloNumber || phoneNumber
 
+  const handleSearch = () => {
+    const q = searchQuery.trim()
+    if (q) {
+      router.push(`/tours?search=${encodeURIComponent(q)}`)
+      setSearchQuery('')
+      setIsSearchOpen(false)
+    }
+  }
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSearch()
+  }
+
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const res = await fetch('/api/categories')
-        const data = res.ok ? await res.json() : []
+        const data = await getCategories()
         setCategories(data || [])
       } catch (error) {
         console.error('Error fetching categories:', error)
@@ -58,9 +75,9 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               {logoUrl ? (
-                <Image src={logoUrl} alt={siteName} width={54} height={54} className="w-13.5 h-13.5 object-contain" priority />
+                <Image src={logoUrl} alt={siteName} width={54} height={54} className="w-13.5 h-13.5 object-contain" />
               ) : (
-                <div className="w-13.5 h-13.5 bg-linear-to-br from-[#059669] to-[#047857] flex items-center justify-center text-white font-bold shadow-md">
+                <div className="w-13.5 h-13.5 bg-linear-to-br from-[#00CBA9] to-[#00A88A] flex items-center justify-center text-white font-bold shadow-md">
                   SH
                 </div>
               )}
@@ -77,7 +94,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                 </svg>
               </button>
               <a href={`tel:${phoneNumber}`} className="p-2.5 rounded-full hover:bg-gray-100 active:bg-gray-200">
-                <svg className="w-5 h-5 text-[#059669]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#00CBA9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
               </a>
@@ -102,9 +119,12 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                 <input
                   type="text"
                   placeholder="Tìm tour, điểm đến..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
                   className="flex-1 bg-transparent py-3 px-3 text-sm outline-none"
                 />
-                <button className="bg-[#059669] text-white px-4 py-3 text-sm font-medium">
+                <button onClick={handleSearch} className="bg-[#00CBA9] text-white px-4 py-3 text-sm font-medium">
                   Tìm
                 </button>
               </div>
@@ -115,7 +135,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
         {/* Desktop Header */}
         <div className="hidden md:block">
           {/* Top Bar */}
-          <div className="bg-[#059669] text-white py-2">
+          <div className="bg-[#00CBA9] text-white py-2">
             <div className="container-custom flex justify-between items-center text-sm">
               <div className="flex items-center gap-4">
                 <a href={`tel:${phoneNumber}`} className="flex items-center gap-1 hover:underline">
@@ -144,9 +164,9 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 shrink-0">
                 {logoUrl ? (
-                  <Image src={logoUrl} alt={siteName} width={72} height={72} className="w-18 h-18 object-contain" priority />
+                  <Image src={logoUrl} alt={siteName} width={57} height={57} className="w-14 h-14 object-contain" />
                 ) : (
-                  <div className="w-18 h-18 bg-linear-to-br from-[#059669] to-[#047857] flex items-center justify-center text-white font-bold text-xl shadow-md">
+                  <div className="w-14 h-14 bg-linear-to-br from-[#00CBA9] to-[#00A88A] flex items-center justify-center text-white font-bold text-lg shadow-md">
                     SH
                   </div>
                 )}
@@ -158,16 +178,19 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
 
               {/* Search Bar */}
               <div className="flex-1 max-w-lg">
-                <div className="flex items-center bg-gray-100 rounded-full overflow-hidden border-2 border-transparent focus-within:border-[#059669] focus-within:bg-white transition-colors">
+                <div className="flex items-center bg-gray-100 rounded-full overflow-hidden border-2 border-transparent focus-within:border-[#00CBA9] focus-within:bg-white transition-colors">
                   <svg className="w-5 h-5 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
                     type="text"
                     placeholder="Tìm tour, điểm đến..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
                     className="flex-1 bg-transparent py-3 px-3 outline-none"
                   />
-                  <button className="bg-[#059669] hover:bg-[#047857] text-white px-6 py-3 font-medium transition-colors">
+                  <button onClick={handleSearch} className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-6 py-3 font-medium transition-colors">
                     Tìm kiếm
                   </button>
                 </div>
@@ -180,7 +203,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   <button 
                     onClick={() => setShowCategoryMenu(!showCategoryMenu)}
                     onMouseEnter={() => setShowCategoryMenu(true)}
-                    className="flex items-center gap-1 text-gray-700 hover:text-[#059669] font-medium transition-colors"
+                    className="flex items-center gap-1 text-gray-700 hover:text-[#00CBA9] font-medium transition-colors"
                   >
                     Tour du lịch
                     <svg className={`w-4 h-4 transition-transform ${showCategoryMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,7 +220,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                       <Link 
                         href="/tours" 
                         onClick={() => setShowCategoryMenu(false)}
-                        className="block px-4 py-2.5 text-gray-700 hover:bg-[#059669]/10 hover:text-[#059669] font-medium transition-colors"
+                        className="block px-4 py-2.5 text-gray-700 hover:bg-[#00CBA9]/10 hover:text-[#00CBA9] font-medium transition-colors"
                       >
                         Tất cả Tour
                       </Link>
@@ -207,7 +230,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                           key={cat.id}
                           href={`/tours?category=${cat.slug}`}
                           onClick={() => setShowCategoryMenu(false)}
-                          className="block px-4 py-2.5 text-gray-600 hover:bg-[#059669]/10 hover:text-[#059669] transition-colors"
+                          className="block px-4 py-2.5 text-gray-600 hover:bg-[#00CBA9]/10 hover:text-[#00CBA9] transition-colors"
                         >
                           {cat.ten || cat.name}
                         </Link>
@@ -216,16 +239,16 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   )}
                 </div>
                 
-                <Link href="/uu-dai" className="text-gray-700 hover:text-[#059669] font-medium transition-colors">
+                <Link href="/uu-dai" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
                   Ưu đãi
                 </Link>
-                <Link href="/blog" className="text-gray-700 hover:text-[#059669] font-medium transition-colors">
+                <Link href="/blog" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
                   Blog
                 </Link>
-                <Link href="/ve-chung-toi" className="text-gray-700 hover:text-[#059669] font-medium transition-colors">
+                <Link href="/ve-chung-toi" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
                   Về chúng tôi
                 </Link>
-                <Link href="/lien-he" className="bg-[#059669] hover:bg-[#047857] text-white px-5 py-2.5 rounded-full font-medium transition-colors">
+                <Link href="/lien-he" className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-5 py-2.5 rounded-full font-medium transition-colors">
                   Liên hệ
                 </Link>
               </nav>
@@ -243,13 +266,13 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
           />
           <div className="md:hidden fixed top-0 left-0 bottom-0 w-[300px] bg-white z-[60] shadow-2xl flex flex-col animate-slide-in-left overflow-hidden">
             {/* Header with Logo */}
-            <div className="bg-linear-to-r from-[#059669] to-[#047857] p-5">
+            <div className="bg-linear-to-r from-[#00CBA9] to-[#00A88A] p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   {logoUrl ? (
                     <Image src={logoUrl} alt={siteName} width={40} height={40} className="w-10 h-10 rounded-xl object-contain bg-white p-1" />
                   ) : (
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#059669] font-bold shadow">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#00CBA9] font-bold shadow">
                       SH
                     </div>
                   )}
@@ -272,7 +295,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
               <div className="flex gap-2">
                 <a
                   href={`tel:${phoneNumber}`}
-                  className="flex-1 flex items-center justify-center gap-2 bg-white text-[#059669] py-2.5 rounded-xl font-medium text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white text-[#00CBA9] py-2.5 rounded-xl font-medium text-sm"
                 >
                   Gọi ngay
                 </a>
@@ -311,7 +334,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                 <Link
                   href="/tours"
                   onClick={() => setShowMobileMenu(false)}
-                  className="flex items-center justify-between px-5 py-3.5 text-[#059669] hover:bg-gray-50 font-semibold"
+                  className="flex items-center justify-between px-5 py-3.5 text-[#00CBA9] hover:bg-gray-50 font-semibold"
                 >
                   Tất cả Tour
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,7 +346,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                     key={cat.id}
                     href={`/tours?category=${cat.slug}`}
                     onClick={() => setShowMobileMenu(false)}
-                    className="flex items-center justify-between px-5 py-3 text-gray-600 hover:bg-gray-50 hover:text-[#059669] transition-colors"
+                    className="flex items-center justify-between px-5 py-3 text-gray-600 hover:bg-gray-50 hover:text-[#00CBA9] transition-colors"
                   >
                     {cat.ten || cat.name}
                     <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,7 +417,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
             {/* Footer - Hotline */}
             <div className="border-t border-gray-200 p-4 bg-gray-50">
               <p className="text-xs text-gray-500 mb-1">Hỗ trợ 24/7</p>
-              <a href={`tel:${phoneNumber}`} className="text-xl font-bold text-[#059669]">
+              <a href={`tel:${phoneNumber}`} className="text-xl font-bold text-[#00CBA9]">
                 {phoneNumber}
               </a>
               <p className="text-xs text-gray-400 mt-2">© 2026 {siteName}</p>

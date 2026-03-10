@@ -1,11 +1,11 @@
-// Neon DB-backed compatibility layer
-// Exports same types/functions as old Strapi API wrapper
-import { db } from './db';
-import { tours, categories, siteSettings } from './schema';
-import { eq, desc, asc, ilike, or, sql } from 'drizzle-orm';
+// Strapi API Configuration
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
-// ============ TYPES (kept for compatibility) ============
+// Timeout config (longer for production cold starts on free tier hosting)
+const API_TIMEOUT = process.env.NODE_ENV === 'production' ? 30000 : 10000; // 30s prod, 10s dev
 
+// Types
 export interface StrapiImage {
   id: number;
   url: string;
@@ -24,7 +24,7 @@ export interface Category {
   id: number;
   documentId: string;
   name: string;
-  ten?: string;
+  ten?: string; // Vietnamese field name
   slug: string;
   description?: string;
   icon?: string;
@@ -70,7 +70,7 @@ export interface Tour {
   groupSize?: string;
   thumbnail: StrapiImage;
   gallery?: StrapiImage[];
-  tourFile?: StrapiImage;
+  tourFile?: StrapiImage; // PDF file for download
   itinerary?: ItineraryItem[];
   includes?: ListItem[];
   excludes?: ListItem[];
@@ -99,10 +99,213 @@ export interface StrapiResponse<T> {
   };
 }
 
+// Helper function to get full image URL
+export function getImageUrl(image?: StrapiImage, size?: 'thumbnail' | 'small' | 'medium' | 'large'): string {
+  if (!image) return '/images/placeholder-tour.jpg';
+  
+  let url = image.url;
+  
+  // Try to get specific size format
+  if (size && image.formats?.[size]) {
+    url = image.formats[size].url;
+  }
+  
+  // Add base URL if needed
+  if (url.startsWith('/')) {
+    url = `${STRAPI_URL}${url}`;
+  }
+  
+  return url;
+}
+
+// API Headers
+function getHeaders(): HeadersInit {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (STRAPI_API_TOKEN) {
+    headers['Authorization'] = `Bearer ${STRAPI_API_TOKEN}`;
+  }
+  
+  return headers;
+}
+
+// Fetch wrapper with error handling and timeout
+async function fetchAPI<T>(endpoint: string, options?: RequestInit & { revalidate?: number | false; timeout?: number }): Promise<T> {
+  const url = `${STRAPI_URL}/api${endpoint}`;
+  
+  const { revalidate, timeout = API_TIMEOUT, ...fetchOptions } = options || {};
+  
+  // Create abort controller for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const res = await fetch(url, {
+      ...fetchOptions,
+      headers: getHeaders(),
+      signal: controller.signal,
+      cache: 'force-cache', // Force cache for better performance
+      next: { 
+        revalidate: revalidate ?? 3600, // Default: cache 1 hour
+        tags: ['strapi'] // Tag for on-demand revalidation
+      },
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!res.ok) {
+      console.error(`API Error: ${res.status} ${res.statusText}`);
+      throw new Error(`Failed to fetch ${endpoint}: ${res.status} ${res.statusText}`);
+    }
+    
+    return res.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        console.error(`Request timeout after ${timeout}ms for ${endpoint}`);
+        throw new Error(`Request timeout: ${endpoint}`);
+      }
+      console.error(`Fetch error for ${endpoint}:`, error.message);
+    }
+    throw error;
+  }
+}
+
+// ============ TOUR API ============
+
+// Get all tours with optional filters
+export async function getTours(params?: {
+  featured?: boolean;
+  category?: string;
+  page?: number;
+  pageSize?: number;
+  sort?: string;
+}): Promise<StrapiResponse<Tour[]>> {
+  const searchParams = new URLSearchParams();
+  
+  // Populate all relations (simpler syntax for Strapi 5)
+  searchParams.set('populate', '*');
+  
+  // Filters
+  if (params?.featured) {
+    searchParams.set('filters[featured][$eq]', 'true');
+  }
+  if (params?.category) {
+    searchParams.set('filters[category][slug][$eq]', params.category);
+  }
+  
+  // Pagination
+  searchParams.set('pagination[page]', String(params?.page || 1));
+  searchParams.set('pagination[pageSize]', String(params?.pageSize || 10));
+  
+  // Sort
+  if (params?.sort) {
+    searchParams.set('sort', params.sort);
+  }
+  
+  return fetchAPI<StrapiResponse<Tour[]>>(`/tours?${searchParams.toString()}`);
+}
+
+// Get single tour by slug (supports draft preview)
+export async function getTourBySlug(slug: string, preview = false): Promise<Tour | null> {
+  const searchParams = new URLSearchParams();
+  
+  // Populate all relations including nested (Strapi 5 syntax)
+  searchParams.append('populate[0]', 'thumbnail');
+  searchParams.append('populate[1]', 'gallery');
+  searchParams.append('populate[2]', 'category');
+  searchParams.append('populate[3]', 'itinerary.image');
+  searchParams.append('populate[4]', 'includes');
+  searchParams.append('populate[5]', 'excludes');
+  searchParams.append('populate[6]', 'notes');
+  searchParams.append('populate[7]', 'departureDates');
+  searchParams.append('populate[8]', 'tourFile');
+  
+  // Filter by slug
+  searchParams.append('filters[slug][$eq]', slug);
+  
+  // Include drafts for preview mode
+  if (preview) {
+    searchParams.append('status', 'draft');
+  }
+  
+  const response = await fetchAPI<StrapiResponse<Tour[]>>(`/tours?${searchParams.toString()}`);
+  
+  return response.data?.[0] || null;
+}
+
+// Get featured tours
+export async function getFeaturedTours(limit = 6): Promise<Tour[]> {
+  const response = await getTours({
+    featured: true,
+    pageSize: limit,
+    sort: 'bookingCount:desc',
+  });
+  
+  return response.data || [];
+}
+
+// ============ CATEGORY API ============
+
+// Get all categories
+export async function getCategories(): Promise<Category[]> {
+  const searchParams = new URLSearchParams();
+  searchParams.append('populate[0]', 'image');
+  searchParams.append('populate[1]', 'tours');
+  searchParams.set('sort', 'order:asc');
+  
+  const response = await fetchAPI<StrapiResponse<Category[]>>(`/categories?${searchParams.toString()}`);
+  
+  return response.data || [];
+}
+
+// Get category by slug
+export async function getCategoryBySlug(slug: string): Promise<Category | null> {
+  const searchParams = new URLSearchParams();
+  searchParams.set('populate', '*');
+  searchParams.set('filters[slug][$eq]', slug);
+  
+  const response = await fetchAPI<StrapiResponse<Category[]>>(`/categories?${searchParams.toString()}`);
+  
+  return response.data?.[0] || null;
+}
+
+// Get tours by category
+export async function getToursByCategory(categorySlug: string, page = 1, pageSize = 12): Promise<StrapiResponse<Tour[]>> {
+  return getTours({
+    category: categorySlug,
+    page,
+    pageSize,
+  });
+}
+
+// ============ SEARCH API ============
+
+export async function searchTours(query: string, page = 1, pageSize = 10): Promise<StrapiResponse<Tour[]>> {
+  const searchParams = new URLSearchParams();
+  
+  searchParams.set('populate', '*');
+  
+  // Search in title and description
+  searchParams.set('filters[$or][0][title][$containsi]', query);
+  searchParams.set('filters[$or][1][shortDescription][$containsi]', query);
+  searchParams.set('filters[$or][2][destination][$containsi]', query);
+  
+  searchParams.set('pagination[page]', String(page));
+  searchParams.set('pagination[pageSize]', String(pageSize));
+  
+  return fetchAPI<StrapiResponse<Tour[]>>(`/tours?${searchParams.toString()}`);
+}
+
+// ============ SITE SETTINGS API ============
+
 export interface BannerSlide {
   id: number;
   image: StrapiImage;
-  imageMobile?: StrapiImage;
   title?: string;
   subtitle?: string;
   linkUrl?: string;
@@ -114,7 +317,6 @@ export interface SiteSettings {
   siteName: string;
   logo?: StrapiImage;
   logoDark?: StrapiImage;
-  favicon?: StrapiImage;
   bannerSlides?: BannerSlide[];
   phoneNumber?: string;
   zaloNumber?: string;
@@ -125,327 +327,15 @@ export interface SiteSettings {
   tiktokUrl?: string;
 }
 
-// ============ HELPERS ============
-
-function urlToStrapiImage(url: string | null | undefined, id = 1): StrapiImage | undefined {
-  if (!url) return undefined;
-  return { id, url, formats: { thumbnail: { url }, small: { url }, medium: { url }, large: { url } } };
-}
-
-function urlToStrapiImageRequired(url: string | null | undefined, id = 1): StrapiImage {
-  const fallback = '/images/placeholder-tour.jpg';
-  const u = url || fallback;
-  return { id, url: u, formats: { thumbnail: { url: u }, small: { url: u }, medium: { url: u }, large: { url: u } } };
-}
-
-export function getImageUrl(image?: StrapiImage | string, size?: 'thumbnail' | 'small' | 'medium' | 'large'): string {
-  if (!image) return '/images/placeholder-tour.jpg';
-  if (typeof image === 'string') return image || '/images/placeholder-tour.jpg';
-  if (size && image.formats?.[size]) return image.formats[size].url;
-  return image.url || '/images/placeholder-tour.jpg';
-}
-
-// Convert DB tour row to Tour interface
-function dbTourToTour(row: Record<string, unknown>, cat?: Record<string, unknown> | null): Tour {
-  const r = row as {
-    id: number; title: string; slug: string; shortDescription: string; content: string | null;
-    price: number; originalPrice: number | null; duration: string; departure: string | null;
-    destination: string; transportation: string | null; groupSize: string | null;
-    thumbnail: string | null; gallery: string[] | null;
-    itinerary: { time?: string; title: string; description?: string; image?: string }[] | null;
-    includes: string[] | null; excludes: string[] | null; notes: string[] | null;
-    policy: string | null; categoryId: number | null;
-    featured: boolean | null; rating: string | null;
-    reviewCount: number | null; bookingCount: number | null;
-    departureDates: { date: string; price?: number; availableSlots: number; status: 'available' | 'almost_full' | 'full' }[] | null;
-    published: boolean | null; createdAt: Date | null; updatedAt: Date | null;
-  };
-
-  const category = cat ? {
-    id: (cat as { id: number }).id,
-    documentId: String((cat as { id: number }).id),
-    name: (cat as { name: string }).name,
-    ten: (cat as { name: string }).name,
-    slug: (cat as { slug: string }).slug,
-    description: (cat as { description?: string }).description,
-    icon: (cat as { icon?: string }).icon,
-    order: (cat as { order?: number }).order || 0,
-  } as Category : undefined;
-
-  return {
-    id: r.id,
-    documentId: String(r.id),
-    title: r.title,
-    slug: r.slug,
-    shortDescription: r.shortDescription || '',
-    content: r.content || undefined,
-    price: r.price,
-    originalPrice: r.originalPrice || undefined,
-    duration: r.duration,
-    departure: r.departure || undefined,
-    destination: r.destination,
-    transportation: r.transportation || undefined,
-    groupSize: r.groupSize || undefined,
-    thumbnail: urlToStrapiImageRequired(r.thumbnail),
-    gallery: (r.gallery || []).map((url, i) => urlToStrapiImageRequired(url, i + 1)),
-    itinerary: (r.itinerary || []).map((it, i) => ({
-      id: i + 1,
-      time: it.time,
-      title: it.title,
-      description: it.description,
-      image: it.image ? urlToStrapiImage(it.image, i + 1) : undefined,
-    })),
-    includes: (r.includes || []).map((text, i) => ({ id: i + 1, text })),
-    excludes: (r.excludes || []).map((text, i) => ({ id: i + 1, text })),
-    notes: (r.notes || []).map((text, i) => ({ id: i + 1, text })),
-    policy: r.policy || undefined,
-    category,
-    featured: r.featured || false,
-    rating: parseFloat(r.rating || '5.0'),
-    reviewCount: r.reviewCount || 0,
-    bookingCount: r.bookingCount || 0,
-    departureDates: (r.departureDates || []).map((dd, i) => ({ id: i + 1, ...dd })),
-    createdAt: r.createdAt?.toISOString() || new Date().toISOString(),
-    updatedAt: r.updatedAt?.toISOString() || new Date().toISOString(),
-    publishedAt: r.createdAt?.toISOString() || new Date().toISOString(),
-  };
-}
-
-function dbCatToCategory(row: Record<string, unknown>, toursList?: Tour[]): Category {
-  const r = row as {
-    id: number; name: string; slug: string; description: string | null;
-    icon: string | null; image: string | null; order: number | null;
-  };
-  return {
-    id: r.id,
-    documentId: String(r.id),
-    name: r.name,
-    ten: r.name,
-    slug: r.slug,
-    description: r.description || undefined,
-    icon: r.icon || undefined,
-    image: urlToStrapiImage(r.image),
-    order: r.order || 0,
-    tours: toursList,
-  };
-}
-
-// ============ TOUR API ============
-
-export async function getTours(params?: {
-  featured?: boolean;
-  category?: string;
-  page?: number;
-  pageSize?: number;
-  sort?: string;
-}): Promise<StrapiResponse<Tour[]>> {
-  try {
-    const page = params?.page || 1;
-    const pageSize = params?.pageSize || 10;
-    const offset = (page - 1) * pageSize;
-
-    // Build query
-    let query = db
-      .select()
-      .from(tours)
-      .leftJoin(categories, eq(tours.categoryId, categories.id))
-      .where(eq(tours.published, true))
-      .limit(pageSize)
-      .offset(offset);
-
-    // Apply featured filter using $dynamic
-    if (params?.featured) {
-      query = db
-        .select()
-        .from(tours)
-        .leftJoin(categories, eq(tours.categoryId, categories.id))
-        .where(sql`${tours.published} = true AND ${tours.featured} = true`)
-        .limit(pageSize)
-        .offset(offset);
-    }
-
-    if (params?.category) {
-      query = db
-        .select()
-        .from(tours)
-        .leftJoin(categories, eq(tours.categoryId, categories.id))
-        .where(sql`${tours.published} = true AND ${categories.slug} = ${params.category}`)
-        .limit(pageSize)
-        .offset(offset);
-    }
-
-    // Sort
-    const sortField = params?.sort || 'bookingCount:desc';
-    const [field, direction] = sortField.split(':');
-    if (field === 'bookingCount') {
-      query = query.orderBy(direction === 'asc' ? asc(tours.bookingCount) : desc(tours.bookingCount)) as typeof query;
-    } else if (field === 'price') {
-      query = query.orderBy(direction === 'asc' ? asc(tours.price) : desc(tours.price)) as typeof query;
-    } else if (field === 'createdAt') {
-      query = query.orderBy(direction === 'asc' ? asc(tours.createdAt) : desc(tours.createdAt)) as typeof query;
-    } else {
-      query = query.orderBy(desc(tours.bookingCount)) as typeof query;
-    }
-
-    const rows = await query;
-
-    // Count total
-    const countResult = await db.select({ count: sql<number>`count(*)` }).from(tours).where(eq(tours.published, true));
-    const total = Number(countResult[0]?.count || 0);
-
-    const data = rows.map(row => dbTourToTour(row.tours as unknown as Record<string, unknown>, row.categories as unknown as Record<string, unknown> | null));
-
-    return {
-      data,
-      meta: {
-        pagination: {
-          page,
-          pageSize,
-          pageCount: Math.ceil(total / pageSize),
-          total,
-        },
-      },
-    };
-  } catch (error) {
-    console.error('Error in getTours:', error);
-    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
-  }
-}
-
-export async function getTourBySlug(slug: string, _preview = false): Promise<Tour | null> {
-  try {
-    const rows = await db
-      .select()
-      .from(tours)
-      .leftJoin(categories, eq(tours.categoryId, categories.id))
-      .where(eq(tours.slug, slug))
-      .limit(1);
-
-    if (!rows[0]) return null;
-    return dbTourToTour(rows[0].tours as unknown as Record<string, unknown>, rows[0].categories as unknown as Record<string, unknown> | null);
-  } catch (error) {
-    console.error('Error in getTourBySlug:', error);
-    return null;
-  }
-}
-
-export async function getFeaturedTours(limit = 6): Promise<Tour[]> {
-  const response = await getTours({ featured: true, pageSize: limit, sort: 'bookingCount:desc' });
-  return response.data || [];
-}
-
-// ============ CATEGORY API ============
-
-export async function getCategories(): Promise<Category[]> {
-  try {
-    const rows = await db.select().from(categories).orderBy(asc(categories.order));
-
-    // For each category, count tours
-    const result: Category[] = [];
-    for (const row of rows) {
-      const tourRows = await db
-        .select()
-        .from(tours)
-        .where(sql`${tours.categoryId} = ${row.id} AND ${tours.published} = true`);
-
-      const toursList = tourRows.map(t => dbTourToTour(t as unknown as Record<string, unknown>));
-      result.push(dbCatToCategory(row as unknown as Record<string, unknown>, toursList));
-    }
-
-    return result;
-  } catch (error) {
-    console.error('Error in getCategories:', error);
-    return [];
-  }
-}
-
-export async function getCategoryBySlug(slug: string): Promise<Category | null> {
-  try {
-    const rows = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
-    if (!rows[0]) return null;
-    return dbCatToCategory(rows[0] as unknown as Record<string, unknown>);
-  } catch (error) {
-    console.error('Error in getCategoryBySlug:', error);
-    return null;
-  }
-}
-
-export async function getToursByCategory(categorySlug: string, page = 1, pageSize = 12): Promise<StrapiResponse<Tour[]>> {
-  return getTours({ category: categorySlug, page, pageSize });
-}
-
-// ============ SEARCH API ============
-
-export async function searchTours(query: string, page = 1, pageSize = 10): Promise<StrapiResponse<Tour[]>> {
-  try {
-    const offset = (page - 1) * pageSize;
-    const searchPattern = `%${query}%`;
-
-    const rows = await db
-      .select()
-      .from(tours)
-      .leftJoin(categories, eq(tours.categoryId, categories.id))
-      .where(
-        sql`${tours.published} = true AND (
-          ${tours.title} ILIKE ${searchPattern} OR
-          ${tours.shortDescription} ILIKE ${searchPattern} OR
-          ${tours.destination} ILIKE ${searchPattern}
-        )`
-      )
-      .limit(pageSize)
-      .offset(offset)
-      .orderBy(desc(tours.bookingCount));
-
-    const data = rows.map(row => dbTourToTour(row.tours as unknown as Record<string, unknown>, row.categories as unknown as Record<string, unknown> | null));
-
-    return {
-      data,
-      meta: {
-        pagination: {
-          page,
-          pageSize,
-          pageCount: Math.ceil(data.length / pageSize),
-          total: data.length,
-        },
-      },
-    };
-  } catch (error) {
-    console.error('Error in searchTours:', error);
-    return { data: [], meta: { pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 } } };
-  }
-}
-
-// ============ SITE SETTINGS API ============
-
 export async function getSiteSettings(): Promise<SiteSettings | null> {
   try {
-    const rows = await db.select().from(siteSettings).limit(1);
-    if (!rows[0]) return null;
-
-    const s = rows[0];
-    return {
-      id: s.id,
-      siteName: s.siteName || 'Son Hang Travel',
-      logo: urlToStrapiImage(s.logo),
-      logoDark: urlToStrapiImage(s.logoDark),
-      favicon: urlToStrapiImage(s.favicon),
-      bannerSlides: (s.bannerSlides || []).map((slide, i) => ({
-        id: i + 1,
-        image: urlToStrapiImageRequired(slide.image, i + 1),
-        imageMobile: slide.imageMobile ? urlToStrapiImageRequired(slide.imageMobile, i + 100) : undefined,
-        title: slide.title,
-        subtitle: slide.subtitle,
-        linkUrl: slide.linkUrl,
-        linkText: slide.linkText,
-      })),
-      phoneNumber: s.phoneNumber || undefined,
-      zaloNumber: s.zaloNumber || undefined,
-      email: s.email || undefined,
-      address: s.address || undefined,
-      facebookUrl: s.facebookUrl || undefined,
-      youtubeUrl: s.youtubeUrl || undefined,
-      tiktokUrl: s.tiktokUrl || undefined,
-    };
+    const searchParams = new URLSearchParams();
+    searchParams.append('populate[0]', 'logo');
+    searchParams.append('populate[1]', 'logoDark');
+    searchParams.append('populate[2]', 'bannerSlides.image');
+    
+    const response = await fetchAPI<{ data: SiteSettings }>(`/site-setting?${searchParams.toString()}`);
+    return response.data || null;
   } catch (error) {
     console.error('Error fetching site settings:', error);
     return null;

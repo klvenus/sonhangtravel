@@ -4,7 +4,6 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
-import StatsBooster from "@/components/StatsBooster";
 import { getSiteSettings, getImageUrl } from "@/lib/strapi";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
@@ -21,7 +20,7 @@ const geistMono = Geist_Mono({
 
 // SEO Metadata
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sonhangtravel.com'),
+  metadataBase: new URL('https://sonhangtravel.vercel.app'),
   title: {
     default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
     template: "%s | Sơn Hằng Travel"
@@ -52,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    url: "https://sonhangtravel.com",
+    url: "https://sonhangtravel.vercel.app",
     siteName: "Sơn Hằng Travel",
     title: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín",
     description: "Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất, visa nhanh, hỗ trợ 24/7.",
@@ -86,7 +85,7 @@ export const metadata: Metadata = {
     google: "your-google-verification-code", // Thay bằng code thật từ Google Search Console
   },
   alternates: {
-    canonical: "https://sonhangtravel.com",
+    canonical: "https://sonhangtravel.vercel.app",
   },
   category: "travel",
 };
@@ -96,7 +95,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#059669',
+  themeColor: '#00CBA9',
 };
 
 export default async function RootLayout({
@@ -107,7 +106,6 @@ export default async function RootLayout({
   // Fetch site settings for Header and Footer
   const siteSettings = await getSiteSettings();
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
-  const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : undefined;
   const siteName = siteSettings?.siteName || 'Sơn Hằng Travel';
   const phoneNumber = siteSettings?.phoneNumber || '0123456789';
   const zaloNumber = siteSettings?.zaloNumber || undefined;
@@ -119,8 +117,8 @@ export default async function RootLayout({
     "@type": "TravelAgency",
     "name": siteName,
     "description": "Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới",
-    "url": "https://sonhangtravel.com",
-    "logo": logoUrl || "https://sonhangtravel.com/logo.png",
+    "url": "https://sonhangtravel.vercel.app",
+    "logo": logoUrl || "https://sonhangtravel.vercel.app/logo.png",
     "telephone": phoneNumber,
     "email": email,
     "address": {
@@ -155,58 +153,17 @@ export default async function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": siteName,
-    "url": "https://sonhangtravel.com",
-    "dateModified": new Date().toISOString(),
+    "url": "https://sonhangtravel.vercel.app",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://sonhangtravel.com/tours?search={search_term_string}",
+      "target": "https://sonhangtravel.vercel.app/tours?search={search_term_string}",
       "query-input": "required name=search_term_string"
-    },
-    // Sitelinks - Main tour categories
-    "hasPart": [
-      {
-        "@type": "WebPage",
-        "name": "Đông Hưng",
-        "url": "https://sonhangtravel.com/tours?category=dong-hung",
-        "description": "Các tour Đông Hưng ngắn ngày và liên tuyến từ Móng Cái"
-      },
-      {
-        "@type": "WebPage",
-        "name": "Hà Khẩu",
-        "url": "https://sonhangtravel.com/tours?category=ha-khau",
-        "description": "Các tour Hà Khẩu và tuyến Châu Hồng Hà từ Lào Cai"
-      },
-      {
-        "@type": "WebPage",
-        "name": "Vân Nam",
-        "url": "https://sonhangtravel.com/tours?category=van-nam",
-        "description": "Các hành trình sâu tuyến Vân Nam như Đại Lý, Lệ Giang, Côn Minh"
-      },
-      {
-        "@type": "WebPage",
-        "name": "Tất cả Tour",
-        "url": "https://sonhangtravel.com/tours",
-        "description": "Danh sách tất cả tour du lịch Trung Quốc"
-      },
-      {
-        "@type": "WebPage",
-        "name": "Blog Du Lịch",
-        "url": "https://sonhangtravel.com/blog",
-        "description": "Chia sẻ kinh nghiệm du lịch Trung Quốc, Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam"
-      }
-    ]
+    }
   };
 
   return (
     <html lang="vi">
       <head>
-        {/* Favicon */}
-        {faviconUrl && (
-          <>
-            <link rel="icon" href={faviconUrl} sizes="any" />
-            <link rel="apple-touch-icon" href={faviconUrl} />
-          </>
-        )}
         {/* JSON-LD Structured Data */}
         <script
           type="application/ld+json"
@@ -220,7 +177,6 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <StatsBooster />
         <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <div className="pb-16 md:pb-0">
           {children}
