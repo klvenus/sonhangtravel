@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getSiteSettings, getTours } from '@/lib/strapi'
+import { getSiteSettings, getTours } from '@/lib/data'
 
 export const revalidate = 3600
 
@@ -38,9 +38,9 @@ export default async function AboutPage() {
 
   // Get 4 tour images for gallery
   const tourImages = (toursData?.data || [])
-    .filter(t => t.thumbnail?.url)
+    .filter(t => t.thumbnail)
     .slice(0, 4)
-    .map(t => ({ url: t.thumbnail.url, title: t.title }))
+    .map(t => ({ url: t.thumbnail || '', title: t.title }))
 
   const zaloButtons = [
     { label: 'Zalo OA', href: 'https://zalo.me/561113801789156735' },
@@ -233,8 +233,8 @@ export default async function AboutPage() {
             {/* Company card */}
             <div className="rounded-2xl border border-gray-200 bg-white p-6 md:p-8">
               <div className="flex items-start gap-4">
-                {settings?.logo?.url ? (
-                  <Image src={settings.logo.url} alt="Sơn Hằng Travel" width={64} height={64} className="w-16 h-16 rounded-xl object-contain bg-gray-50 p-1" unoptimized />
+                {settings?.logo ? (
+                  <Image src={settings.logo} alt="Sơn Hằng Travel" width={64} height={64} className="w-16 h-16 rounded-xl object-contain bg-gray-50 p-1" unoptimized />
                 ) : (
                   <div className="w-16 h-16 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700 font-bold text-xl shrink-0">SH</div>
                 )}
