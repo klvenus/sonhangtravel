@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useMemo } from 'react'
 import TourCard from '@/components/TourCard'
 
 interface TourData {
@@ -33,32 +32,8 @@ interface Props {
 }
 
 export default function ToursPageClient({ initialTours, initialCategories }: Props) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const searchFromUrl = searchParams.get('search') || ''
-  const categoryFromUrl = searchParams.get('category') || null
-
-  const [activeCategory, setActiveCategory] = useState<string | null>(categoryFromUrl)
-  const [searchQuery, setSearchQuery] = useState(searchFromUrl)
-
-  // Sync with URL params
-  useEffect(() => {
-    setSearchQuery(searchParams.get('search') || '')
-    setActiveCategory(searchParams.get('category') || null)
-  }, [searchParams])
-
-  const updateUrl = (nextSearch: string, nextCategory: string | null) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    if (nextSearch.trim()) params.set('search', nextSearch.trim())
-    else params.delete('search')
-
-    if (nextCategory) params.set('category', nextCategory)
-    else params.delete('category')
-
-    const qs = params.toString()
-    router.replace(qs ? `/tours?${qs}` : '/tours', { scroll: false })
-  }
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const normalizedQuery = searchQuery.toLowerCase().trim()
 
@@ -106,17 +81,10 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
               placeholder="Tìm tour, điểm đến..."
               className="flex-1 bg-transparent py-3 px-3 text-sm outline-none"
               value={searchQuery}
-              onChange={(e) => {
-                const nextValue = e.target.value
-                setSearchQuery(nextValue)
-                updateUrl(nextValue, activeCategory)
-              }}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
-              <button onClick={() => {
-                setSearchQuery('')
-                updateUrl('', activeCategory)
-              }} className="px-3 text-gray-400 hover:text-gray-600">
+              <button onClick={() => setSearchQuery('')} className="px-3 text-gray-400 hover:text-gray-600">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -130,10 +98,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
           <h2 className="text-lg font-bold text-gray-800 mb-3">Điểm đến</h2>
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             <button
-              onClick={() => {
-                setActiveCategory(null)
-                updateUrl(searchQuery, null)
-              }}
+              onClick={() => setActiveCategory(null)}
               className={`shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 !activeCategory
                   ? 'bg-[#059669] text-white shadow-md'
@@ -145,10 +110,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
             {initialCategories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => {
-                  setActiveCategory(cat.slug)
-                  updateUrl(searchQuery, cat.slug)
-                }}
+                onClick={() => setActiveCategory(cat.slug)}
                 className={`shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   activeCategory === cat.slug
                     ? 'bg-[#059669] text-white shadow-md'
@@ -186,7 +148,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
             <p className="text-gray-500">
               {searchQuery ? `Không tìm thấy tour nào cho "${searchQuery}"` : 'Không có tour nào trong danh mục này'}
             </p>
-            <button onClick={() => { setSearchQuery(''); setActiveCategory(null); updateUrl('', null) }} className="text-[#059669] mt-2 inline-block hover:underline">
+            <button onClick={() => { setSearchQuery(''); setActiveCategory(null) }} className="text-[#059669] mt-2 inline-block hover:underline">
               Xem tất cả tour →
             </button>
           </div>
