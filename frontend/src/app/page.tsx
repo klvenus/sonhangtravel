@@ -96,7 +96,7 @@ export default async function Home() {
 
   return (
     <main>
-      <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} />
+      <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} searchTours={allTours} />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />
       {toursByCategory.map(group => (
