@@ -19,8 +19,11 @@ const geistMono = Geist_Mono({
 });
 
 // SEO Metadata
+const SITE_URL = 'https://sonhangtravel.vercel.app'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sonhangtravel.vercel.app'),
+  metadataBase: new URL(SITE_URL),
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -30,6 +33,7 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', type: 'image/png' },
     ],
     shortcut: ['/favicon.ico'],
+    other: [{ rel: 'manifest', url: '/site.webmanifest' }],
   },
   title: {
     default: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín 2026",
@@ -61,13 +65,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "vi_VN",
-    url: "https://sonhangtravel.vercel.app",
+    url: SITE_URL,
     siteName: "Sơn Hằng Travel",
     title: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc Giá Rẻ Uy Tín",
     description: "Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất, visa nhanh, hỗ trợ 24/7.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
         alt: "Sơn Hằng Travel - Tour Trung Quốc"
@@ -78,7 +82,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sơn Hằng Travel - Tour Du Lịch Trung Quốc",
     description: "Tour du lịch Trung Quốc giá rẻ từ Móng Cái. Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới.",
-    images: ["/og-image.jpg"],
+    images: [DEFAULT_OG_IMAGE],
   },
   robots: {
     index: true,

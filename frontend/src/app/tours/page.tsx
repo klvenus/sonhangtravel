@@ -3,6 +3,9 @@ import ToursPageClient from './ToursPageClient'
 import { Metadata } from 'next'
 import { Suspense } from 'react'
 
+const SITE_URL = 'https://sonhangtravel.vercel.app'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
 // SEO Metadata for Tours page
 export const metadata: Metadata = {
   title: "Tour Du Lịch Trung Quốc 2026 - Đông Hưng, Nam Ninh, Quế Lâm",
@@ -11,11 +14,25 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel",
     description: "Khám phá Trung Quốc với các tour chất lượng: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất thị trường!",
-    url: "https://sonhangtravel.vercel.app/tours",
+    url: `${SITE_URL}/tours`,
     type: "website",
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Tour du lịch Trung Quốc | Sơn Hằng Travel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel',
+    description: 'Khám phá Trung Quốc với các tour chất lượng: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất thị trường!',
+    images: [DEFAULT_OG_IMAGE],
   },
   alternates: {
-    canonical: "https://sonhangtravel.vercel.app/tours",
+    canonical: `${SITE_URL}/tours`,
   },
 }
 

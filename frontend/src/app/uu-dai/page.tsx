@@ -3,14 +3,37 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getAllBlogPosts } from '@/lib/blog'
 
+const SITE_URL = 'https://sonhangtravel.vercel.app'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Ưu Đãi | Sơn Hằng Travel',
+  title: 'Ưu Đãi',
   description:
     'Tổng hợp các bài viết sale, suất cuối, ưu đãi và chương trình giá tốt mới nhất từ Sơn Hằng Travel.',
   alternates: {
-    canonical: 'https://sonhangtravel.com/uu-dai',
+    canonical: `${SITE_URL}/uu-dai`,
+  },
+  openGraph: {
+    title: 'Ưu Đãi | Sơn Hằng Travel',
+    description: 'Tổng hợp các bài viết sale, suất cuối, ưu đãi và chương trình giá tốt mới nhất từ Sơn Hằng Travel.',
+    url: `${SITE_URL}/uu-dai`,
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Ưu đãi | Sơn Hằng Travel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ưu Đãi | Sơn Hằng Travel',
+    description: 'Tổng hợp các bài viết sale, suất cuối, ưu đãi và chương trình giá tốt mới nhất từ Sơn Hằng Travel.',
+    images: [DEFAULT_OG_IMAGE],
   },
 }
 

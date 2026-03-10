@@ -3,14 +3,37 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getSiteSettings, getTours } from '@/lib/data'
 
+const SITE_URL = 'https://sonhangtravel.vercel.app'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Về Chúng Tôi | Sơn Hằng Travel - Tour Trung Quốc Uy Tín từ Móng Cái',
+  title: 'Về Chúng Tôi - Tour Trung Quốc Uy Tín từ Móng Cái',
   description:
     'Sơn Hằng Travel - đơn vị chuyên tổ chức tour Trung Quốc khởi hành từ Móng Cái. Hơn 9.000 lượt khách tin tưởng, lịch trình rõ ràng, hỗ trợ 24/7.',
   alternates: {
-    canonical: 'https://sonhangtravel.com/ve-chung-toi',
+    canonical: `${SITE_URL}/ve-chung-toi`,
+  },
+  openGraph: {
+    title: 'Về Chúng Tôi | Sơn Hằng Travel',
+    description: 'Sơn Hằng Travel - đơn vị chuyên tổ chức tour Trung Quốc khởi hành từ Móng Cái. Hơn 9.000 lượt khách tin tưởng, lịch trình rõ ràng, hỗ trợ 24/7.',
+    url: `${SITE_URL}/ve-chung-toi`,
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Về chúng tôi | Sơn Hằng Travel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Về Chúng Tôi | Sơn Hằng Travel',
+    description: 'Sơn Hằng Travel - đơn vị chuyên tổ chức tour Trung Quốc khởi hành từ Móng Cái. Hơn 9.000 lượt khách tin tưởng, lịch trình rõ ràng, hỗ trợ 24/7.',
+    images: [DEFAULT_OG_IMAGE],
   },
 }
 

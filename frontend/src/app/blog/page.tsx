@@ -3,12 +3,35 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getAllBlogPosts } from '@/lib/blog'
 
+const SITE_URL = 'https://sonhangtravel.vercel.app'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
 export const metadata: Metadata = {
   title: 'Blog Du Lịch Trung Quốc',
   description:
     'Chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam và các tuyến du lịch Trung Quốc từ Móng Cái, Lào Cai.',
   alternates: {
-    canonical: 'https://sonhangtravel.com/blog',
+    canonical: `${SITE_URL}/blog`,
+  },
+  openGraph: {
+    title: 'Blog Du Lịch Trung Quốc | Sơn Hằng Travel',
+    description: 'Chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam và các tuyến du lịch Trung Quốc từ Móng Cái, Lào Cai.',
+    url: `${SITE_URL}/blog`,
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Blog du lịch Trung Quốc | Sơn Hằng Travel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog Du Lịch Trung Quốc | Sơn Hằng Travel',
+    description: 'Chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam và các tuyến du lịch Trung Quốc từ Móng Cái, Lào Cai.',
+    images: [DEFAULT_OG_IMAGE],
   },
 }
 

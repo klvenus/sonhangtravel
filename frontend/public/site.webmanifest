@@ -1,0 +1,21 @@
+{
+  "name": "Sơn Hằng Travel",
+  "short_name": "Sơn Hằng Travel",
+  "description": "Tour du lịch Trung Quốc khởi hành từ Móng Cái",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00CBA9",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

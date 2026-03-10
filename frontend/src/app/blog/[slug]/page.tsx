@@ -8,6 +8,9 @@ import SaleCountdown from '@/components/SaleCountdown'
 import SaleActions from '@/components/SaleActions'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 
+const SITE_URL = 'https://sonhangtravel.vercel.app'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
 export async function generateStaticParams() {
   const posts = await getAllBlogPosts()
   return posts.map((post) => ({ slug: post.slug }))
@@ -28,30 +31,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: post.description,
     keywords: post.keywords,
     alternates: {
-      canonical: `https://sonhangtravel.com/blog/${post.slug}`,
+      canonical: `${SITE_URL}/blog/${post.slug}`,
     },
     openGraph: {
       title: `${post.title} | Sơn Hằng Travel`,
       description: post.description,
-      url: `https://sonhangtravel.com/blog/${post.slug}`,
+      url: `${SITE_URL}/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.publishedAt,
-      images: post.thumbnail
-        ? [
-            {
-              url: post.thumbnail,
-              width: 1200,
-              height: 630,
-              alt: post.title,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: post.thumbnail || DEFAULT_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${post.title} | Sơn Hằng Travel`,
       description: post.description,
-      images: post.thumbnail ? [post.thumbnail] : undefined,
+      images: [post.thumbnail || DEFAULT_OG_IMAGE],
     },
   }
 }
