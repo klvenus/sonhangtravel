@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getCategories } from '@/lib/strapi'
+import { getCategories } from '@/lib/data'
 
 export const revalidate = 3600 // Cache for 1 hour
 

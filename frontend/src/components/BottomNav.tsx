@@ -10,10 +10,9 @@ import { useState, useEffect } from 'react'
 interface Category {
   id: number
   name: string
-  ten?: string
   slug: string
-  icon?: string
-  image?: { url: string } | null
+  icon?: string | null
+  image?: string | null
 }
 
 interface BottomNavProps {
@@ -214,7 +213,7 @@ export default function BottomNav({ phoneNumber = '0338239888', zaloNumber }: Bo
               {/* Category Grid - iOS App Grid style */}
               <div className="grid grid-cols-4 gap-3">
                 {categories.map((cat) => {
-                  const categoryImage = cat.image?.url || null;
+                  const categoryImage = cat.image || null;
                   
                   return (
                     <Link
@@ -227,7 +226,7 @@ export default function BottomNav({ phoneNumber = '0338239888', zaloNumber }: Bo
                         {categoryImage ? (
                           <Image 
                             src={categoryImage}
-                            alt={cat.ten || cat.name || 'Category'}
+                            alt={cat.name || 'Category'}
                             width={56}
                             height={56}
                             className="w-full h-full object-cover"
@@ -237,7 +236,7 @@ export default function BottomNav({ phoneNumber = '0338239888', zaloNumber }: Bo
                         )}
                       </div>
                       <span className="text-[11px] font-medium text-gray-700 text-center leading-tight line-clamp-2 px-1">
-                        {cat.ten || cat.name}
+                        {cat.name}
                       </span>
                     </Link>
                   );

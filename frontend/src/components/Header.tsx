@@ -4,12 +4,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getCategories } from '@/lib/strapi'
 
 interface Category {
   id: number
-  name?: string
-  ten?: string
+  name: string
   slug: string
 }
 
@@ -48,8 +46,10 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const data = await getCategories()
-        setCategories(data || [])
+        const res = await fetch('/api/categories')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
+        setCategories(Array.isArray(data) ? data : [])
       } catch (error) {
         console.error('Error fetching categories:', error)
       }
@@ -232,7 +232,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                           onClick={() => setShowCategoryMenu(false)}
                           className="block px-4 py-2.5 text-gray-600 hover:bg-[#00CBA9]/10 hover:text-[#00CBA9] transition-colors"
                         >
-                          {cat.ten || cat.name}
+                          {cat.name}
                         </Link>
                       ))}
                     </div>
@@ -348,7 +348,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                     onClick={() => setShowMobileMenu(false)}
                     className="flex items-center justify-between px-5 py-3 text-gray-600 hover:bg-gray-50 hover:text-[#00CBA9] transition-colors"
                   >
-                    {cat.ten || cat.name}
+                    {cat.name}
                     <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
