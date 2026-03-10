@@ -45,6 +45,7 @@ interface TourDetailProps {
 
 export default function TourDetailClient({ tourData, phoneNumber = '0123456789', zaloNumber, isPreview = false }: TourDetailProps) {
   const zaloLink = zaloNumber || phoneNumber
+  const zaloBookingUrl = `https://zalo.me/${zaloLink}`
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
@@ -576,9 +577,15 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     </div>
 
                     {/* Book Button */}
-                    <button className="w-full bg-linear-to-r from-[#00CBA9] to-[#00A88A] hover:from-[#00A88A] hover:to-[#00CBA9] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl mb-3 transform hover:scale-[1.02] active:scale-[0.98]">
+                    <a
+                      href={zaloBookingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Đặt tour ${tourData.title} qua Zalo`}
+                      className="flex w-full items-center justify-center bg-linear-to-r from-[#00CBA9] to-[#00A88A] hover:from-[#00A88A] hover:to-[#00CBA9] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl mb-3 transform hover:scale-[1.02] active:scale-[0.98]"
+                    >
                       Đặt Tour Ngay
-                    </button>
+                    </a>
 
                     {/* Contact */}
                     <div className="flex gap-2 mb-4">
@@ -592,7 +599,9 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                         <span className="text-sm">Gọi ngay</span>
                       </a>
                       <a
-                        href={`https://zalo.me/${zaloLink}`}
+                        href={zaloBookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex-1 flex items-center justify-center gap-2 border-2 border-blue-500 text-blue-500 py-3 rounded-xl hover:bg-blue-50 transition-all font-medium"
                       >
                         <span className="text-sm">Chat Zalo</span>
@@ -640,9 +649,15 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             </div>
             <p className="text-xs text-gray-500">Giá/khách</p>
           </div>
-          <button className="bg-linear-to-r from-[#00CBA9] to-[#00A88A] text-white font-bold px-8 py-3.5 rounded-xl shadow-lg active:scale-95 transition-transform">
+          <a
+            href={zaloBookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Đặt tour ${tourData.title} qua Zalo`}
+            className="bg-linear-to-r from-[#00CBA9] to-[#00A88A] text-white font-bold px-8 py-3.5 rounded-xl shadow-lg active:scale-95 transition-transform"
+          >
             Đặt Tour
-          </button>
+          </a>
         </div>
       </div>
     </div>
