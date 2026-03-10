@@ -39,6 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `${SITE_URL}/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt || post.publishedAt,
       images: [
         {
           url: post.thumbnail || DEFAULT_OG_IMAGE,
@@ -113,11 +114,72 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   const mm = String(publishedDate.getMonth() + 1).padStart(2, '0')
   const dd = String(publishedDate.getDate()).padStart(2, '0')
   const saleUntilIso = `${yyyy}-${mm}-${dd}T23:59:59+07:00`
-  const saleTourHref = 'https://sonhangtravel.com/tours'
+  const canonicalUrl = `${SITE_URL}/blog/${post.slug}`
+  const articleImage = post.thumbnail || DEFAULT_OG_IMAGE
+  const saleTourHref = `${SITE_URL}/tours`
   const saleZaloHref = 'https://zalo.me/0338239888'
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    image: [articleImage],
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    mainEntityOfPage: canonicalUrl,
+    author: {
+      '@type': 'Organization',
+      name: 'Sơn Hằng Travel',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Sơn Hằng Travel',
+      logo: {
+        '@type': 'ImageObject',
+        url: DEFAULT_OG_IMAGE,
+      },
+    },
+  }
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Trang chủ', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
+    ],
+  }
+  const faqItems = post.content
+    .filter((block) => block.type === 'paragraph' && block.text.includes('?'))
+    .map((block) => {
+      const parts = block.text.split('?')
+      const question = parts[0]?.trim()
+      const answer = parts.slice(1).join('?').trim()
+      return question && answer
+        ? {
+            '@type': 'Question',
+            name: `${question}?`,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: answer,
+            },
+          }
+        : null
+    })
+    .filter(Boolean)
+  const faqSchema = faqItems.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems,
+      }
+    : null
 
   return (
     <main className={isSalePost ? "bg-gradient-to-b from-rose-50 via-white to-orange-50" : "bg-white"}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
       {isSalePost && <BlogSalePageEnhancer />}
       <article className="max-w-4xl mx-auto px-4 py-10 md:py-14">
         <div className="mb-8">

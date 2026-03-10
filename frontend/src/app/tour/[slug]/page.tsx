@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Metadata } from 'next'
 
+const SITE_URL = 'https://sonhangtravel.vercel.app'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
 // Dynamic import for better code splitting
 const TourDetailClient = dynamic(() => import('./TourDetailClient'), {
   loading: () => null, // loading.tsx handles this
@@ -28,25 +31,31 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     const imageUrl = tour.thumbnail
       ? getImageUrl(tour.thumbnail, 'large')
-      : 'https://sonhangtravel.vercel.app/og-image.jpg'
+      : DEFAULT_OG_IMAGE
 
     const priceFormatted = new Intl.NumberFormat('vi-VN').format(tour.price)
+    const destinationText = tour.destination || 'Trung Quốc'
+    const departureText = tour.departure || 'Móng Cái'
+    const description = tour.shortDescription || `Tour ${destinationText} ${tour.duration}. Khởi hành từ ${departureText}. Giá chỉ ${priceFormatted}đ/người. Đặt tour ngay!`
+    const keywordSet = new Set([
+      tour.title,
+      `tour ${destinationText.toLowerCase()}`,
+      `du lịch ${destinationText.toLowerCase()}`,
+      `tour ${tour.duration}`,
+      `tour ${departureText.toLowerCase()}`,
+      'tour trung quốc giá rẻ',
+      'sơn hằng travel',
+    ])
 
     return {
       title: `${tour.title} - Giá ${priceFormatted}đ`,
-      description: tour.shortDescription || `Tour ${tour.destination} ${tour.duration}. Khởi hành từ ${tour.departure || 'Móng Cái'}. Giá chỉ ${priceFormatted}đ/người. Đặt tour ngay!`,
-      keywords: [
-        tour.title,
-        `tour ${tour.destination?.toLowerCase()}`,
-        `du lịch ${tour.destination?.toLowerCase()}`,
-        `tour ${tour.duration}`,
-        'tour trung quốc giá rẻ',
-      ],
+      description,
+      keywords: Array.from(keywordSet),
       openGraph: {
         title: `${tour.title} | Sơn Hằng Travel`,
-        description: tour.shortDescription || `Tour ${tour.destination} ${tour.duration}. Giá ${priceFormatted}đ/người`,
-        url: `https://sonhangtravel.vercel.app/tour/${slug}`,
-        type: 'article',
+        description,
+        url: `${SITE_URL}/tour/${slug}`,
+        type: 'website',
         images: [
           {
             url: imageUrl,
@@ -58,12 +67,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       },
       twitter: {
         card: 'summary_large_image',
-        title: tour.title,
-        description: tour.shortDescription || `Tour ${tour.destination} - ${priceFormatted}đ`,
+        title: `${tour.title} | Sơn Hằng Travel`,
+        description,
         images: [imageUrl],
       },
       alternates: {
-        canonical: `https://sonhangtravel.vercel.app/tour/${slug}`,
+        canonical: `${SITE_URL}/tour/${slug}`,
       },
     }
   } catch {
@@ -102,7 +111,7 @@ function transformStrapiTour(tour: TourData) {
     tour.gallery.forEach(img => images.push(getImageUrl(img, 'large')))
   }
   if (images.length === 0) {
-    images.push('https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80')
+    images.push(DEFAULT_OG_IMAGE)
   }
 
   return {
@@ -178,69 +187,109 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
     const phoneNumber = siteSettings?.phoneNumber || '0123456789'
     const zaloNumber = siteSettings?.zaloNumber || undefined
 
-    // JSON-LD for Tour (Product + TouristTrip schema)
+    const imageUrl = tour.thumbnail ? getImageUrl(tour.thumbnail, 'large') : DEFAULT_OG_IMAGE
+    const galleryImages = [imageUrl, ...(tour.gallery || []).map((img) => getImageUrl(img, 'large'))].filter(Boolean)
+    const canonicalUrl = `${SITE_URL}/tour/${slug}`
+    const destinationText = tour.destination || 'Trung Quốc'
+    const departureText = tour.departure || 'Móng Cái'
+    const description = tour.shortDescription || `Tour ${destinationText} ${tour.duration}. Khởi hành từ ${departureText}. Giá chỉ ${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/người.`
+
     const tourSchema = {
-      "@context": "https://schema.org",
-      "@type": "TouristTrip",
-      "name": tour.title,
-      "description": tour.shortDescription || `Tour ${tour.destination} ${tour.duration}`,
-      "touristType": "Leisure",
-      "itinerary": {
-        "@type": "ItemList",
-        "itemListElement": tour.itinerary?.map((item, index) => ({
-          "@type": "ListItem",
-          "position": index + 1,
-          "name": item.title,
-          "description": item.description
-        })) || []
+      '@context': 'https://schema.org',
+      '@type': 'TouristTrip',
+      '@id': `${canonicalUrl}#tour`,
+      name: tour.title,
+      description,
+      url: canonicalUrl,
+      image: galleryImages,
+      touristType: 'Leisure',
+      provider: {
+        '@type': 'TravelAgency',
+        name: 'Sơn Hằng Travel',
+        telephone: phoneNumber,
+        url: SITE_URL,
       },
-      "offers": {
-        "@type": "Offer",
-        "price": tour.price,
-        "priceCurrency": "VND",
-        "availability": "https://schema.org/InStock",
-        "validFrom": new Date().toISOString(),
-        "url": `https://sonhangtravel.vercel.app/tour/${slug}`
+      departureLocation: {
+        '@type': 'Place',
+        name: departureText,
       },
-      "provider": {
-        "@type": "TravelAgency",
-        "name": "Sơn Hằng Travel",
-        "telephone": phoneNumber,
-        "url": "https://sonhangtravel.vercel.app"
+      arrivalLocation: {
+        '@type': 'Place',
+        name: destinationText,
       },
-      "image": tour.thumbnail ? getImageUrl(tour.thumbnail, 'large') : undefined,
-      "aggregateRating": tour.rating ? {
-        "@type": "AggregateRating",
-        "ratingValue": tour.rating,
-        "reviewCount": tour.reviewCount || 10,
-        "bestRating": 5,
-        "worstRating": 1
-      } : undefined
+      offers: {
+        '@type': 'Offer',
+        price: tour.price,
+        priceCurrency: 'VND',
+        availability: 'https://schema.org/InStock',
+        url: canonicalUrl,
+      },
+      itinerary: {
+        '@type': 'ItemList',
+        itemListElement: tour.itinerary?.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.title,
+          description: item.description,
+        })) || [],
+      },
+      aggregateRating: tour.rating ? {
+        '@type': 'AggregateRating',
+        ratingValue: Number(tour.rating),
+        reviewCount: tour.reviewCount || 10,
+        bestRating: 5,
+        worstRating: 1,
+      } : undefined,
+    }
+
+    const serviceSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      '@id': `${canonicalUrl}#service`,
+      serviceType: 'Tour du lịch Trung Quốc',
+      name: tour.title,
+      description,
+      provider: {
+        '@type': 'TravelAgency',
+        name: 'Sơn Hằng Travel',
+        url: SITE_URL,
+      },
+      areaServed: {
+        '@type': 'Country',
+        name: 'Trung Quốc',
+      },
+      offers: {
+        '@type': 'Offer',
+        price: tour.price,
+        priceCurrency: 'VND',
+        url: canonicalUrl,
+      },
+      image: imageUrl,
     }
 
     const breadcrumbSchema = {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
         {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Trang chủ",
-          "item": "https://sonhangtravel.vercel.app"
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Trang chủ',
+          item: SITE_URL,
         },
         {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Tour",
-          "item": "https://sonhangtravel.vercel.app/tours"
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Tour du lịch',
+          item: `${SITE_URL}/tours`,
         },
         {
-          "@type": "ListItem",
-          "position": 3,
-          "name": tour.title,
-          "item": `https://sonhangtravel.vercel.app/tour/${slug}`
-        }
-      ]
+          '@type': 'ListItem',
+          position: 3,
+          name: tour.title,
+          item: canonicalUrl,
+        },
+      ],
     }
 
     return (
@@ -249,6 +298,10 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(tourSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
         />
         <script
           type="application/ld+json"
