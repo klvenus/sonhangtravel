@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import TourCard from '@/components/TourCard'
 
 interface TourData {
@@ -35,19 +35,16 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const normalizedQuery = searchQuery.toLowerCase().trim()
+  const filteredTours = initialTours.filter((tour) => {
+    const matchCategory = !activeCategory || tour.categorySlug === activeCategory
+    const q = searchQuery.trim().toLowerCase()
+    const haystack = [tour.title, tour.location, tour.category || '']
+      .join(' ')
+      .toLowerCase()
 
-  // Filter by category + search
-  const filteredTours = useMemo(() => {
-    return initialTours.filter(tour => {
-      const matchCategory = !activeCategory || tour.categorySlug === activeCategory
-      const matchSearch = !normalizedQuery ||
-        tour.title.toLowerCase().includes(normalizedQuery) ||
-        tour.location.toLowerCase().includes(normalizedQuery) ||
-        (tour.category && tour.category.toLowerCase().includes(normalizedQuery))
-      return matchCategory && matchSearch
-    })
-  }, [activeCategory, initialTours, normalizedQuery])
+    const matchSearch = !q || haystack.includes(q)
+    return matchCategory && matchSearch
+  })
 
   const activeCateg = initialCategories.find(cat => cat.slug === activeCategory)
   const pageTitle = searchQuery
@@ -81,6 +78,7 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
               placeholder="Tìm tour, điểm đến..."
               className="flex-1 bg-transparent py-3 px-3 text-sm outline-none"
               value={searchQuery}
+              onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
