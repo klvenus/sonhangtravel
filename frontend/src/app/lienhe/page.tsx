@@ -158,12 +158,12 @@ export default async function ContactPage() {
                 ✅ Gợi ý cách nhắn nhanh
               </span>
               <h2 className="mt-4 text-2xl font-bold text-gray-900 md:text-3xl">Nhắn theo mẫu này để bên em tư vấn nhanh hơn</h2>
-              <div className="mt-5 rounded-3xl bg-gray-900 p-5 font-mono text-sm leading-7 text-emerald-300 shadow-inner">
-                Em muốn đi tour Trung Quốc\n
-                - Điểm đến: Đông Hưng / Nam Ninh / ...\n
-                - Số người: ...\n
-                - Ngày dự kiến: ...\n
-                - Nhu cầu: đi nhanh / mua sắm / nghỉ dưỡng / đoàn riêng
+              <div className="mt-5 rounded-3xl bg-gray-900 p-5 font-mono text-sm leading-7 text-emerald-300 shadow-inner whitespace-pre-line">
+                {`Em muốn đi tour Trung Quốc
+- Điểm đến: Đông Hưng / Nam Ninh / ...
+- Số người: ...
+- Ngày dự kiến: ...
+- Nhu cầu: đi nhanh / mua sắm / nghỉ dưỡng / đoàn riêng`}
               </div>
             </div>
             <div className="grid gap-4">
