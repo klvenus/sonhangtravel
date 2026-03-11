@@ -354,12 +354,6 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                 <Link href="/ve-chung-toi" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
                   Về chúng tôi
                 </Link>
-                <Link href="/lienhe" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
-                  Liên hệ
-                </Link>
-                <Link href="/lien-he" className="bg-[#00CBA9] hover:bg-[#00A88A] text-white px-5 py-2.5 rounded-full font-medium transition-colors">
-                  Liên hệ
-                </Link>
               </nav>
             </div>
           </div>
@@ -511,7 +505,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   </svg>
                 </Link>
                 <Link
-                  href="/lienhe"
+                  href="/lien-he"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:bg-gray-50 font-medium"
                 >

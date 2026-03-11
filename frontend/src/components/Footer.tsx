@@ -160,7 +160,7 @@ export default function Footer({ logoUrl }: FooterProps) {
                   <Link href="/ve-chung-toi" className="hover:text-white/70 transition-colors">Về chúng tôi</Link>
                 </li>
                 <li>
-                  <Link href="/lienhe" className="hover:text-white/70 transition-colors">Liên hệ</Link>
+                  <Link href="/lien-he" className="hover:text-white/70 transition-colors">Liên hệ</Link>
                 </li>
               </ul>
 

@@ -26,7 +26,7 @@ export default function NotFound() {
             desc="Danh sách tour Trung Quốc đang mở bán, có thể lọc theo điểm đến và nhu cầu."
           />
           <QuickCard
-            href="/lienhe"
+            href="/lien-he"
             emoji="📞"
             title="Liên hệ tư vấn"
             desc="Gọi hotline, nhắn Zalo, xem địa chỉ văn phòng và cách liên hệ nhanh nhất."
