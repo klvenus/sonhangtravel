@@ -61,21 +61,17 @@ export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSect
     return () => clearInterval(timer)
   }, [slides.length, next])
 
-  // Navigation arrows + dots (shared)
+  // Navigation dots only
   const NavOverlay = () => (
     <>
       {slides.length > 1 && (
-        <>
-          <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-sm md:text-lg z-10 transition-colors" aria-label="Slide trước">‹</button>
-          <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center text-sm md:text-lg z-10 transition-colors" aria-label="Slide tiếp">›</button>
-          <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-            {slides.map((_, i) => (
-              <button key={i} onClick={() => setCurrent(i)}
-                className={`rounded-full transition-all ${i === current ? 'w-6 h-2 bg-white' : 'w-2 h-2 bg-white/50 hover:bg-white/75'}`}
-                aria-label={`Slide ${i + 1}`} />
-            ))}
-          </div>
-        </>
+        <div className="absolute bottom-2 md:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+          {slides.map((_, i) => (
+            <button key={i} onClick={() => setCurrent(i)}
+              className={`rounded-full transition-all ${i === current ? 'w-6 h-2 bg-white' : 'w-2 h-2 bg-white/50 hover:bg-white/75'}`}
+              aria-label={`Slide ${i + 1}`} />
+          ))}
+        </div>
       )}
     </>
   )
