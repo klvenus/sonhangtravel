@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { siteSettings } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
+import { revalidateProduction } from '@/lib/revalidate';
 
 export async function GET() {
   try {
@@ -26,6 +27,8 @@ export async function PUT(request: NextRequest) {
     } else {
       [result] = await db.insert(siteSettings).values(updateData).returning();
     }
+
+    revalidateProduction(['/ve-chung-toi']);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });
