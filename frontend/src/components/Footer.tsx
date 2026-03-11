@@ -153,6 +153,15 @@ export default function Footer({ logoUrl }: FooterProps) {
                 <li>
                   <Link href="/tours" className="hover:text-white/70 transition-colors">Tất cả tour</Link>
                 </li>
+                <li>
+                  <Link href="/blog" className="hover:text-white/70 transition-colors">Blog du lịch</Link>
+                </li>
+                <li>
+                  <Link href="/ve-chung-toi" className="hover:text-white/70 transition-colors">Về chúng tôi</Link>
+                </li>
+                <li>
+                  <Link href="/lienhe" className="hover:text-white/70 transition-colors">Liên hệ</Link>
+                </li>
               </ul>
 
               <h4 className="text-white font-semibold mb-4">Kết Nối</h4>

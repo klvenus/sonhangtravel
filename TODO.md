@@ -21,3 +21,9 @@
 - [x] Build admin to verify backup UI works
 
 - [x] Install real local auto-backup via macOS launchd at 09:00 and 21:00
+
+## 2026-03-11 Task: 404 + lienhe page
+- [x] Add custom 404 page
+- [x] Add /lienhe landing page
+- [x] Update header/footer links
+- [x] Build frontend and verify routes
