@@ -46,6 +46,7 @@ function transformBannerSlide(slide: BannerSlide, index: number) {
   return {
     id: index + 1,
     image: getImageUrl(slide.image, 'large'),
+    imageMobile: slide.imageMobile ? getImageUrl(slide.imageMobile, 'large') : undefined,
     title: slide.title,
     subtitle: slide.subtitle,
     linkUrl: slide.linkUrl,

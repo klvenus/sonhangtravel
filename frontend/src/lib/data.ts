@@ -65,6 +65,7 @@ export interface TourData {
 
 export interface BannerSlide {
   image: string;
+  imageMobile?: string;
   title?: string;
   subtitle?: string;
   linkUrl?: string;
