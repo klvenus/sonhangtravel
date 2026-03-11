@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NavLink href="/categories" icon="📁" label="Danh mục" />
               <NavLink href="/settings" icon="⚙️" label="Cài đặt" />
               <NavLink href="/upload" icon="🖼️" label="Upload ảnh" />
+              <NavLink href="/backup" icon="💾" label="Backup" />
               <div className="pt-3 border-t mt-3">
                 <NavLink href="/seed" icon="🌱" label="Seed data" />
                 <NavLink href="/revalidate" icon="🔄" label="Revalidate" />

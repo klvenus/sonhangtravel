@@ -96,7 +96,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-verification-code", // Thay bằng code thật từ Google Search Console
+    google: "BhDvMrb8WJy9fdNU1e3S4C5LamfZNlFvEUx32aHkKQw",
   },
   alternates: {
     canonical: "https://sonhangtravel.com",
