@@ -89,13 +89,13 @@ export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSect
     : []
 
   // Render a single slide image with link wrapper
-  const SlideImg = ({ src, alt, priority, sizes }: { src: string; alt: string; priority: boolean; sizes: string }) => (
+  const SlideImg = ({ src, alt, priority, sizes, fit = 'cover' }: { src: string; alt: string; priority: boolean; sizes: string; fit?: 'cover' | 'contain' }) => (
     <Image
       src={src}
       alt={alt}
       fill
       sizes={sizes}
-      className="object-cover"
+      className={fit === 'contain' ? 'object-contain' : 'object-cover'}
       quality={100}
       unoptimized
       priority={priority}
@@ -104,19 +104,19 @@ export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSect
 
   return (
     <section>
-      {/* ========== MOBILE: 9:16 → hiển thị ảnh mobile (hoặc fallback ảnh PC) ========== */}
-      {/* Kích thước đề xuất: 1080×1920 (tỷ lệ 9:16) hoặc 1080×1350 (4:5) */}
-      <div className="md:hidden relative h-[55vw] min-h-[200px] max-h-[280px] overflow-hidden">
+      {/* ========== MOBILE: ưu tiên ảnh mobile full chiều rộng, hạn chế crop ========== */}
+      {/* Kích thước đề xuất: 1080×600, 1080×1350 hoặc ảnh ngang tối ưu cho mobile */}
+      <div className="md:hidden relative aspect-[9/5] w-full min-h-[220px] overflow-hidden bg-white">
         {slides.map((s, i) => {
           const mobileSrc = ('imageMobile' in s && s.imageMobile) ? s.imageMobile : s.image
           return (
             <div key={s.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
               {s.linkUrl ? (
                 <a href={s.linkUrl} className="block w-full h-full">
-                  <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
+                  <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" fit="contain" />
                 </a>
               ) : (
-                <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
+                <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" fit="contain" />
               )}
             </div>
           )
