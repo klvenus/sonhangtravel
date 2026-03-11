@@ -42,10 +42,15 @@
 ```bash
 cd admin
 npm install   # Lần đầu hoặc khi có thay đổi dependencies
-npm run dev   # Chạy trên port 3001
+npm run dev   # Chạy trên port 3001 và mở cho máy khác trong LAN truy cập được
 ```
 
-Mở trình duyệt: **http://localhost:3001**
+Mở trên máy hiện tại: **http://localhost:3001**
+
+Nếu muốn máy khác cùng LAN truy cập:
+- tìm IP của máy đang chạy admin
+- mở trên máy khác theo dạng: **http://IP-CUA-MAY:3001**
+- ví dụ: `http://192.168.1.23:3001`
 
 ### Sidebar Navigation
 
