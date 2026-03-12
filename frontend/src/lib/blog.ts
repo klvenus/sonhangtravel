@@ -3,8 +3,10 @@ import { db } from './db'
 import { blogPosts } from './schema'
 
 export interface BlogBlock {
-  type: 'heading' | 'paragraph'
-  text: string
+  type: 'heading' | 'paragraph' | 'list'
+  text?: string
+  items?: string[]
+  style?: 'unordered' | 'ordered'
 }
 
 export interface BlogPost {

@@ -150,9 +150,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     ],
   }
   const faqItems = post.content
-    .filter((block) => block.type === 'paragraph' && block.text.includes('?'))
+    .filter((block) => block.type === 'paragraph' && typeof block.text === 'string' && block.text.includes('?'))
     .map((block) => {
-      const parts = block.text.split('?')
+      const text = block.text || ''
+      const parts = text.split('?')
       const question = parts[0]?.trim()
       const answer = parts.slice(1).join('?').trim()
       return question && answer
@@ -225,7 +226,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
         <div className="prose prose-lg max-w-none prose-p:text-gray-700 prose-p:leading-8 prose-h2:text-gray-900 prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4">
           {(() => {
-            const faqIndex = post.content.findIndex((block) => block.type === 'heading' && block.text.trim().toLowerCase() === 'faq nhanh')
+            const faqIndex = post.content.findIndex((block) => block.type === 'heading' && typeof block.text === 'string' && block.text.trim().toLowerCase() === 'faq nhanh')
             const mainBlocks = faqIndex >= 0 ? post.content.slice(0, faqIndex) : post.content
             const faqBlocks = faqIndex >= 0 ? post.content.slice(faqIndex + 1) : []
 
@@ -233,9 +234,23 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               <>
                 {mainBlocks.map((block, index) => {
                   if (block.type === 'heading') {
-                    return <h2 key={index} className={isSalePost ? 'text-gray-900 font-bold tracking-tight' : ''}>{block.text}</h2>
+                    return <h2 key={index} className={isSalePost ? 'text-gray-900 font-bold tracking-tight' : ''}>{block.text || ''}</h2>
                   }
-                  return renderParagraph(block.text, index, isSalePost)
+
+                  if (block.type === 'list') {
+                    const items = Array.isArray(block.items) ? block.items.filter(Boolean) : []
+                    if (items.length === 0) return null
+                    const ListTag = block.style === 'ordered' ? 'ol' : 'ul'
+                    return (
+                      <ListTag key={index} className="my-5 space-y-3 pl-6 text-gray-700 leading-8 marker:text-emerald-600">
+                        {items.map((item, itemIndex) => (
+                          <li key={`${index}-${itemIndex}`}>{item}</li>
+                        ))}
+                      </ListTag>
+                    )
+                  }
+
+                  return renderParagraph(block.text || '', index, isSalePost)
                 })}
 
                 {faqBlocks.length > 0 && (
@@ -246,7 +261,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     </div>
                     <div className="space-y-3">
                       {faqBlocks.map((block, index) => {
-                        const parts = block.text.split('?')
+                        const text = block.text || ''
+                        const parts = text.split('?')
                         const question = parts[0]?.trim()
                         const answer = parts.slice(1).join('?').trim()
                         return (
