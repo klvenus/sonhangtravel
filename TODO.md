@@ -13,4 +13,5 @@
 - [x] Add permanent redirects for legacy travel URLs with current SEO signals
 - [x] Redirect old sitemap/contact/category/tour patterns to current routes
 - [x] Verify key legacy URLs return 301/308 to the intended new destinations
+- [x] Clean up low-value legacy URLs with 410 when no relevant replacement exists
 - [x] Update changelog

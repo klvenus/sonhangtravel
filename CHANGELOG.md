@@ -2,6 +2,7 @@
 ## [Unreleased]
 ### Fixed
 - Added permanent redirects from legacy site URLs and old sitemap endpoints to the current blog/tour/contact routes so old SEO traffic from the previous site can land on the new structure instead of 404 pages.
+- Added more legacy redirect mappings for old category/tag/tour URLs and returned `410 Gone` for irrelevant old junk/search/`wp-content` URLs so Google can drop non-travel pages instead of keeping them as soft leftovers.
 - Fixed recent blog detail pages so CTA button blocks render cleanly and content sections/list blocks have looser spacing for easier reading.
 - Fixed tours search page to use the Neon DB data layer instead of legacy Strapi fetches, restoring working search/filter results on production.
 - Fixed the mobile header contact link to use `/lienhe` consistently.

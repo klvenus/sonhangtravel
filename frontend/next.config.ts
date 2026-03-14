@@ -12,6 +12,11 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
     permanent: true,
   },
   {
+    source: '/sitemaps.xml',
+    destination: '/sitemap.xml',
+    permanent: true,
+  },
+  {
     source: '/author-sitemap.xml',
     destination: '/sitemap.xml',
     permanent: true,
@@ -52,6 +57,16 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
     permanent: true,
   },
   {
+    source: '/category/cam-nang-du-lich',
+    destination: '/blog',
+    permanent: true,
+  },
+  {
+    source: '/category/an-sach-dong-hung-trung-quoc',
+    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    permanent: true,
+  },
+  {
     source: '/category/:slug',
     destination: '/tours?category=:slug',
     permanent: true,
@@ -64,6 +79,16 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
   {
     source: '/tag/chua-quan-am',
     destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    permanent: true,
+  },
+  {
+    source: '/tag/pho-co-truc-son-dong-hung-trung-quoc',
+    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    permanent: true,
+  },
+  {
+    source: '/faqs',
+    destination: '/lien-he',
     permanent: true,
   },
   {
