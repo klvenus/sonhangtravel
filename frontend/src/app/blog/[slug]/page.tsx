@@ -266,6 +266,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               <>
                 {mainBlocks.map((block, index) => {
                   const prevBlock = index > 0 ? mainBlocks[index - 1] : null
+                  const prevPrevBlock = index > 1 ? mainBlocks[index - 2] : null
                   const afterCtaHeading = prevBlock?.type === 'heading' && /^cta$/i.test((prevBlock.text || '').trim())
 
                   if (block.type === 'heading') {
@@ -297,7 +298,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     )
                   }
 
-                  return renderParagraph(block.text || '', index, isSalePost, afterCtaHeading)
+                  const paragraphText = afterCtaHeading && extractInlineLinks(block.text || '').length === 0 && prevPrevBlock?.type === 'paragraph'
+                    ? `${prevPrevBlock.text || ''} ${(block.text || '').trim()}`.trim()
+                    : (block.text || '')
+
+                  return renderParagraph(paragraphText, index, isSalePost, afterCtaHeading)
                 })}
 
                 {faqBlocks.length > 0 && (
