@@ -6,5 +6,11 @@
 ## 2026-03-15 Task: Tidy recent blog layout CTA + spacing
 - [x] Fix bottom blog CTA/button layout on recent posts
 - [x] Increase spacing for blog outline/content blocks so paragraphs/lists breathe more
-- [ ] Verify recent blog pages render cleanly
+- [x] Verify recent blog pages render cleanly
+- [x] Update changelog
+
+## 2026-03-15 Task: Redirect legacy URLs from old site to new structure
+- [x] Add permanent redirects for legacy travel URLs with current SEO signals
+- [x] Redirect old sitemap/contact/category/tour patterns to current routes
+- [x] Verify key legacy URLs return 301/308 to the intended new destinations
 - [x] Update changelog
