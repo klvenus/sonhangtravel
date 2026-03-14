@@ -58,46 +58,74 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-function renderParagraph(text: string, key: number, isSalePost: boolean) {
+function extractInlineLinks(text: string) {
+  const matches = Array.from(text.matchAll(/https?:\/\/[^\s)]+/g))
+  const seen = new Set<string>()
+
+  return matches
+    .map((match) => match[0].trim())
+    .filter((url) => {
+      if (seen.has(url)) return false
+      seen.add(url)
+      return true
+    })
+}
+
+function getLinkLabel(href: string) {
+  try {
+    const url = new URL(href)
+    const slug = url.pathname.split('/').filter(Boolean).pop() || ''
+    if (url.pathname.includes('/tour/') || url.pathname.includes('/tours/')) {
+      const pretty = slug
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase())
+      return pretty ? `Xem tour ${pretty}` : 'Xem chi tiết tour'
+    }
+  } catch {}
+
+  return 'Xem chi tiết'
+}
+
+function renderParagraph(text: string, key: number, isSalePost: boolean, forceCtaBlock = false) {
   const markdownMatch = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
   const rawCtaMatch = text.match(/^(?:👉\s*)?(.+?):\s*(https?:\/\/\S+)$/)
   const match = markdownMatch || rawCtaMatch
-  if (!match) return <p key={key} className="mb-5 text-[17px] leading-8 text-gray-700 md:mb-6 md:text-[18px]">{text}</p>
+  const inlineLinks = extractInlineLinks(text)
+  const shouldRenderInlineCta = forceCtaBlock && inlineLinks.length > 0
 
-  const href = match[2]
-  const label = match[1].trim()
-  const full = match[0]
-  const parts = markdownMatch ? text.split(full) : ['']
-
-  if (isSalePost) {
-    return (
-      <div key={key} className="not-prose my-8 space-y-4 rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50 p-5 md:my-10 md:p-6 shadow-sm">
-        {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[0].trim()}</p>}
-        <div>
-          <Link
-            href={href}
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-center font-semibold text-white no-underline shadow-md transition-all hover:opacity-95"
-          >
-            <span>{label}</span>
-            <span>→</span>
-          </Link>
-        </div>
-        {parts[1] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[1].trim()}</p>}
-      </div>
-    )
+  if (!match && !shouldRenderInlineCta) {
+    return <p key={key} className="mb-5 text-[17px] leading-8 text-gray-700 md:mb-6 md:text-[18px]">{text}</p>
   }
 
+  const href = match?.[2] || ''
+  const label = match?.[1]?.trim() || ''
+  const full = match?.[0] || ''
+  const parts = match
+    ? (markdownMatch ? text.split(full) : [''])
+    : [text.replace(/https?:\/\/[^\s)]+/g, '').replace(/\s{2,}/g, ' ').trim()]
+
+  const ctaLinks = shouldRenderInlineCta
+    ? inlineLinks.map((url) => ({ href: url, label: getLinkLabel(url) }))
+    : [{ href, label }]
+
+  const cardClass = isSalePost
+    ? 'not-prose my-8 space-y-4 rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50 p-5 md:my-10 md:p-6 shadow-sm'
+    : 'not-prose my-8 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 md:my-10 md:p-6'
+
+  const buttonClass = isSalePost
+    ? 'inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-center font-semibold text-white no-underline shadow-md transition-all hover:opacity-95'
+    : 'inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-center font-semibold text-white no-underline transition-colors hover:bg-emerald-700'
+
   return (
-    <div key={key} className="not-prose my-8 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 md:my-10 md:p-6">
+    <div key={key} className={cardClass}>
       {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[0].trim()}</p>}
-      <div>
-        <Link
-          href={href}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-center font-semibold text-white no-underline transition-colors hover:bg-emerald-700"
-        >
-          <span>{label}</span>
-          <span>→</span>
-        </Link>
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        {ctaLinks.map((link, index) => (
+          <Link key={`${key}-${index}`} href={link.href} className={buttonClass}>
+            <span>{link.label}</span>
+            <span>→</span>
+          </Link>
+        ))}
       </div>
       {parts[1] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[1].trim()}</p>}
     </div>
@@ -237,6 +265,9 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             return (
               <>
                 {mainBlocks.map((block, index) => {
+                  const prevBlock = index > 0 ? mainBlocks[index - 1] : null
+                  const afterCtaHeading = prevBlock?.type === 'heading' && /^cta$/i.test((prevBlock.text || '').trim())
+
                   if (block.type === 'heading') {
                     const headingText = (block.text || '').trim()
                     const isCtaHeading = /^cta$/i.test(headingText)
@@ -266,7 +297,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     )
                   }
 
-                  return renderParagraph(block.text || '', index, isSalePost)
+                  return renderParagraph(block.text || '', index, isSalePost, afterCtaHeading)
                 })}
 
                 {faqBlocks.length > 0 && (
