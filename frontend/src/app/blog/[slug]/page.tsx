@@ -74,14 +74,8 @@ function extractInlineLinks(text: string) {
 function getLinkLabel(href: string, index = 0) {
   try {
     const url = new URL(href)
-    const slug = url.pathname.split('/').filter(Boolean).pop() || ''
-
     if (url.pathname.includes('/tour/') || url.pathname.includes('/tours/')) {
-      const durationMatch = slug.match(/(\d+)-ngay-(\d+)-dem/i)
-      if (durationMatch) {
-        return `Xem tour ${durationMatch[1]}N${durationMatch[2]}Đ`
-      }
-      return index > 0 ? `Xem tour ${index + 1}` : 'Xem chi tiết tour'
+      return index > 0 ? `Xem thêm tour ${index + 1}` : 'Xem chi tiết tour'
     }
   } catch {}
 
@@ -304,7 +298,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
                   const shouldHidePreCtaParagraph = block.type === 'paragraph'
                     && nextBlock?.type === 'heading'
-                    && /^cta$/i.test((nextBlock.text || '').trim())
+                    && /^(cta|liên hệ & giữ chỗ)$/i.test((nextBlock.text || '').trim())
                     && extractInlineLinks(block.text || '').length > 0
 
                   if (shouldHidePreCtaParagraph) {
