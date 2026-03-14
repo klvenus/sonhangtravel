@@ -63,7 +63,7 @@ function extractInlineLinks(text: string) {
   const seen = new Set<string>()
 
   return matches
-    .map((match) => match[0].trim())
+    .map((match) => match[0].trim().replace(/[.,!?;:]+$/g, ''))
     .filter((url) => {
       if (seen.has(url)) return false
       seen.add(url)
@@ -270,6 +270,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 {mainBlocks.map((block, index) => {
                   const prevBlock = index > 0 ? mainBlocks[index - 1] : null
                   const prevPrevBlock = index > 1 ? mainBlocks[index - 2] : null
+                  const nextBlock = index < mainBlocks.length - 1 ? mainBlocks[index + 1] : null
                   const afterCtaHeading = prevBlock?.type === 'heading' && /^cta$/i.test((prevBlock.text || '').trim())
 
                   if (block.type === 'heading') {
@@ -299,6 +300,15 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                         ))}
                       </ListTag>
                     )
+                  }
+
+                  const shouldHidePreCtaParagraph = block.type === 'paragraph'
+                    && nextBlock?.type === 'heading'
+                    && /^cta$/i.test((nextBlock.text || '').trim())
+                    && extractInlineLinks(block.text || '').length > 0
+
+                  if (shouldHidePreCtaParagraph) {
+                    return null
                   }
 
                   const inheritedLinks = afterCtaHeading && prevPrevBlock?.type === 'paragraph'
