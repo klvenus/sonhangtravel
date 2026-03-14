@@ -1,6 +1,7 @@
 
 ## [Unreleased]
 ### Fixed
+- Fixed recent blog detail pages so CTA button blocks render cleanly and content sections/list blocks have looser spacing for easier reading.
 - Fixed tours search page to use the Neon DB data layer instead of legacy Strapi fetches, restoring working search/filter results on production.
 - Fixed the mobile header contact link to use `/lienhe` consistently.
 - Fixed blog detail rendering for new Facebook-derived posts that include `list` content blocks, preventing production 500 errors on those articles.

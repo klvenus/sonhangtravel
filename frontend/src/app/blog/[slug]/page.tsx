@@ -62,7 +62,7 @@ function renderParagraph(text: string, key: number, isSalePost: boolean) {
   const markdownMatch = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
   const rawCtaMatch = text.match(/^(?:👉\s*)?(.+?):\s*(https?:\/\/\S+)$/)
   const match = markdownMatch || rawCtaMatch
-  if (!match) return <p key={key}>{text}</p>
+  if (!match) return <p key={key} className="mb-5 text-[17px] leading-8 text-gray-700 md:mb-6 md:text-[18px]">{text}</p>
 
   const href = match[2]
   const label = match[1].trim()
@@ -71,31 +71,35 @@ function renderParagraph(text: string, key: number, isSalePost: boolean) {
 
   if (isSalePost) {
     return (
-      <div key={key} className="my-6 rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50 p-4 md:p-5 not-prose shadow-sm">
-        {parts[0] && <p className="mb-3 text-gray-700 leading-8">{parts[0].trim()}</p>}
-        <Link
-          href={href}
-          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 font-semibold text-white no-underline shadow-md hover:opacity-95 transition-all animate-pulse"
-        >
-          {label}
-          <span>→</span>
-        </Link>
-        {parts[1] && <p className="mt-3 text-gray-700 leading-8">{parts[1].trim()}</p>}
+      <div key={key} className="not-prose my-8 space-y-4 rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50 p-5 md:my-10 md:p-6 shadow-sm">
+        {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[0].trim()}</p>}
+        <div>
+          <Link
+            href={href}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-center font-semibold text-white no-underline shadow-md transition-all hover:opacity-95"
+          >
+            <span>{label}</span>
+            <span>→</span>
+          </Link>
+        </div>
+        {parts[1] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[1].trim()}</p>}
       </div>
     )
   }
 
   return (
-    <div key={key} className="my-6 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 md:p-5 not-prose">
-      {parts[0] && <p className="mb-3 text-gray-700 leading-8">{parts[0].trim()}</p>}
-      <Link
-        href={href}
-        className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 font-semibold text-white no-underline hover:bg-emerald-700 transition-colors"
-      >
-        {label}
-        <span>→</span>
-      </Link>
-      {parts[1] && <p className="mt-3 text-gray-700 leading-8">{parts[1].trim()}</p>}
+    <div key={key} className="not-prose my-8 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 md:my-10 md:p-6">
+      {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[0].trim()}</p>}
+      <div>
+        <Link
+          href={href}
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-center font-semibold text-white no-underline transition-colors hover:bg-emerald-700"
+        >
+          <span>{label}</span>
+          <span>→</span>
+        </Link>
+      </div>
+      {parts[1] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[1].trim()}</p>}
     </div>
   )
 }
@@ -224,7 +228,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           )
         )}
 
-        <div className="prose prose-lg max-w-none prose-p:text-gray-700 prose-p:leading-8 prose-h2:text-gray-900 prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4">
+        <div className="prose prose-lg max-w-none prose-p:my-0 prose-p:text-gray-700 prose-p:leading-8 prose-h2:text-gray-900 prose-h2:font-bold prose-h2:mt-14 prose-h2:mb-5 prose-ul:my-7 prose-ol:my-7">
           {(() => {
             const faqIndex = post.content.findIndex((block) => block.type === 'heading' && typeof block.text === 'string' && block.text.trim().toLowerCase() === 'faq nhanh')
             const mainBlocks = faqIndex >= 0 ? post.content.slice(0, faqIndex) : post.content
@@ -234,7 +238,19 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               <>
                 {mainBlocks.map((block, index) => {
                   if (block.type === 'heading') {
-                    return <h2 key={index} className={isSalePost ? 'text-gray-900 font-bold tracking-tight' : ''}>{block.text || ''}</h2>
+                    const headingText = (block.text || '').trim()
+                    const isCtaHeading = /^cta$/i.test(headingText)
+                    return (
+                      <h2
+                        key={index}
+                        className={[
+                          isSalePost ? 'text-gray-900 font-bold tracking-tight' : '',
+                          isCtaHeading ? 'mt-16 mb-4 text-2xl md:text-3xl' : '',
+                        ].filter(Boolean).join(' ')}
+                      >
+                        {isCtaHeading ? 'Liên hệ & giữ chỗ' : headingText}
+                      </h2>
+                    )
                   }
 
                   if (block.type === 'list') {
