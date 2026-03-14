@@ -129,8 +129,8 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
     : 'not-prose my-8 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 md:my-10 md:p-6'
 
   const buttonClass = isSalePost
-    ? 'inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-center font-semibold text-white no-underline shadow-md transition-all hover:opacity-95'
-    : 'inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-center font-semibold text-white no-underline transition-colors hover:bg-emerald-700'
+    ? 'group inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-center font-semibold text-white no-underline shadow-[0_10px_30px_rgba(249,115,22,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(244,63,94,0.28)]'
+    : 'group inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/85 px-5 py-3 text-center font-semibold text-slate-900 no-underline shadow-[0_12px_32px_rgba(15,23,42,0.10)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_18px_40px_rgba(15,23,42,0.14)]'
 
   return (
     <div key={key} className={cardClass}>
@@ -139,7 +139,7 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
         {ctaLinks.map((link, index) => (
           <Link key={`${key}-${index}`} href={link.href} className={buttonClass}>
             <span>{link.label}</span>
-            <span>→</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
           </Link>
         ))}
       </div>
