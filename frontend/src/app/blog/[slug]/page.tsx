@@ -71,6 +71,22 @@ function extractInlineLinks(text: string) {
     })
 }
 
+function extractMarkdownLinks(text: string) {
+  const matches = Array.from(text.matchAll(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g))
+  const seen = new Set<string>()
+
+  return matches
+    .map((match) => ({
+      label: match[1].trim(),
+      href: match[2].trim().replace(/[.,!?;:]+$/g, ''),
+    }))
+    .filter((link) => {
+      if (seen.has(link.href)) return false
+      seen.add(link.href)
+      return true
+    })
+}
+
 function getLinkLabel(href: string, index = 0) {
   try {
     const url = new URL(href)
@@ -83,27 +99,30 @@ function getLinkLabel(href: string, index = 0) {
 }
 
 function renderParagraph(text: string, key: number, isSalePost: boolean, forceCtaBlock = false, inheritedLinks: string[] = []) {
-  const markdownMatch = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
+  const markdownLinks = extractMarkdownLinks(text)
   const rawCtaMatch = text.match(/^(?:👉\s*)?(.+?):\s*(https?:\/\/\S+)$/)
-  const match = markdownMatch || rawCtaMatch
+  const match = rawCtaMatch
   const inlineLinks = extractInlineLinks(text)
   const resolvedLinks = forceCtaBlock ? (inlineLinks.length > 0 ? inlineLinks : inheritedLinks) : inlineLinks
   const shouldRenderInlineCta = forceCtaBlock && resolvedLinks.length > 0
 
-  if (!match && !shouldRenderInlineCta) {
+  if (markdownLinks.length === 0 && !match && !shouldRenderInlineCta) {
     return <p key={key} className="mb-5 text-[17px] leading-8 text-gray-700 md:mb-6 md:text-[18px]">{text}</p>
   }
 
   const href = match?.[2] || ''
   const label = match?.[1]?.trim() || ''
-  const full = match?.[0] || ''
-  const parts = match
-    ? (markdownMatch ? text.split(full) : [''])
-    : [text.replace(/https?:\/\/[^\s)]+/g, '').replace(/\s{2,}/g, ' ').trim()]
+  const parts = markdownLinks.length > 0
+    ? [text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '').replace(/\s{2,}/g, ' ').trim()]
+    : match
+      ? ['']
+      : [text.replace(/https?:\/\/[^\s)]+/g, '').replace(/\s{2,}/g, ' ').trim()]
 
   const ctaLinks = shouldRenderInlineCta
     ? resolvedLinks.map((url, index) => ({ href: url, label: getLinkLabel(url, index) }))
-    : [{ href, label }]
+    : markdownLinks.length > 0
+      ? markdownLinks
+      : [{ href, label }]
 
   const cardClass = isSalePost
     ? 'not-prose my-8 space-y-4 rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50 p-5 md:my-10 md:p-6 shadow-sm'
