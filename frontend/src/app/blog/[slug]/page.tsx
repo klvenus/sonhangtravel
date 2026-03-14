@@ -71,27 +71,30 @@ function extractInlineLinks(text: string) {
     })
 }
 
-function getLinkLabel(href: string) {
+function getLinkLabel(href: string, index = 0) {
   try {
     const url = new URL(href)
     const slug = url.pathname.split('/').filter(Boolean).pop() || ''
+
     if (url.pathname.includes('/tour/') || url.pathname.includes('/tours/')) {
-      const pretty = slug
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, (char) => char.toUpperCase())
-      return pretty ? `Xem tour ${pretty}` : 'Xem chi tiết tour'
+      const durationMatch = slug.match(/(\d+)-ngay-(\d+)-dem/i)
+      if (durationMatch) {
+        return `Xem tour ${durationMatch[1]}N${durationMatch[2]}Đ`
+      }
+      return index > 0 ? `Xem tour ${index + 1}` : 'Xem chi tiết tour'
     }
   } catch {}
 
-  return 'Xem chi tiết'
+  return index > 0 ? `Xem thêm lựa chọn ${index + 1}` : 'Xem chi tiết'
 }
 
-function renderParagraph(text: string, key: number, isSalePost: boolean, forceCtaBlock = false) {
+function renderParagraph(text: string, key: number, isSalePost: boolean, forceCtaBlock = false, inheritedLinks: string[] = []) {
   const markdownMatch = text.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/)
   const rawCtaMatch = text.match(/^(?:👉\s*)?(.+?):\s*(https?:\/\/\S+)$/)
   const match = markdownMatch || rawCtaMatch
   const inlineLinks = extractInlineLinks(text)
-  const shouldRenderInlineCta = forceCtaBlock && inlineLinks.length > 0
+  const resolvedLinks = forceCtaBlock ? (inlineLinks.length > 0 ? inlineLinks : inheritedLinks) : inlineLinks
+  const shouldRenderInlineCta = forceCtaBlock && resolvedLinks.length > 0
 
   if (!match && !shouldRenderInlineCta) {
     return <p key={key} className="mb-5 text-[17px] leading-8 text-gray-700 md:mb-6 md:text-[18px]">{text}</p>
@@ -105,7 +108,7 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
     : [text.replace(/https?:\/\/[^\s)]+/g, '').replace(/\s{2,}/g, ' ').trim()]
 
   const ctaLinks = shouldRenderInlineCta
-    ? inlineLinks.map((url) => ({ href: url, label: getLinkLabel(url) }))
+    ? resolvedLinks.map((url, index) => ({ href: url, label: getLinkLabel(url, index) }))
     : [{ href, label }]
 
   const cardClass = isSalePost
@@ -298,11 +301,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     )
                   }
 
-                  const paragraphText = afterCtaHeading && extractInlineLinks(block.text || '').length === 0 && prevPrevBlock?.type === 'paragraph'
-                    ? `${prevPrevBlock.text || ''} ${(block.text || '').trim()}`.trim()
-                    : (block.text || '')
+                  const inheritedLinks = afterCtaHeading && prevPrevBlock?.type === 'paragraph'
+                    ? extractInlineLinks(prevPrevBlock.text || '')
+                    : []
 
-                  return renderParagraph(paragraphText, index, isSalePost, afterCtaHeading)
+                  return renderParagraph(block.text || '', index, isSalePost, afterCtaHeading, inheritedLinks)
                 })}
 
                 {faqBlocks.length > 0 && (
