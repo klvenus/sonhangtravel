@@ -46,7 +46,7 @@ export default function CategoryToursSection({ categoryName, categorySlug, tours
 
         {/* Grid 2 columns on mobile */}
         <div className="grid grid-cols-2 gap-3 px-4">
-          {tours.slice(0, 4).map((tour) => (
+          {tours.map((tour) => (
             <TourCard key={tour.id} {...tour} />
           ))}
         </div>
@@ -70,7 +70,7 @@ export default function CategoryToursSection({ categoryName, categorySlug, tours
 
         {/* Tours Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {tours.slice(0, 4).map((tour) => (
+          {tours.map((tour) => (
             <TourCard key={tour.id} {...tour} />
           ))}
         </div>
