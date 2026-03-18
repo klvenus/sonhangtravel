@@ -17,13 +17,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/tours`,
       lastModified: new Date(),
       changeFrequency: 'daily',
-      priority: 0.9,
+      priority: 0.95,
     },
     {
       url: `${SITE_URL}/blog`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
+      changeFrequency: 'weekly',
+      priority: 0.6,
     },
     {
       url: `${SITE_URL}/uu-dai`,
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/tour/${tour.slug}`,
       lastModified: tour.updatedAt || new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.8,
+      priority: 0.9,
     }))
   } catch (error) {
     console.error('Error fetching tours for sitemap:', error)
@@ -61,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/blog/${post.slug}`,
       lastModified: post.updatedAt || post.publishedAt || new Date().toISOString(),
       changeFrequency: 'weekly' as const,
-      priority: 0.75,
+      priority: 0.55,
     }))
   } catch (error) {
     console.error('Error fetching blog posts for sitemap:', error)
@@ -71,15 +71,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let categoryPages: MetadataRoute.Sitemap = []
   try {
     const categories = await getCategories()
-    categoryPages = (categories || []).map((cat) => ({
+    categoryPages = (categories || [])
+      .filter((cat) => (cat.tourCount || 0) > 0)
+      .map((cat) => ({
       url: `${SITE_URL}/tours/${cat.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.85,
+      priority: 0.92,
     }))
   } catch (error) {
     console.error('Error fetching categories for sitemap:', error)
   }
 
-  return [...staticPages, ...tourPages, ...blogPages, ...categoryPages]
+  return [...staticPages, ...categoryPages, ...tourPages, ...blogPages]
 }

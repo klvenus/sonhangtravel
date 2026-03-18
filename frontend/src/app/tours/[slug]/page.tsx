@@ -2,12 +2,26 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import TourCard from '@/components/TourCard'
-import { getTours, getCategoryBySlug, getImageUrl } from '@/lib/data'
+import { getTours, getCategoryBySlug, getCategories, getImageUrl } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
 
 // Enable ISR - revalidate every 1 hour
 export const revalidate = 3600
+
+export async function generateStaticParams() {
+  try {
+    const categories = await getCategories()
+    return categories
+      .filter((category) => (category.tourCount || 0) > 0)
+      .map((category) => ({
+        slug: category.slug,
+      }))
+  } catch (error) {
+    console.error('Error generating category static params:', error)
+    return []
+  }
+}
 
 // Generate metadata for SEO
 export async function generateMetadata({ 
@@ -17,7 +31,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   try {
     const { slug } = await params
-    const category = await getCategoryBySlug(slug)
+    const [category, toursRes] = await Promise.all([
+      getCategoryBySlug(slug),
+      getTours({ category: slug, pageSize: 1 }),
+    ])
     
     if (!category) {
       return {
@@ -28,12 +45,17 @@ export async function generateMetadata({
     const categoryName = category.name || 'Danh mục'
     const canonicalUrl = `${SITE_URL}/tours/${slug}`
     const categoryImage = category.image ? getImageUrl(category.image, 'large') : undefined
+    const hasPublishedTours = toursRes.total > 0
     
     return {
       title: `Tour ${categoryName}`,
       description: category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`,
       alternates: {
         canonical: canonicalUrl,
+      },
+      robots: {
+        index: hasPublishedTours,
+        follow: true,
       },
       openGraph: {
         title: `Tour ${categoryName}`,
@@ -64,22 +86,16 @@ export default async function CategoryToursPage({
 }) {
   try {
     const { slug } = await params
-    console.log('[CategoryToursPage] Fetching data for slug:', slug)
-    
-    // Fetch with longer timeout and retry
     const [toursRes, category] = await Promise.all([
-      getTours({ category: slug, pageSize: 20 }).catch(err => {
+      getTours({ category: slug, pageSize: 200 }).catch(err => {
         console.error('[CategoryToursPage] Error fetching tours:', err)
-        return { data: [], meta: { pagination: { page: 1, pageSize: 20, pageCount: 0, total: 0 } } }
+        return { data: [], total: 0, page: 1, pageSize: 200 }
       }),
       getCategoryBySlug(slug).catch(err => {
         console.error('[CategoryToursPage] Error fetching category:', err)
         return null
       })
     ])
-
-    console.log('[CategoryToursPage] Category result:', category)
-    console.log('[CategoryToursPage] Tours count:', toursRes.data?.length || 0)
 
     // If category not found, show 404
     if (!category) {
@@ -186,7 +202,7 @@ export default async function CategoryToursPage({
                 )}
                 {!category.description && (
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    Tour {categoryName} Cùng khám phá động hứng với sơn hằng travel
+                    Khám phá các tour {categoryName} khởi hành thuận tiện cùng Sơn Hằng Travel.
                   </p>
                 )}
               </div>

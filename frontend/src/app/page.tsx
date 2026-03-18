@@ -4,11 +4,41 @@ import FeaturedTours from '@/components/FeaturedTours'
 import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import { getCategories, getTours, getImageUrl, getSiteSettings, CategoryData, TourData, BannerSlide } from '@/lib/data'
+import { Metadata } from 'next'
 
 const SITE_URL = 'https://sonhangtravel.com'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
 // ISR - Revalidate every hour
 export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: 'Tour Du Lịch Trung Quốc 2026 - Đông Hưng, Nam Ninh, Quế Lâm',
+  description: 'Sơn Hằng Travel chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng 1-2 ngày, Nam Ninh, Quế Lâm, Trương Gia Giới. Lịch khởi hành đều, giá tốt, hỗ trợ nhanh.',
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    title: 'Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel',
+    description: 'Danh mục tour Trung Quốc nổi bật từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới và nhiều hành trình bán chạy.',
+    url: SITE_URL,
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Tour du lịch Trung Quốc | Sơn Hằng Travel',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel',
+    description: 'Danh mục tour Trung Quốc nổi bật từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới và nhiều hành trình bán chạy.',
+    images: [DEFAULT_OG_IMAGE],
+  },
+}
 
 // Transform functions
 function transformCategory(cat: CategoryData) {

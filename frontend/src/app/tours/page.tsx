@@ -7,8 +7,7 @@ import { redirect } from 'next/navigation'
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
-// SEO Metadata for Tours page
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Tour Du Lịch Trung Quốc 2026 - Đông Hưng, Nam Ninh, Quế Lâm",
   description: "🎯 Danh sách tour du lịch Trung Quốc hot nhất 2026: Tour Đông Hưng 1-2 ngày, Tour Nam Ninh shopping, Tour Quế Lâm Dương Sóc, Tour Trương Gia Giới. Giá từ 999K!",
   keywords: ["tour trung quốc 2026", "tour đông hưng giá rẻ", "tour nam ninh mua sắm", "tour quế lâm", "du lịch trung quốc từ móng cái"],
@@ -35,6 +34,51 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${SITE_URL}/tours`,
   },
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: Promise<{ category?: string; search?: string }>
+}): Promise<Metadata> {
+  const params = searchParams ? await searchParams : undefined
+  const searchQuery = params?.search?.trim()
+
+  if (!searchQuery) {
+    return baseMetadata
+  }
+
+  return {
+    title: `Tìm kiếm tour ${searchQuery}`,
+    description: `Kết quả tìm kiếm tour cho từ khóa "${searchQuery}" tại Sơn Hằng Travel.`,
+    alternates: {
+      canonical: `${SITE_URL}/tours`,
+    },
+    robots: {
+      index: false,
+      follow: true,
+    },
+    openGraph: {
+      title: `Tìm kiếm tour ${searchQuery} | Sơn Hằng Travel`,
+      description: `Kết quả tìm kiếm tour cho từ khóa "${searchQuery}" tại Sơn Hằng Travel.`,
+      url: `${SITE_URL}/tours`,
+      type: 'website',
+      images: [
+        {
+          url: DEFAULT_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          alt: 'Tour du lịch Trung Quốc | Sơn Hằng Travel',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Tìm kiếm tour ${searchQuery} | Sơn Hằng Travel`,
+      description: `Kết quả tìm kiếm tour cho từ khóa "${searchQuery}" tại Sơn Hằng Travel.`,
+      images: [DEFAULT_OG_IMAGE],
+    },
+  }
 }
 
 // ISR - Revalidate every hour
