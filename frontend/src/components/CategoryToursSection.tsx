@@ -39,7 +39,7 @@ export default function CategoryToursSection({ categoryName, categorySlug, tours
         {/* Section Header */}
         <div className="flex items-center justify-between px-4 mb-3">
           <h2 className="text-lg font-bold text-gray-800">Tour {categoryName}</h2>
-          <Link href={`/tours?category=${categorySlug}`} className="text-[#FF5722] text-sm font-medium">
+          <Link href={`/tours/${categorySlug}`} className="text-[#FF5722] text-sm font-medium">
             Xem tất cả →
           </Link>
         </div>
@@ -61,7 +61,7 @@ export default function CategoryToursSection({ categoryName, categorySlug, tours
             <p className="text-gray-600 mt-1">Khám phá các tour du lịch {categoryName}</p>
           </div>
           <Link
-            href={`/tours?category=${categorySlug}`}
+            href={`/tours/${categorySlug}`}
             className="text-[#FF5722] font-medium hover:underline"
           >
             Xem tất cả →

@@ -6,7 +6,7 @@ const LEGACY_TOUR_REDIRECTS: Record<string, string> = {
   '/Tour/tour-dong-hung-2-ngay-1-dem': '/tour/dong-hung-2-ngay-1-dem',
   '/Tour/tour-dong-hung-trong-ngay': '/tour/dong-hung-1-ngay',
   '/Tour/tour-dong-hung-3-ngay-2-dem': '/tour/dong-hung-nam-ninh-3-ngay-2-dem',
-  '/Tour/tour-ha-khau-2-ngay-1-dem': '/tours?category=ha-khau',
+  '/Tour/tour-ha-khau-2-ngay-1-dem': '/tours/ha-khau',
   '/Tour/ha-khau-kien-thuy-mong-tu': '/tour/ha-khau-khai-vien-kien-thuy-mong-tu-3-ngay-2-dem',
   '/Tour/ha-khau-binh-bien-mong-tu-2n1d': '/tour/ha-khau-binh-bien-di-lac-mong-tu-kien-thuy-3-ngay-2-dem',
   '/Tour/ha-khau-binh-bien-kien-thuy-mong-tu-3n2d': '/tour/ha-khau-binh-bien-di-lac-mong-tu-kien-thuy-3-ngay-2-dem',

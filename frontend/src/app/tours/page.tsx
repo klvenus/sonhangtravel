@@ -2,6 +2,7 @@ import { getTours, getCategories, getImageUrl, TourData, CategoryData } from '@/
 import ToursPageClient from './ToursPageClient'
 import { Metadata } from 'next'
 import { Suspense } from 'react'
+import { redirect } from 'next/navigation'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
@@ -117,7 +118,19 @@ function transformCategory(cat: CategoryData) {
   }
 }
 
-export default async function ToursPage() {
+export default async function ToursPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ category?: string; search?: string }>
+}) {
+  const params = searchParams ? await searchParams : undefined
+  const categorySlug = params?.category?.trim()
+  const searchQuery = params?.search?.trim()
+
+  if (categorySlug && !searchQuery) {
+    redirect(`/tours/${categorySlug}`)
+  }
+
   let tours: ReturnType<typeof transformTour>[] = []
   let categories: ReturnType<typeof transformCategory>[] = []
 

@@ -1,9 +1,10 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import TourCard from '@/components/TourCard'
 import { getTours, getCategoryBySlug, getImageUrl } from '@/lib/data'
+
+const SITE_URL = 'https://sonhangtravel.com'
 
 // Enable ISR - revalidate every 1 hour
 export const revalidate = 3600
@@ -25,14 +26,27 @@ export async function generateMetadata({
     }
 
     const categoryName = category.name || 'Danh mục'
+    const canonicalUrl = `${SITE_URL}/tours/${slug}`
+    const categoryImage = category.image ? getImageUrl(category.image, 'large') : undefined
     
     return {
-      title: `Tour ${categoryName} | Sơn Hằng Travel`,
+      title: `Tour ${categoryName}`,
       description: category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`,
+      alternates: {
+        canonical: canonicalUrl,
+      },
       openGraph: {
         title: `Tour ${categoryName}`,
         description: category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName}`,
-        images: category.image ? [getImageUrl(category.image, 'large')] : [],
+        url: canonicalUrl,
+        type: 'website',
+        images: categoryImage ? [categoryImage] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `Tour ${categoryName} | Sơn Hằng Travel`,
+        description: category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`,
+        images: categoryImage ? [categoryImage] : [],
       },
     }
   } catch (error) {
@@ -75,9 +89,76 @@ export default async function CategoryToursPage({
 
     const tours = toursRes.data || []
     const categoryName = category.name || 'Danh mục'
+    const canonicalUrl = `${SITE_URL}/tours/${slug}`
+    const categoryDescription = category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`
+    const categoryImage = category.image ? getImageUrl(category.image, 'large') : undefined
+    const categorySchema = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: `Tour ${categoryName}`,
+      url: canonicalUrl,
+      description: categoryDescription,
+      about: {
+        '@type': 'Thing',
+        name: categoryName,
+      },
+      mainEntity: {
+        '@id': `${canonicalUrl}#tour-list`,
+      },
+      primaryImageOfPage: categoryImage || undefined,
+    }
+    const breadcrumbSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Trang chủ', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Tours', item: `${SITE_URL}/tours` },
+        { '@type': 'ListItem', position: 3, name: `Tour ${categoryName}`, item: canonicalUrl },
+      ],
+    }
+    const itemListSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      '@id': `${canonicalUrl}#tour-list`,
+      name: `Danh sách tour ${categoryName}`,
+      itemListOrder: 'https://schema.org/ItemListOrderAscending',
+      numberOfItems: tours.length,
+      itemListElement: tours.map((tour, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${SITE_URL}/tour/${tour.slug}`,
+        item: {
+          '@type': 'TouristTrip',
+          name: tour.title,
+          url: `${SITE_URL}/tour/${tour.slug}`,
+          image: getImageUrl(tour.thumbnail, 'large') || getImageUrl(tour.gallery?.[0], 'large') || undefined,
+          offers: {
+            '@type': 'Offer',
+            price: tour.price,
+            priceCurrency: 'VND',
+            availability: 'https://schema.org/InStock',
+            url: `${SITE_URL}/tour/${tour.slug}`,
+          },
+        },
+      })),
+    }
 
     return (
       <div className="min-h-screen bg-gray-50">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(categorySchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
+        {tours.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+          />
+        )}
         {/* Breadcrumb */}
         <div className="bg-white border-b">
           <div className="container-custom py-3">

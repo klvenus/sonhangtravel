@@ -63,27 +63,27 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
   },
   {
     source: '/category/an-sach-dong-hung-trung-quoc',
-    destination: '/tours?category=dong-hung',
+    destination: '/tours/dong-hung',
     permanent: true,
   },
   {
     source: '/category/:slug',
-    destination: '/tours?category=:slug',
+    destination: '/tours/:slug',
     permanent: true,
   },
   {
     source: '/diadiem/:slug',
-    destination: '/tours?category=:slug',
+    destination: '/tours/:slug',
     permanent: true,
   },
   {
     source: '/tag/chua-quan-am',
-    destination: '/tours?category=dong-hung',
+    destination: '/tours/dong-hung',
     permanent: true,
   },
   {
     source: '/tag/pho-co-truc-son-dong-hung-trung-quoc',
-    destination: '/tours?category=dong-hung',
+    destination: '/tours/dong-hung',
     permanent: true,
   },
   {
@@ -98,12 +98,12 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
   },
   {
     source: '/chua-quan-am-dong-hung-trung-quoc',
-    destination: '/tours?category=dong-hung',
+    destination: '/tours/dong-hung',
     permanent: true,
   },
   {
     source: '/bai-bien-van-vi-dong-hung-trung-quoc',
-    destination: '/tours?category=dong-hung',
+    destination: '/tours/dong-hung',
     permanent: true,
   },
 ]

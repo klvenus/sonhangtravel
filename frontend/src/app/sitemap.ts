@@ -72,10 +72,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const categories = await getCategories()
     categoryPages = (categories || []).map((cat) => ({
-      url: `${SITE_URL}/tours?category=${cat.slug}`,
+      url: `${SITE_URL}/tours/${cat.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
-      priority: 0.7,
+      priority: 0.85,
     }))
   } catch (error) {
     console.error('Error fetching categories for sitemap:', error)

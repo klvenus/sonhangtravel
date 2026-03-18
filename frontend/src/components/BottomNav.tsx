@@ -218,7 +218,7 @@ export default function BottomNav({ phoneNumber = '0338239888', zaloNumber }: Bo
                   return (
                     <Link
                       key={cat.id}
-                      href={`/tours?category=${cat.slug}`}
+                      href={`/tours/${cat.slug}`}
                       onClick={() => setShowCategories(false)}
                       className="flex flex-col items-center gap-2 py-2 rounded-xl active:bg-gray-100/60 transition-all"
                     >

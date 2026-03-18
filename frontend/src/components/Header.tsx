@@ -334,7 +334,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                       {categories.map((cat) => (
                         <Link 
                           key={cat.id}
-                          href={`/tours?category=${cat.slug}`}
+                          href={`/tours/${cat.slug}`}
                           onClick={() => setShowCategoryMenu(false)}
                           className="block px-4 py-2.5 text-gray-600 hover:bg-[#00CBA9]/10 hover:text-[#00CBA9] transition-colors"
                         >
@@ -447,7 +447,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                 {categories.map((cat) => (
                   <Link
                     key={cat.id}
-                    href={`/tours?category=${cat.slug}`}
+                    href={`/tours/${cat.slug}`}
                     onClick={() => setShowMobileMenu(false)}
                     className="flex items-center justify-between px-5 py-3 text-gray-600 hover:bg-gray-50 hover:text-[#00CBA9] transition-colors"
                   >
