@@ -6,6 +6,23 @@ import { getTours, getCategoryBySlug, getCategories, getImageUrl } from '@/lib/d
 
 const SITE_URL = 'https://sonhangtravel.com'
 
+function buildCategoryFaqItems(categoryName: string, slug: string, tourCount: number) {
+  return [
+    {
+      question: `Tour ${categoryName} có những lịch trình nào nổi bật?`,
+      answer: `Hiện Sơn Hằng Travel đang có khoảng ${tourCount} hành trình thuộc nhóm ${categoryName}. Anh chị có thể xem trực tiếp tại ${SITE_URL}/tours/${slug} để chọn tour phù hợp về thời gian, điểm đi và ngân sách.`,
+    },
+    {
+      question: `Nên chọn tour ${categoryName} mấy ngày?`,
+      answer: `Nếu muốn đi nhanh gọn, anh chị có thể ưu tiên tour ngắn ngày. Nếu muốn kết hợp tham quan và mua sắm sâu hơn, nên chọn các hành trình 2 ngày trở lên để lịch trình thoải mái hơn.`,
+    },
+    {
+      question: `Đặt tour ${categoryName} trước bao lâu là hợp lý?`,
+      answer: `Với các tuyến bán chạy, nên giữ chỗ sớm để chủ động hồ sơ và giá tốt. Đặt sớm cũng giúp mình chọn được ngày khởi hành phù hợp hơn.`,
+    },
+  ]
+}
+
 // Enable ISR - revalidate every 1 hour
 export const revalidate = 3600
 
@@ -158,6 +175,19 @@ export default async function CategoryToursPage({
         },
       })),
     }
+    const faqItems = buildCategoryFaqItems(categoryName, slug, tours.length)
+    const faqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    }
 
     return (
       <div className="min-h-screen bg-gray-50">
@@ -175,6 +205,10 @@ export default async function CategoryToursPage({
             dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
           />
         )}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
         {/* Breadcrumb */}
         <div className="bg-white border-b">
           <div className="container-custom py-3">
@@ -217,24 +251,41 @@ export default async function CategoryToursPage({
 
               {/* Tours Grid */}
               {tours.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {tours.map((tour) => (
-                    <TourCard
-                      key={tour.id}
-                      id={String(tour.id)}
-                      title={tour.title}
-                      slug={tour.slug}
-                      image={getImageUrl(tour.thumbnail, 'medium')}
-                      location={tour.destination}
-                      duration={tour.duration}
-                      price={tour.price}
-                      originalPrice={tour.originalPrice || undefined}
-                      rating={Number(tour.rating || 5)}
-                      reviewCount={tour.reviewCount || 0}
-                      isHot={tour.featured || undefined}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    {tours.map((tour) => (
+                      <TourCard
+                        key={tour.id}
+                        id={String(tour.id)}
+                        title={tour.title}
+                        slug={tour.slug}
+                        image={getImageUrl(tour.thumbnail, 'medium')}
+                        location={tour.destination}
+                        duration={tour.duration}
+                        price={tour.price}
+                        originalPrice={tour.originalPrice || undefined}
+                        rating={Number(tour.rating || 5)}
+                        reviewCount={tour.reviewCount || 0}
+                        isHot={tour.featured || undefined}
+                      />
+                    ))}
+                  </div>
+
+                  <section className="mt-10 rounded-2xl bg-white p-6 shadow-sm">
+                    <h2 className="text-2xl font-bold text-gray-900">Cẩm nang nhanh cho tour {categoryName}</h2>
+                    <p className="mt-2 text-sm leading-7 text-gray-600">
+                      Đây là landing page tổng hợp để anh chị so sánh nhanh các lịch trình {categoryName}, xem mức giá, thời lượng và chọn tour phù hợp nhất trước khi liên hệ chốt chỗ.
+                    </p>
+                    <div className="mt-5 grid gap-3 md:grid-cols-3">
+                      {faqItems.map((item, index) => (
+                        <div key={index} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                          <h3 className="text-base font-semibold text-gray-900">{item.question}</h3>
+                          <p className="mt-2 text-sm leading-7 text-gray-600">{item.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </>
               ) : (
                 <div className="text-center py-12 bg-white rounded-xl">
                   <div className="text-6xl mb-4">🏝️</div>

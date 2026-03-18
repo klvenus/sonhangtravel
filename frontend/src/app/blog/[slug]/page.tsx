@@ -6,10 +6,78 @@ import BlogGalleryLightbox from '@/components/BlogGalleryLightbox'
 import BlogSalePageEnhancer from '@/components/BlogSalePageEnhancer'
 import SaleCountdown from '@/components/SaleCountdown'
 import SaleActions from '@/components/SaleActions'
+import TourCard from '@/components/TourCard'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
+import { getTours, getImageUrl } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+
+function normalizeVietnamese(text: string) {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .trim()
+}
+
+function buildRelatedTours(post: NonNullable<Awaited<ReturnType<typeof getBlogPostBySlug>>>, tours: Awaited<ReturnType<typeof getTours>>['data']) {
+  const contentText = post.content
+    .flatMap((block) => [block.text || '', ...(block.items || [])])
+    .join(' ')
+  const searchText = normalizeVietnamese([
+    post.title,
+    post.description,
+    post.excerpt,
+    post.category,
+    post.keywords.join(' '),
+    contentText,
+  ].join(' '))
+
+  const scoredTours = tours
+    .map((tour) => {
+      const destinationText = normalizeVietnamese(tour.destination || '')
+      const titleText = normalizeVietnamese(tour.title)
+      const categoryText = normalizeVietnamese(tour.categoryName || '')
+
+      let score = 0
+      if (searchText.includes(titleText)) score += 8
+      if (titleText.split(/\s+/).some((token) => token.length > 2 && searchText.includes(token))) score += 3
+      if (destinationText && searchText.includes(destinationText)) score += 5
+      if (categoryText && searchText.includes(categoryText)) score += 4
+
+      return { tour, score }
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score
+      return (b.tour.bookingCount || 0) - (a.tour.bookingCount || 0)
+    })
+
+  const fallbackTours = tours
+    .sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0))
+    .slice(0, 3)
+
+  const selected = (scoredTours.length > 0 ? scoredTours.map((item) => item.tour) : fallbackTours).slice(0, 3)
+
+  return selected.map((tour) => ({
+    id: String(tour.id),
+    title: /^tour\b/i.test(tour.title) ? tour.title : `Tour ${tour.title}`,
+    slug: tour.slug,
+    image: getImageUrl(tour.thumbnail, 'medium') || getImageUrl(tour.gallery?.[0], 'medium') || DEFAULT_OG_IMAGE,
+    location: tour.destination,
+    duration: tour.duration,
+    price: tour.price,
+    originalPrice: tour.originalPrice || undefined,
+    rating: Number(tour.rating || 5),
+    reviewCount: tour.reviewCount || 0,
+    isHot: Boolean(tour.featured),
+    categoryName: tour.categoryName,
+    categorySlug: tour.categorySlug,
+  }))
+}
 
 export async function generateStaticParams() {
   const posts = await getAllBlogPosts()
@@ -155,11 +223,28 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
 
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const post = await getBlogPostBySlug(slug)
+  const [post, toursRes] = await Promise.all([
+    getBlogPostBySlug(slug),
+    getTours({ pageSize: 200, sort: 'bookingCount:desc' }),
+  ])
 
   if (!post) {
     notFound()
   }
+
+  const relatedTours = buildRelatedTours(post, toursRes.data || [])
+  const relatedToursSchema = relatedTours.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: `Tour phù hợp với bài viết ${post.title}`,
+        itemListElement: relatedTours.map((tour, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: `${SITE_URL}/tour/${tour.slug}`,
+        })),
+      }
+    : null
 
   const isSalePost = /thanh lý|suất cuối|ưu đãi|giảm còn|giá tốt|flash sale/i.test(`${post.title} ${post.excerpt} ${post.description}`)
   const publishedDate = new Date(post.publishedAt)
@@ -237,6 +322,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
+      {relatedToursSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(relatedToursSchema) }} />}
       {isSalePost && <BlogSalePageEnhancer />}
       <article className="max-w-4xl mx-auto px-4 py-10 md:py-14">
         <div className="mb-8">
@@ -387,6 +473,55 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         </div>
 
         {isSalePost && <SaleActions untilIso={saleUntilIso} tourHref={saleTourHref} zaloHref={saleZaloHref} />}
+
+        {relatedTours.length > 0 && (
+          <section className="mt-14 border-t border-gray-200 pt-10">
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Tour phù hợp với bài viết này</h2>
+                <p className="mt-2 text-gray-600">Các hành trình liên quan để kéo người đọc từ nội dung sang trang tour đang bán thực tế.</p>
+              </div>
+              <Link href="/tours" className="text-sm font-semibold text-[#059669] hover:underline">
+                Xem tất cả tour
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {relatedTours.map((tour) => (
+                <TourCard
+                  key={tour.id}
+                  id={tour.id}
+                  title={tour.title}
+                  slug={tour.slug}
+                  image={tour.image}
+                  location={tour.location}
+                  duration={tour.duration}
+                  price={tour.price}
+                  originalPrice={tour.originalPrice}
+                  rating={tour.rating}
+                  reviewCount={tour.reviewCount}
+                  isHot={tour.isHot}
+                />
+              ))}
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              {Array.from(new Map(
+                relatedTours
+                  .filter((tour) => tour.categorySlug && tour.categoryName)
+                  .map((tour) => [tour.categorySlug, { slug: tour.categorySlug, name: tour.categoryName }])
+              ).values()).map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/tours/${category.slug}`}
+                  className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
+                >
+                  Xem tour {category.name}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {!isSalePost && post.gallery && post.gallery.length === 1 && (
           <section className="mt-14 border-t border-gray-200 pt-10">
