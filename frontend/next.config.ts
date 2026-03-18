@@ -58,12 +58,12 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
   },
   {
     source: '/category/cam-nang-du-lich',
-    destination: '/blog',
+    destination: '/tours',
     permanent: true,
   },
   {
     source: '/category/an-sach-dong-hung-trung-quoc',
-    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    destination: '/tours?category=dong-hung',
     permanent: true,
   },
   {
@@ -78,12 +78,12 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
   },
   {
     source: '/tag/chua-quan-am',
-    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    destination: '/tours?category=dong-hung',
     permanent: true,
   },
   {
     source: '/tag/pho-co-truc-son-dong-hung-trung-quoc',
-    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    destination: '/tours?category=dong-hung',
     permanent: true,
   },
   {
@@ -93,17 +93,17 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
   },
   {
     source: '/cam-nang-kham-pha-dong-hung-trung-quoc-1-ngay-an-gi-choi-gi-mua-sam-gi-cap-nhat-2025',
-    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    destination: '/tour/dong-hung-1-ngay',
     permanent: true,
   },
   {
     source: '/chua-quan-am-dong-hung-trung-quoc',
-    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    destination: '/tours?category=dong-hung',
     permanent: true,
   },
   {
     source: '/bai-bien-van-vi-dong-hung-trung-quoc',
-    destination: '/blog/kinh-nghiem-di-dong-hung-1-ngay-tu-mong-cai',
+    destination: '/tours?category=dong-hung',
     permanent: true,
   },
 ]

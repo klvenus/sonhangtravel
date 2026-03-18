@@ -1,8 +1,13 @@
 // Auto-revalidate Vercel ISR after data changes
 export async function revalidateProduction(extraPaths: string[] = []) {
-  const siteUrl = process.env.VERCEL_SITE_URL || 'https://sonhangtravel.vercel.app';
-  const secret = process.env.REVALIDATE_SECRET || 'sonhang-revalidate-2026';
+  const siteUrl = process.env.VERCEL_SITE_URL || 'https://sonhangtravel.com';
+  const secret = process.env.REVALIDATE_SECRET;
   const paths = ['/', '/tours', ...extraPaths];
+
+  if (!secret) {
+    console.warn('[revalidate] Skipped: missing REVALIDATE_SECRET');
+    return;
+  }
 
   // Fire and forget — don't block the response
   Promise.allSettled(

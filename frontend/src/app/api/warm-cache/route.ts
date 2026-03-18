@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getTours } from '@/lib/data'
 
 // This endpoint can be called by a cron job to keep popular pages warm
 // Vercel Cron: Add to vercel.json or use external service like cron-job.org
@@ -13,17 +14,9 @@ export async function GET() {
       '/tours',
     ]
     
-    // Also fetch all tour detail pages
-    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://sonhangtravel.onrender.com'
-    const toursResponse = await fetch(`${strapiUrl}/api/tours?fields[0]=slug&pagination[pageSize]=100`, {
-      next: { revalidate: 0 } // Don't cache this fetch
-    })
-    
-    if (toursResponse.ok) {
-      const toursData = await toursResponse.json()
-      const tourSlugs = toursData.data?.map((t: { slug: string }) => `/tour/${t.slug}`) || []
-      pagesToWarm.push(...tourSlugs)
-    }
+    const toursResponse = await getTours({ pageSize: 200, sort: 'bookingCount:desc' })
+    const tourSlugs = toursResponse.data?.map((tour) => `/tour/${tour.slug}`) || []
+    pagesToWarm.push(...tourSlugs)
     
     console.log(`Warming ${pagesToWarm.length} pages...`)
     

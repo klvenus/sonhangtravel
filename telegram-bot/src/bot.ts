@@ -8,7 +8,7 @@ import { uploadToCloudinary } from './cloudinary.js';
 
 // ─── Config ───
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
-const SITE_URL = process.env.VERCEL_SITE_URL || 'https://sonhangtravel.vercel.app';
+const SITE_URL = process.env.VERCEL_SITE_URL || 'https://sonhangtravel.com';
 
 if (!BOT_TOKEN) {
   console.error('❌ TELEGRAM_BOT_TOKEN is required');

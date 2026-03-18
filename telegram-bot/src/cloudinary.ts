@@ -1,7 +1,15 @@
 // Cloudinary upload helper
-const CLOUD_NAME = process.env.CLOUDINARY_NAME || 'dzxntgoko';
-const API_KEY = process.env.CLOUDINARY_KEY || '316995586271977';
-const API_SECRET = process.env.CLOUDINARY_SECRET || '9YuonKfWHcfu-OBlcUC8-nCXG3o';
+function getCloudinaryConfig() {
+  const cloudName = process.env.CLOUDINARY_NAME;
+  const apiKey = process.env.CLOUDINARY_KEY;
+  const apiSecret = process.env.CLOUDINARY_SECRET;
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    throw new Error('Missing Cloudinary environment variables');
+  }
+
+  return { cloudName, apiKey, apiSecret };
+}
 
 async function sha1(data: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -11,18 +19,19 @@ async function sha1(data: string): Promise<string> {
 
 export async function uploadToCloudinary(buffer: Buffer, filename: string): Promise<string | null> {
   try {
+    const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
     const timestamp = Math.round(Date.now() / 1000);
     const paramsToSign = `folder=sonhangtravel&timestamp=${timestamp}`;
-    const signature = await sha1(paramsToSign + API_SECRET);
+    const signature = await sha1(paramsToSign + apiSecret);
 
     const formData = new FormData();
     formData.append('file', new Blob([buffer]), filename);
-    formData.append('api_key', API_KEY);
+    formData.append('api_key', apiKey);
     formData.append('timestamp', String(timestamp));
     formData.append('signature', signature);
     formData.append('folder', 'sonhangtravel');
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
       method: 'POST',
       body: formData,
     });

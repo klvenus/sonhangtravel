@@ -1,5 +1,7 @@
 # Hướng dẫn sử dụng Admin Strapi - Sơn Hằng Travel
 
+> Deprecated: tài liệu này chỉ để tham khảo kiến trúc/model Strapi cũ. Luồng publish hiện tại là `admin local` hoặc `telegram-bot` ghi trực tiếp vào Neon PostgreSQL rồi frontend đọc từ DB; không còn phụ thuộc Strapi để vận hành hằng ngày.
+
 ## 🔗 Truy cập Admin Panel
 - URL: http://localhost:1337/admin
 - Đăng nhập với tài khoản admin đã tạo

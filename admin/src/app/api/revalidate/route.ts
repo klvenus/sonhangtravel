@@ -4,8 +4,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
     const paths = body.paths || ['/', '/tours'];
-    const siteUrl = process.env.VERCEL_SITE_URL || 'https://sonhangtravel.vercel.app';
-    const secret = process.env.REVALIDATE_SECRET || 'sonhang-revalidate-2026';
+    const siteUrl = process.env.VERCEL_SITE_URL || 'https://sonhangtravel.com';
+    const secret = process.env.REVALIDATE_SECRET;
+
+    if (!secret) {
+      return NextResponse.json({ error: 'Missing REVALIDATE_SECRET' }, { status: 500 });
+    }
 
     const results = [];
     for (const path of paths) {

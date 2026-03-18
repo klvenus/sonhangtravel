@@ -1,20 +1,29 @@
 import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Secret token to validate webhook requests
-const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET || 'sonhang-revalidate-2026'
+function getRevalidateSecret() {
+  const secret = process.env.REVALIDATE_SECRET
+
+  if (!secret) {
+    throw new Error('REVALIDATE_SECRET is not configured')
+  }
+
+  return secret
+}
 
 export async function POST(request: NextRequest) {
   try {
+    const revalidateSecret = getRevalidateSecret()
+
     // Check secret token
     const token = request.headers.get('x-revalidate-token') || 
                   request.nextUrl.searchParams.get('secret')
     
-    if (token !== REVALIDATE_SECRET) {
+    if (token !== revalidateSecret) {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
     }
 
-    // Get the body (Strapi webhook payload)
+    // Get the body from admin/bot/manual revalidate callers
     const body = await request.json().catch(() => ({}))
     
     console.log('Revalidate webhook received:', body)
@@ -51,9 +60,10 @@ export async function POST(request: NextRequest) {
 
 // Also support GET for easy testing
 export async function GET(request: NextRequest) {
+  const revalidateSecret = getRevalidateSecret()
   const token = request.nextUrl.searchParams.get('secret')
   
-  if (token !== REVALIDATE_SECRET) {
+  if (token !== revalidateSecret) {
     return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
   }
 

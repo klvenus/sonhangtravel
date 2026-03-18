@@ -1,7 +1,7 @@
 # Hướng dẫn cho OpenClaw: Chạy Telegram Bot quản lý Sơn Hằng Travel
 
 ## Mục tiêu
-Chạy Telegram Bot đã có sẵn tại `/Users/khumlong/sonhangtravel/telegram-bot` để quản lý tours du lịch qua Telegram. Bot kết nối trực tiếp vào database Neon PostgreSQL, upload ảnh lên Cloudinary, và tự động cập nhật website production.
+Chạy Telegram Bot đã có sẵn tại `/Users/khumlong/sonhangtravel/telegram-bot` để quản lý tours du lịch qua Telegram. Bot kết nối trực tiếp vào database Neon PostgreSQL, upload ảnh lên Cloudinary, và tự động cập nhật website production. Bot này dùng chung data layer với admin local, không đi qua Strapi.
 
 ---
 
@@ -20,9 +20,7 @@ Bot sẽ hiện: `🤖 Sơn Hằng Travel Bot đang chạy...`
 
 ## Bước 2: Test bot trên Telegram
 
-Mở Telegram, tìm bot bằng token: `7434463749:AAGCPru0hv_9ahOPq3xPARGE6UBNRtGTNXc`
-
-Hoặc tìm theo username bot (nếu đã set username trên BotFather).
+Mở Telegram, tìm bot theo username đã cấu hình trên BotFather.
 
 Gửi `/start` để xem menu lệnh.
 
@@ -134,13 +132,13 @@ Tour tự động lưu sau bước 6.
 
 ### Biến môi trường (`.env`)
 ```
-TELEGRAM_BOT_TOKEN=7434463749:AAGCPru0hv_9ahOPq3xPARGE6UBNRtGTNXc
-DATABASE_URL=postgresql://neondb_owner:npg_wYe3gIcx5hua@ep-little-lake-a1rinsa3-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
-CLOUDINARY_NAME=dzxntgoko
-CLOUDINARY_KEY=316995586271977
-CLOUDINARY_SECRET=9YuonKfWHcfu-OBlcUC8-nCXG3o
-VERCEL_SITE_URL=https://sonhangtravel.vercel.app
-REVALIDATE_SECRET=sonhang-revalidate-2026
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/DB?sslmode=require
+CLOUDINARY_NAME=your-cloud-name
+CLOUDINARY_KEY=your-cloudinary-key
+CLOUDINARY_SECRET=your-cloudinary-secret
+VERCEL_SITE_URL=https://sonhangtravel.com
+REVALIDATE_SECRET=your-long-random-secret
 ```
 
 ### Tech stack
@@ -151,8 +149,8 @@ REVALIDATE_SECRET=sonhang-revalidate-2026
 - **Commands**: `npm start` (chạy) / `npm run dev` (chạy + auto-reload khi sửa code)
 
 ### Website production
-- URL: https://sonhangtravel.vercel.app
-- Tour detail: `https://sonhangtravel.vercel.app/tour/[slug]`
+- URL: https://sonhangtravel.com
+- Tour detail: `https://sonhangtravel.com/tour/[slug]`
 - Revalidation tự động sau mỗi thao tác CRUD
 
 ---

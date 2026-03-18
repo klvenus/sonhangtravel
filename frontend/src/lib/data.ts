@@ -1,23 +1,7 @@
-// Data layer - replaces Strapi API calls with direct Neon DB queries
+// Shared data layer for direct Neon DB queries
 import { db } from './db';
 import { categories, tours, siteSettings } from './schema';
 import { eq, desc, asc, ilike, or, and, sql } from 'drizzle-orm';
-
-// ============ TYPES (keep compatible with existing components) ============
-
-export interface StrapiImage {
-  id: number;
-  url: string;
-  alternativeText?: string;
-  width?: number;
-  height?: number;
-  formats?: {
-    thumbnail?: { url: string };
-    small?: { url: string };
-    medium?: { url: string };
-    large?: { url: string };
-  };
-}
 
 export interface CategoryData {
   id: number;

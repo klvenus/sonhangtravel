@@ -11,7 +11,7 @@ const LEGACY_TOUR_REDIRECTS: Record<string, string> = {
   '/Tour/ha-khau-binh-bien-mong-tu-2n1d': '/tour/ha-khau-binh-bien-di-lac-mong-tu-kien-thuy-3-ngay-2-dem',
   '/Tour/ha-khau-binh-bien-kien-thuy-mong-tu-3n2d': '/tour/ha-khau-binh-bien-di-lac-mong-tu-kien-thuy-3-ngay-2-dem',
   '/Tour/dong-hung-nam-ninh-thai-binh-co-tran-3-ngay-2-dem':
-    '/blog/tour-nam-ninh-thai-binh-co-tran-lieu-chau-khoi-hanh-26-03-dang-duoc-khach-chot-nhanh',
+    '/tour/dong-hung-nam-ninh-3-ngay-2-dem',
 }
 
 const GONE_PATHS = new Set([

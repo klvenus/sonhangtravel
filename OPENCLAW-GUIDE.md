@@ -6,6 +6,8 @@ Bạn KHÔNG CẦN sửa bất kỳ file code nào (`.tsx`, `.ts`, `.json`...).
 Mọi thao tác quản lý tour, banner, danh mục đều thực hiện qua **API HTTP**.
 Admin app chạy trên `http://localhost:3001`.
 
+> Publish flow hiện tại là admin local ghi trực tiếp vào Neon PostgreSQL rồi revalidate frontend. Không cần chạy Strapi cho các thao tác vận hành thường ngày.
+
 ---
 
 ## 1. Kiểm tra admin đang chạy
@@ -76,7 +78,7 @@ curl -s -X PUT http://localhost:3001/api/settings \
 
 ### Bước 3: Revalidate website (tùy chọn)
 ```bash
-curl -s "https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/"
+curl -s "https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/"
 ```
 
 ---
@@ -171,13 +173,13 @@ Sau khi thay đổi dữ liệu, website tự động cập nhật. Nếu cần 
 
 ```bash
 # Trang chủ
-curl -s "https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/"
+curl -s "https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/"
 
 # Trang tours
-curl -s "https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/tours"
+curl -s "https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/tours"
 
 # Tour cụ thể
-curl -s "https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/tour/slug-cua-tour"
+curl -s "https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/tour/slug-cua-tour"
 ```
 
 ---

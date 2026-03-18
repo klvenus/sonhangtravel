@@ -5,6 +5,8 @@ import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
 import { getCategories, getTours, getImageUrl, getSiteSettings, CategoryData, TourData, BannerSlide } from '@/lib/data'
 
+const SITE_URL = 'https://sonhangtravel.com'
+
 // ISR - Revalidate every hour
 export const revalidate = 3600
 
@@ -54,6 +56,39 @@ function transformBannerSlide(slide: BannerSlide, index: number) {
   }
 }
 
+function buildTourItemListSchema(
+  tours: Array<ReturnType<typeof transformTour>>,
+  name: string,
+  id: string
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': id,
+    name,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    numberOfItems: tours.length,
+    itemListElement: tours.map((tour, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${SITE_URL}/tour/${tour.slug}`,
+      item: {
+        '@type': 'TouristTrip',
+        name: tour.title,
+        url: `${SITE_URL}/tour/${tour.slug}`,
+        image: tour.image || undefined,
+        offers: {
+          '@type': 'Offer',
+          price: tour.price,
+          priceCurrency: 'VND',
+          availability: 'https://schema.org/InStock',
+          url: `${SITE_URL}/tour/${tour.slug}`,
+        },
+      },
+    })),
+  }
+}
+
 export default async function Home() {
   // Fetch data on server
   let categories: ReturnType<typeof transformCategory>[] = []
@@ -95,8 +130,22 @@ export default async function Home() {
     tours: allTours.filter(tour => tour.categorySlug === cat.slug)
   })).filter(group => group.tours.length > 0)
 
+  const featuredToursSchema = tours.length > 0
+    ? buildTourItemListSchema(
+        tours,
+        'Danh sách tour nổi bật Sơn Hằng Travel',
+        `${SITE_URL}/#featured-tours`
+      )
+    : null
+
   return (
     <main>
+      {featuredToursSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(featuredToursSchema) }}
+        />
+      )}
       <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} searchTours={allTours} />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />

@@ -101,8 +101,8 @@ const fallbackPolicies = {
   ],
 }
 
-// Transform Strapi tour to page data
-function transformStrapiTour(tour: TourData) {
+// Transform DB tour row to page data
+function transformTour(tour: TourData) {
   const images: string[] = []
   if (tour.thumbnail) {
     images.push(getImageUrl(tour.thumbnail, 'large'))
@@ -165,13 +165,10 @@ export async function generateStaticParams() {
 
 interface PageProps {
   params: Promise<{ slug: string }>
-  searchParams: Promise<{ preview?: string }>
 }
 
-export default async function TourDetailPage({ params, searchParams }: PageProps) {
+export default async function TourDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const { preview } = await searchParams
-  const isPreview = preview === 'true'
   
   try {
     const [tour, siteSettings] = await Promise.all([
@@ -183,7 +180,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
       notFound()
     }
 
-    const tourData = transformStrapiTour(tour)
+    const tourData = transformTour(tour)
     const phoneNumber = siteSettings?.phoneNumber || '0123456789'
     const zaloNumber = siteSettings?.zaloNumber || undefined
 
@@ -307,7 +304,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
-        <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} isPreview={isPreview} />
+        <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
       </>
     )
   } catch (error) {
@@ -315,4 +312,3 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
     notFound()
   }
 }
-

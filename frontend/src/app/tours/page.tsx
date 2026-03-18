@@ -1,4 +1,4 @@
-import { getTours, getCategories, TourData, CategoryData } from '@/lib/data'
+import { getTours, getCategories, getImageUrl, TourData, CategoryData } from '@/lib/data'
 import ToursPageClient from './ToursPageClient'
 import { Metadata } from 'next'
 import { Suspense } from 'react'
@@ -39,13 +39,62 @@ export const metadata: Metadata = {
 // ISR - Revalidate every hour
 export const revalidate = 3600
 
+function buildToursItemListSchema(tours: Array<ReturnType<typeof transformTour>>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': `${SITE_URL}/tours#tour-list`,
+    name: 'Danh sách tour du lịch Trung Quốc Sơn Hằng Travel',
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    numberOfItems: tours.length,
+    itemListElement: tours.map((tour, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${SITE_URL}/tour/${tour.slug}`,
+      item: {
+        '@type': 'TouristTrip',
+        name: tour.title,
+        url: `${SITE_URL}/tour/${tour.slug}`,
+        image: tour.image.startsWith('/') ? undefined : tour.image,
+        offers: {
+          '@type': 'Offer',
+          price: tour.price,
+          priceCurrency: 'VND',
+          availability: 'https://schema.org/InStock',
+          url: `${SITE_URL}/tour/${tour.slug}`,
+        },
+      },
+    })),
+  }
+}
+
+function buildToursCollectionSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Tour Du Lịch Trung Quốc',
+    url: `${SITE_URL}/tours`,
+    about: {
+      '@type': 'Thing',
+      name: 'Tour du lịch Trung Quốc',
+    },
+    mainEntity: {
+      '@id': `${SITE_URL}/tours#tour-list`,
+    },
+  }
+}
+
 // Transform tour for client component
 function transformTour(tour: TourData) {
+  const image = getImageUrl(tour.thumbnail, 'large')
+    || getImageUrl(tour.gallery?.[0], 'large')
+    || '/images/placeholder-tour.jpg'
+
   return {
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
-    image: tour.thumbnail || tour.gallery?.[0] || '/images/placeholder-tour.jpg',
+    image,
     gallery: tour.gallery || [],
     location: tour.destination,
     duration: tour.duration,
@@ -88,5 +137,26 @@ export default async function ToursPage() {
     console.error('Error fetching tours data:', error)
   }
 
-  return <Suspense><ToursPageClient initialTours={tours} initialCategories={categories} /></Suspense>
+  const toursItemListSchema = tours.length > 0 ? buildToursItemListSchema(tours) : null
+  const toursCollectionSchema = tours.length > 0 ? buildToursCollectionSchema() : null
+
+  return (
+    <>
+      {toursCollectionSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(toursCollectionSchema) }}
+        />
+      )}
+      {toursItemListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(toursItemListSchema) }}
+        />
+      )}
+      <Suspense>
+        <ToursPageClient initialTours={tours} initialCategories={categories} />
+      </Suspense>
+    </>
+  )
 }

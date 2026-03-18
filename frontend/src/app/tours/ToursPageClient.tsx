@@ -59,7 +59,9 @@ export default function ToursPageClient({ initialTours, initialCategories }: Pro
 
   useEffect(() => {
     const search = searchParams.get('search') || ''
+    const category = searchParams.get('category') || null
     setSearchQuery(search)
+    setActiveCategory(category)
   }, [searchParams])
 
   const queryTokens = tokenizeSearch(searchQuery)

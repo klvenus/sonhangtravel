@@ -1,17 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const CLOUD_NAME = process.env.CLOUDINARY_NAME || 'dzxntgoko';
-const API_KEY = process.env.CLOUDINARY_KEY || '316995586271977';
-const API_SECRET = process.env.CLOUDINARY_SECRET || '9YuonKfWHcfu-OBlcUC8-nCXG3o';
+function getCloudinaryConfig() {
+  const cloudName = process.env.CLOUDINARY_NAME;
+  const apiKey = process.env.CLOUDINARY_KEY;
+  const apiSecret = process.env.CLOUDINARY_SECRET;
+
+  if (!cloudName || !apiKey || !apiSecret) {
+    throw new Error('Missing Cloudinary environment variables');
+  }
+
+  return { cloudName, apiKey, apiSecret };
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
     const { searchParams } = new URL(request.url);
     const folder = searchParams.get('folder') || 'sonhangtravel';
     const maxResults = searchParams.get('max') || '50';
 
-    const auth = Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64');
-    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/search`;
+    const auth = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
+    const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/search`;
 
     const res = await fetch(url, {
       method: 'POST',
@@ -28,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     if (!res.ok) {
       // Fallback to resources API if search API fails
-      const fallbackUrl = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image?type=upload&prefix=${folder}&max_results=${maxResults}`;
+      const fallbackUrl = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?type=upload&prefix=${folder}&max_results=${maxResults}`;
       const fallbackRes = await fetch(fallbackUrl, {
         headers: { 'Authorization': `Basic ${auth}` },
       });

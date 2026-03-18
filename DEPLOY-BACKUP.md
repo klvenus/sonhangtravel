@@ -7,7 +7,7 @@ Giữ toàn bộ cấu hình quan trọng để nếu đổi tài khoản Vercel
 - `frontend/vercel.json`: cron `/api/warm-cache`
 - `frontend/package.json`: scripts build/dev/start
 - `admin/package.json`: scripts build/dev
-- `backend/.env.example`: mẫu env backend
+- `backend/.env.example`: mẫu env backend legacy (chỉ cần nếu còn giữ Strapi cũ)
 - Toàn bộ source code frontend/admin/backend đã nằm trong git
 
 ## Những gì PHẢI backup ngoài git
@@ -17,10 +17,9 @@ Không commit secret thật vào git. Giữ 1 bản backup private ở 1Password
 
 #### Frontend (`frontend/.env.local`)
 Cần các key sau:
-- `NEXT_PUBLIC_STRAPI_URL`
-- `STRAPI_API_TOKEN`
 - `DATABASE_URL`
-- `ADMIN_PASSWORD`
+- `NEXT_PUBLIC_SITE_URL`
+- `REVALIDATE_SECRET`
 
 #### Admin (`admin/.env.local`)
 Cần các key sau:
@@ -57,7 +56,7 @@ Nếu đổi account Vercel mà vẫn dùng domain cũ:
 ### 4) Database / media
 - Neon project connection string
 - Cloudinary cloud name + API key/secret
-- Nếu dùng Strapi cũ thì backup URL + token
+- Nếu vẫn giữ `backend/` để tham khảo legacy thì backup thêm env Strapi riêng, còn publish flow hiện tại không cần Strapi
 
 ## Cách khôi phục khi đổi sang account Vercel mới
 

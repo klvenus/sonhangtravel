@@ -1,6 +1,6 @@
 # Sơn Hằng Travel — Admin Panel Guide
 
-> Tài liệu hướng dẫn sử dụng Admin Panel để quản lý nội dung cho website [sonhangtravel.vercel.app](https://sonhangtravel.vercel.app).
+> Tài liệu hướng dẫn sử dụng Admin Panel để quản lý nội dung cho website [sonhangtravel.com](https://sonhangtravel.com).
 > Dành cho AI agent (OpenClaw) hoặc người vận hành.
 
 ---
@@ -24,7 +24,7 @@
 
 | Thành phần | Công nghệ | URL |
 |---|---|---|
-| **Frontend** (production) | Next.js 16.1.1 | https://sonhangtravel.vercel.app |
+| **Frontend** (production) | Next.js 16.1.1 | https://sonhangtravel.com |
 | **Admin** (local only) | Next.js 16.1.1 | http://localhost:3001 |
 | **Database** | PostgreSQL (Neon) | Neon serverless |
 | **Ảnh** | Cloudinary | Cloud: `dzxntgoko` |
@@ -34,6 +34,8 @@
 2. Sau khi lưu → Tự động revalidate ISR cache trên Vercel
 3. Frontend (Vercel) → Đọc dữ liệu từ Neon PostgreSQL → Hiển thị cho người dùng
 4. Ảnh upload → Cloudinary → URL ảnh lưu trong DB
+
+> `backend/` Strapi hiện là phần legacy còn lưu trong repo, không nằm trong luồng publish hiện tại.
 
 ---
 
@@ -60,7 +62,10 @@ Nếu muốn máy khác cùng LAN truy cập:
 | 🗺️ Tours | `/tours` | Danh sách tours |
 | ➕ Thêm tour | `/tours/new` | Tạo tour mới |
 | 📁 Danh mục | `/categories` | Quản lý danh mục |
+| 📝 Blog | `/blog` | Quản lý bài viết |
+| ➕ Thêm bài viết | `/blog/new` | Tạo blog mới |
 | ⚙️ Cài đặt | `/settings` | Cài đặt website |
+| 💾 Backup | `/backup` | Sao lưu file cấu hình/env local |
 | 🖼️ Upload ảnh | `/upload` | Upload ảnh lên Cloudinary |
 | 🌱 Seed data | `/seed` | Tạo dữ liệu mẫu |
 | 🔄 Revalidate | `/revalidate` | Xóa cache thủ công |
@@ -234,9 +239,9 @@ Khi tour được tạo/sửa/xóa, hệ thống **tự động revalidate** cá
 - Vào **🔄 Revalidate** (`/revalidate`) trong admin
 - Hoặc gọi API trực tiếp:
   ```
-  GET https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/
-  GET https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/tours
-  GET https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/tour/[slug]
+  GET https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/
+  GET https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/tours
+  GET https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/tour/[slug]
   ```
 
 ---
@@ -399,10 +404,10 @@ Database: **Neon PostgreSQL** (shared giữa admin và frontend)
 
 ### 🔑 Thông tin kết nối
 
-- **Production URL**: https://sonhangtravel.vercel.app
+- **Production URL**: https://sonhangtravel.com
 - **Admin URL**: http://localhost:3001
 - **Cloudinary Cloud**: `dzxntgoko`
-- **Revalidate Secret**: `sonhang-revalidate-2026`
+- **Revalidate Secret**: đọc từ biến môi trường `REVALIDATE_SECRET`
 - **GitHub**: `klvenus/sonhangtravel` (branch: `main`)
 
 ### 📋 Checklist tạo tour mới
@@ -417,7 +422,7 @@ Database: **Neon PostgreSQL** (shared giữa admin và frontend)
 - [ ] Thêm **Lịch trình** (từng mục: thời gian → tiêu đề → mô tả)
 - [ ] Thêm **Bao gồm** / **Không bao gồm** / **Lưu ý**
 - [ ] Nhấn **💾 Lưu**
-- [ ] Kiểm tra trên website: `https://sonhangtravel.vercel.app/tour/[slug]`
+- [ ] Kiểm tra trên website: `https://sonhangtravel.com/tour/[slug]`
 
 ### 🚀 Quy trình cho AI agent
 

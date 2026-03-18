@@ -23,11 +23,11 @@ sonhangtravel/
 │   └── src/
 │       ├── app/    ← Pages + API routes
 │       └── lib/    ← DB, schema, revalidate
-├── frontend/       ← Next.js 16 trên Vercel (sonhangtravel.vercel.app)
+├── frontend/       ← Next.js 16 trên Vercel (sonhangtravel.com)
 │   └── src/
 │       ├── app/    ← Pages (ISR)
 │       ├── components/ ← UI components
-│       └── lib/    ← DB, strapi helpers
+│       └── lib/    ← DB query helpers
 ├── telegram-bot/   ← Telegram bot (standalone Node.js)
 │   └── src/        ← bot.ts, db.ts, schema.ts
 ```
@@ -35,6 +35,8 @@ sonhangtravel/
 **Database**: Neon PostgreSQL — shared giữa admin, frontend, telegram-bot  
 **Images**: Cloudinary (cloud: dzxntgoko, folder: sonhangtravel)  
 **Revalidate**: Sau khi admin sửa data → auto revalidate Vercel ISR
+
+> `backend/` Strapi hiện chỉ còn là phần legacy để tham khảo model cũ. Luồng publish hiện tại là `admin local / telegram-bot -> Neon PostgreSQL -> frontend`.
 
 ---
 
@@ -94,7 +96,7 @@ sonhangtravel/
 | `app/layout.tsx` | ? | Root layout (Header + Footer + BottomNav) | |
 | `app/page.tsx` | **~322** | Homepage — fetch tours, categories, settings → pass to components | ISR revalidate=3600 |
 | `app/tours/page.tsx` | ? | Tours listing page | ISR |
-| `app/tours/ToursPageClient.tsx` | ~121 | Client-side tour filtering | |
+| `app/tours/ToursPageClient.tsx` | ~121 | Client-side tour filtering | Đọc query `search` và `category` |
 | `app/tour/[slug]/page.tsx` | ? | Tour detail — fetch single tour | |
 | `app/tour/[slug]/TourDetailClient.tsx` | **~831** | Tour detail UI | ⚠️ FILE RẤT DÀI |
 | `app/blog/page.tsx` | ? | Blog listing | |
@@ -125,11 +127,10 @@ sonhangtravel/
 ### Lib
 | File | Dòng | Vai trò |
 |------|------|---------|
-| `lib/strapi.ts` | **~451** | API client — fetch tours, categories, settings từ DB. ⚠️ DÀI |
+| `lib/data.ts` | ? | Shared DB data layer — fetch tours, categories, settings trực tiếp từ Neon |
 | `lib/schema.ts` | ? | Drizzle schema (shared) |
 | `lib/db.ts` | ? | Neon DB connection |
 | `lib/blog.ts` | ? | Blog fetch helpers |
-| `lib/data.ts` | ? | Static data helpers |
 
 ---
 
@@ -190,14 +191,14 @@ curl -X POST http://localhost:3001/api/tours \
   -d '{"title":"...","price":1500000,...}'
 
 # Revalidate website
-curl "https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-2026&path=/"
+curl "https://sonhangtravel.com/api/revalidate?secret=$REVALIDATE_SECRET&path=/"
 ```
 
 ### Thêm field mới vào Settings
 1. `admin/src/lib/schema.ts` → Thêm column vào bảng `siteSettings`
 2. `admin/src/app/settings/page.tsx` → Thêm vào interface `Settings` + defaultSettings + JSX form
 3. `admin/src/app/api/settings/route.ts` → Thêm field vào mảng `fields` trong hàm PUT
-4. Nếu frontend cần dùng → sửa `frontend/src/lib/strapi.ts` hàm `getSiteSettings()`
+4. Nếu frontend cần dùng → sửa `frontend/src/lib/data.ts` và component/page đang consume data đó
 
 ### Thêm field mới vào Tour
 1. `admin/src/lib/schema.ts` → Thêm column vào bảng `tours`
@@ -229,18 +230,19 @@ curl "https://sonhangtravel.vercel.app/api/revalidate?secret=sonhang-revalidate-
 
 ### Admin `.env`
 ```
-DATABASE_URL=postgresql://neondb_owner:npg_wYe3gIcx5hua@ep-little-lake-a1rinsa3-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
-CLOUDINARY_NAME=dzxntgoko
-CLOUDINARY_KEY=316995586271977
-CLOUDINARY_SECRET=9YuonKfWHcfu-OBlcUC8-nCXG3o
-REVALIDATE_SECRET=sonhang-revalidate-2026
-VERCEL_SITE_URL=https://sonhangtravel.vercel.app
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/DB?sslmode=require
+CLOUDINARY_NAME=your-cloud-name
+CLOUDINARY_KEY=your-cloudinary-key
+CLOUDINARY_SECRET=your-cloudinary-secret
+REVALIDATE_SECRET=your-long-random-secret
+VERCEL_SITE_URL=https://sonhangtravel.com
 ```
 
 ### Frontend `.env.local`
 ```
-DATABASE_URL=postgresql://neondb_owner:npg_wYe3gIcx5hua@ep-little-lake-a1rinsa3-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
-REVALIDATE_SECRET=sonhang-revalidate-2026
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/DB?sslmode=require
+REVALIDATE_SECRET=your-long-random-secret
+NEXT_PUBLIC_SITE_URL=https://sonhangtravel.com
 ```
 
 ---
