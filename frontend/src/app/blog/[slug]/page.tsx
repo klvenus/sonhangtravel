@@ -2,16 +2,22 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import type { ReactNode } from 'react'
 import BlogGalleryLightbox from '@/components/BlogGalleryLightbox'
 import BlogSalePageEnhancer from '@/components/BlogSalePageEnhancer'
 import SaleCountdown from '@/components/SaleCountdown'
 import SaleActions from '@/components/SaleActions'
-import TourCard from '@/components/TourCard'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 import { getTours, getImageUrl } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+const ZALO_OA_URL = 'https://zalo.me/561113801789156735'
+const STOP_MATCH_TOKENS = new Set([
+  'tour', 'ngay', 'dem', 'trung', 'quoc', 'du', 'lich', 'noi', 'bat', 'ghep',
+  'shopping', 'cao', 'cap', 'gia', 'tot', 'sale', 'uu', 'dai', 'hanh', 'trinh',
+  'di', 've', 'cho', 'khach', 'son', 'hang', 'travel',
+])
 
 function normalizeVietnamese(text: string) {
   return text
@@ -21,6 +27,20 @@ function normalizeVietnamese(text: string) {
     .replace(/Đ/g, 'D')
     .toLowerCase()
     .trim()
+}
+
+function tokenizeForMatch(text: string) {
+  return Array.from(new Set(
+    normalizeVietnamese(text)
+      .split(/[^a-z0-9]+/)
+      .map((token) => token.trim())
+      .filter((token) => token.length > 2 && !STOP_MATCH_TOKENS.has(token))
+  ))
+}
+
+function formatPrice(price?: number | null) {
+  if (!price) return 'Liên hệ'
+  return `${new Intl.NumberFormat('vi-VN').format(price)}đ`
 }
 
 function buildRelatedTours(post: NonNullable<Awaited<ReturnType<typeof getBlogPostBySlug>>>, tours: Awaited<ReturnType<typeof getTours>>['data']) {
@@ -41,26 +61,31 @@ function buildRelatedTours(post: NonNullable<Awaited<ReturnType<typeof getBlogPo
       const destinationText = normalizeVietnamese(tour.destination || '')
       const titleText = normalizeVietnamese(tour.title)
       const categoryText = normalizeVietnamese(tour.categoryName || '')
+      const durationText = normalizeVietnamese(tour.duration || '')
+      const titleTokens = tokenizeForMatch(tour.title)
+      const destinationTokens = tokenizeForMatch(tour.destination || '')
+      const categoryTokens = tokenizeForMatch(tour.categoryName || '')
+      const durationTokens = tokenizeForMatch(tour.duration || '')
 
       let score = 0
-      if (searchText.includes(titleText)) score += 8
-      if (titleText.split(/\s+/).some((token) => token.length > 2 && searchText.includes(token))) score += 3
-      if (destinationText && searchText.includes(destinationText)) score += 5
-      if (categoryText && searchText.includes(categoryText)) score += 4
+      if (searchText.includes(titleText)) score += 16
+      if (destinationText && searchText.includes(destinationText)) score += 10
+      if (categoryText && searchText.includes(categoryText)) score += 8
+      if (durationText && searchText.includes(durationText)) score += 4
+
+      score += Math.min(10, titleTokens.filter((token) => searchText.includes(token)).length * 2)
+      score += Math.min(6, destinationTokens.filter((token) => searchText.includes(token)).length * 2)
+      score += Math.min(4, categoryTokens.filter((token) => searchText.includes(token)).length * 2)
+      score += Math.min(2, durationTokens.filter((token) => searchText.includes(token)).length)
 
       return { tour, score }
     })
-    .filter((item) => item.score > 0)
+    .filter((item) => item.score >= 6)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score
       return (b.tour.bookingCount || 0) - (a.tour.bookingCount || 0)
     })
-
-  const fallbackTours = tours
-    .sort((a, b) => (b.bookingCount || 0) - (a.bookingCount || 0))
-    .slice(0, 3)
-
-  const selected = (scoredTours.length > 0 ? scoredTours.map((item) => item.tour) : fallbackTours).slice(0, 3)
+  const selected = scoredTours.map((item) => item.tour).slice(0, 3)
 
   return selected.map((tour) => ({
     id: String(tour.id),
@@ -77,6 +102,73 @@ function buildRelatedTours(post: NonNullable<Awaited<ReturnType<typeof getBlogPo
     categoryName: tour.categoryName,
     categorySlug: tour.categorySlug,
   }))
+}
+
+function normalizeMatchedUrl(url: string) {
+  return url.trim().replace(/[.,!?;:]+$/g, '')
+}
+
+function getFriendlyLinkLabel(href: string) {
+  try {
+    const url = new URL(href)
+    if (url.hostname.includes('zalo.me')) return 'Zalo Sơn Hằng Travel'
+    if (url.pathname.startsWith('/tour/')) return 'trang tour này'
+    if (url.pathname.startsWith('/tours/')) return 'danh mục tour này'
+    if (url.hostname.includes('sonhangtravel.com')) return 'trang này'
+  } catch {}
+
+  return 'liên kết này'
+}
+
+function renderLinkedText(text: string) {
+  const parts: ReactNode[] = []
+  const pattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s)]+)/g
+  let lastIndex = 0
+  let nodeIndex = 0
+
+  for (const match of text.matchAll(pattern)) {
+    const index = match.index ?? 0
+    if (index > lastIndex) {
+      parts.push(text.slice(lastIndex, index))
+    }
+
+    const markdownLabel = match[1]
+    const rawHref = normalizeMatchedUrl(match[2] || match[3] || '')
+    const trailing = (match[0] || '').slice(rawHref.length)
+    const label = markdownLabel?.trim() || getFriendlyLinkLabel(rawHref)
+    const isInternal = rawHref.startsWith(SITE_URL)
+
+    parts.push(
+      isInternal ? (
+        <Link key={`inline-${nodeIndex}`} href={rawHref} className="font-medium text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-800">
+          {label}
+        </Link>
+      ) : (
+        <a
+          key={`inline-${nodeIndex}`}
+          href={rawHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-800"
+        >
+          {label}
+        </a>
+      )
+    )
+
+    if (trailing) {
+      parts.push(trailing)
+    }
+
+    lastIndex = index + match[0].length
+    nodeIndex += 1
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex))
+  }
+
+  return parts.length > 0 ? parts : text
 }
 
 export async function generateStaticParams() {
@@ -180,7 +272,7 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
   const shouldRenderInlineCta = forceCtaBlock && resolvedLinks.length > 0
 
   if (markdownLinks.length === 0 && !match && !shouldRenderInlineCta) {
-    return <p key={key} className="mb-5 text-[17px] leading-8 text-gray-700 md:mb-6 md:text-[18px]">{text}</p>
+    return <p key={key} className="mb-5 text-[17px] leading-8 text-gray-700 md:mb-6 md:text-[18px]">{renderLinkedText(text)}</p>
   }
 
   const href = match?.[2] || ''
@@ -199,7 +291,7 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
 
   const cardClass = isSalePost
     ? 'not-prose my-8 space-y-4 rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 via-rose-50 to-amber-50 p-5 md:my-10 md:p-6 shadow-sm'
-    : 'not-prose my-8 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 md:my-10 md:p-6'
+    : 'not-prose my-8 space-y-4 rounded-3xl border border-emerald-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.95),_rgba(236,253,245,0.95)_58%,_rgba(209,250,229,0.82))] p-5 md:my-10 md:p-6 shadow-[0_18px_50px_rgba(5,150,105,0.08)]'
 
   const buttonClass = isSalePost
     ? 'group inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-center font-semibold text-white no-underline shadow-[0_10px_30px_rgba(249,115,22,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(244,63,94,0.28)]'
@@ -207,7 +299,11 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
 
   return (
     <div key={key} className={cardClass}>
-      {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[0].trim()}</p>}
+      <div className="space-y-1">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700/80">Liên hệ nhanh</p>
+        <h3 className="text-xl font-bold text-slate-900 md:text-2xl">Xem chi tiết hoặc nhắn bên em giữ chỗ</h3>
+      </div>
+      {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{renderLinkedText(parts[0].trim())}</p>}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {ctaLinks.map((link, index) => (
           <Link key={`${key}-${index}`} href={link.href} className={buttonClass}>
@@ -216,8 +312,117 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
           </Link>
         ))}
       </div>
-      {parts[1] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{parts[1].trim()}</p>}
+      {parts[1] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{renderLinkedText(parts[1].trim())}</p>}
     </div>
+  )
+}
+
+function RecommendationSection({
+  tours,
+  isSalePost,
+}: {
+  tours: Array<{
+    id: string
+    title: string
+    slug: string
+    image: string
+    location?: string | null
+    duration?: string | null
+    price?: number | null
+    originalPrice?: number | null
+    isHot?: boolean
+    categoryName?: string | null
+  }>
+  isSalePost: boolean
+}) {
+  const hasTours = tours.length > 0
+
+  return (
+    <section className={`not-prose mt-14 overflow-hidden rounded-[28px] border p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] md:p-7 ${isSalePost ? 'border-orange-200 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.98),_rgba(255,237,213,0.95)_55%,_rgba(254,205,211,0.88))]' : 'border-emerald-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.98),_rgba(236,253,245,0.96)_58%,_rgba(209,250,229,0.82))]'}`}>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <p className={`text-xs font-semibold uppercase tracking-[0.26em] ${isSalePost ? 'text-orange-600' : 'text-emerald-700/80'}`}>
+            {hasTours ? 'Đi tiếp hành trình này' : 'Chưa có tour khớp 100%'}
+          </p>
+          <h2 className="mt-2 text-2xl font-bold leading-tight text-slate-900 md:text-3xl">
+            {hasTours ? 'Nếu thấy đúng vibe này, nên xem tour nào?' : 'Nhắn Zalo OA để bên em tư vấn đúng tuyến gần nhất'}
+          </h2>
+          <p className="mt-3 text-[16px] leading-7 text-slate-600 md:text-[17px]">
+            {hasTours
+              ? 'Bên em gom sẵn các tour đang bán thật, khớp nội dung bài viết để khách không phải kéo tìm lại từ đầu.'
+              : 'Bài này chưa khớp hoàn toàn với tour đang mở bán. Nhắn Zalo OA để bên em gợi ý tuyến gần nhất, lịch đi phù hợp và báo giá nhanh.'}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href={ZALO_OA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-12 items-center justify-center gap-3 rounded-2xl bg-[#0068FF] px-5 py-3 font-semibold text-white shadow-[0_16px_36px_rgba(0,104,255,0.24)] transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_46px_rgba(0,104,255,0.28)]"
+          >
+            <Image src="/icons/zalo.png" alt="Zalo" width={20} height={20} className="h-5 w-5" />
+            <span>Nhắn Zalo OA</span>
+          </a>
+          {!hasTours && (
+            <Link
+              href="/tours"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white/90 px-5 py-3 font-semibold text-slate-800 transition-colors hover:bg-white"
+            >
+              Xem toàn bộ tour
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {hasTours && (
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {tours.map((tour) => (
+            <Link
+              key={tour.id}
+              href={`/tour/${tour.slug}`}
+              className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-white/80 bg-white/90 shadow-[0_14px_36px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(15,23,42,0.12)]"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <Image
+                  src={tour.image}
+                  alt={tour.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 360px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                {tour.isHot && (
+                  <span className="absolute left-3 top-3 inline-flex rounded-full bg-rose-500/95 px-3 py-1 text-xs font-semibold text-white shadow-sm">
+                    Tour hot
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-1 flex-col p-4">
+                <div className="flex flex-wrap gap-2 text-xs font-medium text-emerald-700">
+                  {tour.categoryName && <span className="rounded-full bg-emerald-50 px-2.5 py-1">{tour.categoryName}</span>}
+                  {tour.duration && <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-600">{tour.duration}</span>}
+                </div>
+                <h3 className="mt-3 line-clamp-2 text-lg font-bold leading-7 text-slate-900">{tour.title}</h3>
+                {tour.location && <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">{tour.location}</p>}
+                <div className="mt-4 flex items-end justify-between gap-3">
+                  <div>
+                    {tour.originalPrice ? (
+                      <p className="text-sm text-slate-400 line-through">{formatPrice(tour.originalPrice)}</p>
+                    ) : (
+                      <div className="h-[20px]" />
+                    )}
+                    <p className="text-xl font-bold text-emerald-700">{formatPrice(tour.price)}</p>
+                  </div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-emerald-600">
+                    Xem tour
+                    <span>→</span>
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -255,7 +460,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   const canonicalUrl = `${SITE_URL}/blog/${post.slug}`
   const articleImage = post.thumbnail || DEFAULT_OG_IMAGE
   const saleTourHref = `${SITE_URL}/tours`
-  const saleZaloHref = 'https://zalo.me/0338239888'
+  const saleZaloHref = ZALO_OA_URL
   const youtubeVideoId = post.content
     .map((block) => extractYouTubeVideoId(typeof block.text === 'string' ? block.text : ''))
     .find(Boolean) || null
@@ -402,16 +607,18 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
                   if (block.type === 'heading') {
                     const headingText = (block.text || '').trim()
-                    const isCtaHeading = /^cta$/i.test(headingText)
+                    const isCtaHeading = /^(cta|liên hệ & giữ chỗ)$/i.test(headingText)
+                    if (isCtaHeading) {
+                      return null
+                    }
                     return (
                       <h2
                         key={index}
                         className={[
                           isSalePost ? 'text-gray-900 font-bold tracking-tight' : '',
-                          isCtaHeading ? 'mt-16 mb-4 text-2xl md:text-3xl' : '',
                         ].filter(Boolean).join(' ')}
                       >
-                        {isCtaHeading ? 'Liên hệ & giữ chỗ' : headingText}
+                        {headingText}
                       </h2>
                     )
                   }
@@ -442,7 +649,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     ? extractInlineLinks(prevPrevBlock.text || '')
                     : []
 
-                  return renderParagraph(block.text || '', index, isSalePost, afterCtaHeading, inheritedLinks)
+                  if (afterCtaHeading) {
+                    return null
+                  }
+
+                  return renderParagraph(block.text || '', index, isSalePost, false, inheritedLinks)
                 })}
 
                 {faqBlocks.length > 0 && (
@@ -472,56 +683,9 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           })()}
         </div>
 
+        <RecommendationSection tours={relatedTours} isSalePost={isSalePost} />
+
         {isSalePost && <SaleActions untilIso={saleUntilIso} tourHref={saleTourHref} zaloHref={saleZaloHref} />}
-
-        {relatedTours.length > 0 && (
-          <section className="mt-14 border-t border-gray-200 pt-10">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Tour phù hợp với bài viết này</h2>
-                <p className="mt-2 text-gray-600">Các hành trình liên quan để kéo người đọc từ nội dung sang trang tour đang bán thực tế.</p>
-              </div>
-              <Link href="/tours" className="text-sm font-semibold text-[#059669] hover:underline">
-                Xem tất cả tour
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {relatedTours.map((tour) => (
-                <TourCard
-                  key={tour.id}
-                  id={tour.id}
-                  title={tour.title}
-                  slug={tour.slug}
-                  image={tour.image}
-                  location={tour.location}
-                  duration={tour.duration}
-                  price={tour.price}
-                  originalPrice={tour.originalPrice}
-                  rating={tour.rating}
-                  reviewCount={tour.reviewCount}
-                  isHot={tour.isHot}
-                />
-              ))}
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              {Array.from(new Map(
-                relatedTours
-                  .filter((tour) => tour.categorySlug && tour.categoryName)
-                  .map((tour) => [tour.categorySlug, { slug: tour.categorySlug, name: tour.categoryName }])
-              ).values()).map((category) => (
-                <Link
-                  key={category.slug}
-                  href={`/tours/${category.slug}`}
-                  className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
-                >
-                  Xem tour {category.name}
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
 
         {!isSalePost && post.gallery && post.gallery.length === 1 && (
           <section className="mt-14 border-t border-gray-200 pt-10">
