@@ -2,6 +2,8 @@ import { getTourBySlug, getImageUrl, TourData, getSiteSettings, getTours } from 
 import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Metadata } from 'next'
+import Link from 'next/link'
+import TourCard from '@/components/TourCard'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
@@ -9,6 +11,20 @@ const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v177
 interface TourFaqItem {
   question: string
   answer: string
+}
+
+interface RelatedTourCard {
+  id: string
+  title: string
+  slug: string
+  image: string
+  location: string
+  duration: string
+  price: number
+  originalPrice?: number
+  rating: number
+  reviewCount: number
+  isHot?: boolean
 }
 
 // Dynamic import for better code splitting
@@ -65,6 +81,63 @@ function buildTourFaqItems(tour: TourData): TourFaqItem[] {
       answer: note || 'Anh chị nên đặt sớm để giữ chỗ đẹp, chủ động hồ sơ và tránh tăng giá sát ngày đi.',
     },
   ].filter((item): item is TourFaqItem => Boolean(item))
+}
+
+function cleanHighlightText(text: string) {
+  return text
+    .replace(/\s+/g, ' ')
+    .replace(/^ngày\s*\d+[:.\-\s]*/i, '')
+    .trim()
+}
+
+function buildTourHighlights(tour: TourData): string[] {
+  const highlightSet = new Set<string>()
+
+  if (tour.destination && tour.duration) {
+    highlightSet.add(`Khám phá ${tour.destination} với lịch trình ${tour.duration}`)
+  }
+
+  if (tour.departure) {
+    highlightSet.add(`Khởi hành thuận tiện từ ${tour.departure}`)
+  }
+
+  for (const item of tour.itinerary || []) {
+    const title = cleanHighlightText(item.title || '')
+    if (title) {
+      highlightSet.add(title)
+    }
+    if (highlightSet.size >= 5) {
+      break
+    }
+  }
+
+  for (const item of tour.includes || []) {
+    const includeText = cleanHighlightText(item)
+    if (includeText) {
+      highlightSet.add(`Bao gồm ${includeText}`)
+    }
+    if (highlightSet.size >= 6) {
+      break
+    }
+  }
+
+  return Array.from(highlightSet).slice(0, 6)
+}
+
+function transformRelatedTour(tour: TourData): RelatedTourCard {
+  return {
+    id: String(tour.id),
+    title: formatSeoTourName(tour.title),
+    slug: tour.slug,
+    image: getImageUrl(tour.thumbnail, 'medium'),
+    location: tour.destination,
+    duration: tour.duration,
+    price: tour.price,
+    originalPrice: tour.originalPrice || undefined,
+    rating: Number(tour.rating || 5),
+    reviewCount: tour.reviewCount || 0,
+    isHot: Boolean(tour.featured),
+  }
 }
 
 // Generate dynamic metadata for each tour (SEO)
@@ -183,7 +256,7 @@ function transformTour(tour: TourData) {
     reviewCount: tour.reviewCount || 0,
     bookedCount: tour.bookingCount || 0,
     images,
-    highlights: [],
+    highlights: buildTourHighlights(tour),
     tourFileUrl: undefined,
     itinerary: tour.itinerary?.map(item => ({
       time: item.time || '',
@@ -237,6 +310,26 @@ export default async function TourDetailPage({ params }: PageProps) {
     const phoneNumber = siteSettings?.phoneNumber || '0123456789'
     const zaloNumber = siteSettings?.zaloNumber || undefined
     const faqItems = buildTourFaqItems(tour)
+    const [categoryToursRes, popularToursRes] = await Promise.all([
+      tour.categorySlug ? getTours({ category: tour.categorySlug, pageSize: 6 }) : Promise.resolve({ data: [], total: 0, page: 1, pageSize: 6 }),
+      getTours({ pageSize: 6, sort: 'bookingCount:desc' }),
+    ])
+
+    const relatedTourMap = new Map<string, TourData>()
+    for (const item of categoryToursRes.data || []) {
+      if (item.slug !== tour.slug) {
+        relatedTourMap.set(item.slug, item)
+      }
+    }
+    for (const item of popularToursRes.data || []) {
+      if (item.slug !== tour.slug && !relatedTourMap.has(item.slug)) {
+        relatedTourMap.set(item.slug, item)
+      }
+      if (relatedTourMap.size >= 4) {
+        break
+      }
+    }
+    const relatedTours = Array.from(relatedTourMap.values()).slice(0, 4).map(transformRelatedTour)
 
     const imageUrl = tour.thumbnail ? getImageUrl(tour.thumbnail, 'large') : DEFAULT_OG_IMAGE
     const galleryImages = [imageUrl, ...(tour.gallery || []).map((img) => getImageUrl(img, 'large'))].filter(Boolean)
@@ -356,6 +449,16 @@ export default async function TourDetailPage({ params }: PageProps) {
         },
       })),
     } : null
+    const relatedToursSchema = relatedTours.length > 0 ? {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: `Tour liên quan ${seoTourName}`,
+      itemListElement: relatedTours.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${SITE_URL}/tour/${item.slug}`,
+      })),
+    } : null
 
     return (
       <>
@@ -378,7 +481,55 @@ export default async function TourDetailPage({ params }: PageProps) {
             dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
           />
         )}
+        {relatedToursSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(relatedToursSchema) }}
+          />
+        )}
         <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} faqItems={faqItems} />
+        {relatedTours.length > 0 && (
+          <section className="bg-white pb-12">
+            <div className="container mx-auto max-w-7xl px-4">
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Tour liên quan{tour.categoryName ? ` ${tour.categoryName}` : ''}
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Gợi ý thêm các hành trình phù hợp để anh chị dễ so sánh và chọn lịch trình thuận tiện hơn.
+                  </p>
+                </div>
+                {tour.categorySlug && (
+                  <Link
+                    href={`/tours/${tour.categorySlug}`}
+                    className="text-sm font-semibold text-[#059669] hover:underline"
+                  >
+                    Xem tất cả tour {tour.categoryName || ''}
+                  </Link>
+                )}
+              </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {relatedTours.map((item) => (
+                  <TourCard
+                    key={item.id}
+                    id={item.id}
+                    title={item.title}
+                    slug={item.slug}
+                    image={item.image}
+                    location={item.location}
+                    duration={item.duration}
+                    price={item.price}
+                    originalPrice={item.originalPrice}
+                    rating={item.rating}
+                    reviewCount={item.reviewCount}
+                    isHot={item.isHot}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
       </>
     )
   } catch (error) {
