@@ -98,6 +98,11 @@ function getLinkLabel(href: string, index = 0) {
   return index > 0 ? `Xem thêm lựa chọn ${index + 1}` : 'Xem chi tiết'
 }
 
+function extractYouTubeVideoId(text: string) {
+  const match = text.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/i)
+  return match?.[1] || null
+}
+
 function renderParagraph(text: string, key: number, isSalePost: boolean, forceCtaBlock = false, inheritedLinks: string[] = []) {
   const markdownLinks = extractMarkdownLinks(text)
   const rawCtaMatch = text.match(/^(?:👉\s*)?(.+?):\s*(https?:\/\/\S+)$/)
@@ -166,6 +171,9 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   const articleImage = post.thumbnail || DEFAULT_OG_IMAGE
   const saleTourHref = `${SITE_URL}/tours`
   const saleZaloHref = 'https://zalo.me/0338239888'
+  const youtubeVideoId = post.content
+    .map((block) => extractYouTubeVideoId(typeof block.text === 'string' ? block.text : ''))
+    .find(Boolean) || null
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -244,7 +252,20 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           {isSalePost && <SaleCountdown untilIso={saleUntilIso} />}
         </div>
 
-        {post.thumbnail && (
+        {youtubeVideoId ? (
+          <div className="mb-10 overflow-hidden rounded-3xl bg-black shadow-sm">
+            <div className="aspect-video w-full">
+              <iframe
+                src={`https://www.youtube.com/embed/${youtubeVideoId}`}
+                title={post.title}
+                className="h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        ) : post.thumbnail && (
           post.gallery && post.gallery.length > 1 && !isSalePost ? (
             <div className="mb-10">
               <BlogGalleryLightbox images={post.gallery} title={post.title} />
@@ -285,6 +306,13 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                   const prevPrevBlock = index > 1 ? mainBlocks[index - 2] : null
                   const nextBlock = index < mainBlocks.length - 1 ? mainBlocks[index + 1] : null
                   const afterCtaHeading = prevBlock?.type === 'heading' && /^cta$/i.test((prevBlock.text || '').trim())
+                  const headingTextRaw = typeof block.text === 'string' ? block.text.trim() : ''
+                  const isYoutubeSectionHeading = /^xem video thực tế của sơn hằng travel$/i.test(headingTextRaw)
+                  const isYoutubeLinkParagraph = block.type === 'paragraph' && !!extractYouTubeVideoId(block.text || '')
+
+                  if (isYoutubeSectionHeading || isYoutubeLinkParagraph) {
+                    return null
+                  }
 
                   if (block.type === 'heading') {
                     const headingText = (block.text || '').trim()
