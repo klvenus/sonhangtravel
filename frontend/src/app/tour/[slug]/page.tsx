@@ -6,6 +6,11 @@ import { Metadata } from 'next'
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
+interface TourFaqItem {
+  question: string
+  answer: string
+}
+
 // Dynamic import for better code splitting
 const TourDetailClient = dynamic(() => import('./TourDetailClient'), {
   loading: () => null, // loading.tsx handles this
@@ -16,6 +21,51 @@ export const revalidate = 1800
 
 // Allow new tours to be generated on-demand (not 404)
 export const dynamicParams = true
+
+function formatSeoTourName(title: string) {
+  const normalizedTitle = title.trim()
+  return /^tour\b/i.test(normalizedTitle) ? normalizedTitle : `Tour ${normalizedTitle}`
+}
+
+function buildTourFaqItems(tour: TourData): TourFaqItem[] {
+  const seoTourName = formatSeoTourName(tour.title)
+  const price = `${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/khách`
+  const departure = tour.departure || 'Móng Cái'
+  const duration = tour.duration || '1 ngày'
+  const documents = (fallbackPolicies.documents || []).slice(0, 2).join('; ')
+  const includedItems = (tour.includes || []).slice(0, 3).join(', ')
+  const childPolicy = fallbackPolicies.children.join(' ')
+  const note = (tour.notes || fallbackPolicies.notes)[0]
+
+  return [
+    {
+      question: `${seoTourName} giá bao nhiêu?`,
+      answer: `${seoTourName} hiện có giá từ ${price}. Giá thực tế có thể thay đổi theo ngày khởi hành, số lượng khách và thời điểm lễ tết.`,
+    },
+    {
+      question: `${seoTourName} khởi hành từ đâu và đi trong bao lâu?`,
+      answer: `${seoTourName} khởi hành từ ${departure}, thời lượng ${duration}, phù hợp cho khách muốn đi nhanh gọn trong ngày.`,
+    },
+    includedItems
+      ? {
+          question: `Giá ${seoTourName.toLowerCase()} đã bao gồm những gì?`,
+          answer: `Giá tour thường đã bao gồm các hạng mục chính như ${includedItems}. Chi tiết cuối cùng sẽ được Sơn Hằng Travel xác nhận khi chốt lịch.`,
+        }
+      : null,
+    {
+      question: `Đi ${seoTourName.toLowerCase()} cần chuẩn bị giấy tờ gì?`,
+      answer: `Khách nên chuẩn bị đầy đủ hồ sơ theo hướng dẫn của đơn vị tổ chức. Với tour đường bộ qua cửa khẩu, các giấy tờ thường gặp là ${documents}.`,
+    },
+    {
+      question: `${seoTourName} có phù hợp cho trẻ em không?`,
+      answer: childPolicy,
+    },
+    {
+      question: `Nên đặt ${seoTourName.toLowerCase()} trước bao lâu?`,
+      answer: note || 'Anh chị nên đặt sớm để giữ chỗ đẹp, chủ động hồ sơ và tránh tăng giá sát ngày đi.',
+    },
+  ].filter((item): item is TourFaqItem => Boolean(item))
+}
 
 // Generate dynamic metadata for each tour (SEO)
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -33,26 +83,29 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ? getImageUrl(tour.thumbnail, 'large')
       : DEFAULT_OG_IMAGE
 
+    const seoTourName = formatSeoTourName(tour.title)
     const priceFormatted = new Intl.NumberFormat('vi-VN').format(tour.price)
     const destinationText = tour.destination || 'Trung Quốc'
     const departureText = tour.departure || 'Móng Cái'
-    const description = tour.shortDescription || `Tour ${destinationText} ${tour.duration}. Khởi hành từ ${departureText}. Giá chỉ ${priceFormatted}đ/người. Đặt tour ngay!`
+    const description = tour.shortDescription || `${seoTourName}. Khởi hành từ ${departureText}, lịch trình ${tour.duration}, giá từ ${priceFormatted}đ/người. Phù hợp cho khách muốn đi Trung Quốc trong ngày nhanh gọn.`
     const keywordSet = new Set([
-      tour.title,
+      seoTourName,
+      seoTourName.toLowerCase(),
       `tour ${destinationText.toLowerCase()}`,
       `du lịch ${destinationText.toLowerCase()}`,
       `tour ${tour.duration}`,
       `tour ${departureText.toLowerCase()}`,
+      `${seoTourName.toLowerCase()} giá rẻ`,
       'tour trung quốc giá rẻ',
       'sơn hằng travel',
     ])
 
     return {
-      title: `${tour.title} - Giá ${priceFormatted}đ`,
+      title: `${seoTourName} - Giá ${priceFormatted}đ`,
       description,
       keywords: Array.from(keywordSet),
       openGraph: {
-        title: `${tour.title} | Sơn Hằng Travel`,
+        title: `${seoTourName} | Sơn Hằng Travel`,
         description,
         url: `${SITE_URL}/tour/${slug}`,
         type: 'website',
@@ -61,13 +114,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             url: imageUrl,
             width: 1200,
             height: 630,
-            alt: tour.title,
+            alt: seoTourName,
           }
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${tour.title} | Sơn Hằng Travel`,
+        title: `${seoTourName} | Sơn Hằng Travel`,
         description,
         images: [imageUrl],
       },
@@ -116,7 +169,7 @@ function transformTour(tour: TourData) {
 
   return {
     id: String(tour.id),
-    title: tour.title,
+    title: formatSeoTourName(tour.title),
     slug: tour.slug,
     shortDescription: tour.shortDescription,
     content: tour.content || '',
@@ -183,19 +236,21 @@ export default async function TourDetailPage({ params }: PageProps) {
     const tourData = transformTour(tour)
     const phoneNumber = siteSettings?.phoneNumber || '0123456789'
     const zaloNumber = siteSettings?.zaloNumber || undefined
+    const faqItems = buildTourFaqItems(tour)
 
     const imageUrl = tour.thumbnail ? getImageUrl(tour.thumbnail, 'large') : DEFAULT_OG_IMAGE
     const galleryImages = [imageUrl, ...(tour.gallery || []).map((img) => getImageUrl(img, 'large'))].filter(Boolean)
     const canonicalUrl = `${SITE_URL}/tour/${slug}`
+    const seoTourName = formatSeoTourName(tour.title)
     const destinationText = tour.destination || 'Trung Quốc'
     const departureText = tour.departure || 'Móng Cái'
-    const description = tour.shortDescription || `Tour ${destinationText} ${tour.duration}. Khởi hành từ ${departureText}. Giá chỉ ${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/người.`
+    const description = tour.shortDescription || `${seoTourName}. Khởi hành từ ${departureText}, lịch trình ${tour.duration}, giá từ ${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/người.`
 
     const tourSchema = {
       '@context': 'https://schema.org',
       '@type': 'TouristTrip',
       '@id': `${canonicalUrl}#tour`,
-      name: tour.title,
+      name: seoTourName,
       description,
       url: canonicalUrl,
       image: galleryImages,
@@ -244,7 +299,7 @@ export default async function TourDetailPage({ params }: PageProps) {
       '@type': 'Service',
       '@id': `${canonicalUrl}#service`,
       serviceType: 'Tour du lịch Trung Quốc',
-      name: tour.title,
+      name: seoTourName,
       description,
       provider: {
         '@type': 'TravelAgency',
@@ -283,11 +338,24 @@ export default async function TourDetailPage({ params }: PageProps) {
         {
           '@type': 'ListItem',
           position: 3,
-          name: tour.title,
+          name: seoTourName,
           item: canonicalUrl,
         },
       ],
     }
+
+    const faqSchema = faqItems.length > 0 ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    } : null
 
     return (
       <>
@@ -304,7 +372,13 @@ export default async function TourDetailPage({ params }: PageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
-        <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
+        {faqSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+          />
+        )}
+        <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} faqItems={faqItems} />
       </>
     )
   } catch (error) {

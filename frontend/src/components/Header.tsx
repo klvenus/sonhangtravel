@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 const SEARCH_STOP_WORDS = ['tour', 'du', 'lịch', 'du lịch', 'combo', 'gia', 'giá', 're', 'rẻ', 'di', 'đi', 'den', 'đến']
 
@@ -51,6 +51,7 @@ interface HeaderProps {
 
 export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789', zaloNumber, searchTours = [] }: HeaderProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const [searchQuery, setSearchQuery] = useState('')
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -60,6 +61,8 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   const [categories, setCategories] = useState<Category[]>([])
 
   const zaloLink = zaloNumber || phoneNumber
+  const isHomePage = pathname === '/'
+  const SiteNameTag = isHomePage ? 'h1' : 'p'
   const normalizedQuery = searchQuery.trim()
   const queryTokens = tokenizeSearch(searchQuery)
   const liveResults = normalizedQuery
@@ -248,7 +251,7 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
                   </div>
                 )}
                 <div>
-                  <h1 className="text-xl font-bold text-gray-800 leading-tight">{siteName}</h1>
+                  <SiteNameTag className="text-xl font-bold text-gray-800 leading-tight">{siteName}</SiteNameTag>
                   <p className="text-xs text-gray-500">Tour Trung Quốc Uy Tín</p>
                 </div>
               </Link>

@@ -40,9 +40,13 @@ interface TourDetailProps {
   }
   phoneNumber?: string
   zaloNumber?: string
+  faqItems?: Array<{
+    question: string
+    answer: string
+  }>
 }
 
-export default function TourDetailClient({ tourData, phoneNumber = '0123456789', zaloNumber }: TourDetailProps) {
+export default function TourDetailClient({ tourData, phoneNumber = '0123456789', zaloNumber, faqItems = [] }: TourDetailProps) {
   const zaloLink = zaloNumber || phoneNumber
   const zaloBookingUrl = `https://zalo.me/${zaloLink}`
   const [activeTab, setActiveTab] = useState('overview')
@@ -495,6 +499,23 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     </div>
                   )}
                 </div>
+
+                {faqItems.length > 0 && (
+                  <section className="mt-8">
+                    <h2 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                      <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
+                      Giải đáp nhanh về {tourData.title}
+                    </h2>
+                    <div className="space-y-3">
+                      {faqItems.map((item, idx) => (
+                        <div key={idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                          <h3 className="text-base font-semibold text-gray-900">{item.question}</h3>
+                          <p className="mt-2 text-sm leading-7 text-gray-600">{item.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
               </div>
 
               {/* Right Sidebar - Desktop Only */}
