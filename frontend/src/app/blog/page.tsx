@@ -96,7 +96,7 @@ function FeaturedPostCard({ post }: { post: BlogPost }) {
       <div className="grid lg:grid-cols-[1.08fr_0.92fr]">
         <Link
           href={`/blog/${post.slug}`}
-          className="relative block aspect-[16/10] overflow-hidden bg-gray-100 lg:min-h-[420px] lg:aspect-auto"
+          className="relative block aspect-[16/10] overflow-hidden bg-gray-100 sm:aspect-[16/9] lg:min-h-[420px] lg:aspect-auto"
         >
           {post.thumbnail ? (
             <Image
@@ -110,31 +110,31 @@ function FeaturedPostCard({ post }: { post: BlogPost }) {
           ) : null}
         </Link>
 
-        <div className="flex flex-col justify-center p-6 md:p-8">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
+        <div className="flex flex-col justify-center p-4 sm:p-6 md:p-8">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 sm:text-sm">
+            <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-semibold text-emerald-700 sm:px-3">
               Bài mới nhất
             </span>
-            <span className={`inline-flex rounded-full border px-3 py-1 font-medium ${getCategoryClasses(post.category)}`}>
+            <span className={`inline-flex rounded-full border px-2.5 py-1 font-medium ${getCategoryClasses(post.category)} sm:px-3`}>
               {post.category}
             </span>
             <span>{formatDate(post.publishedAt)}</span>
           </div>
 
-          <h2 className="mt-4 text-2xl font-bold leading-tight text-gray-900 md:text-4xl">
+          <h2 className="mt-3 text-xl font-bold leading-tight text-gray-900 sm:mt-4 sm:text-2xl md:text-4xl">
             <Link href={`/blog/${post.slug}`} className="transition-colors hover:text-emerald-700">
               {post.title}
             </Link>
           </h2>
 
-          <p className="mt-4 line-clamp-5 text-base leading-8 text-gray-600">
+          <p className="mt-3 line-clamp-3 text-sm leading-7 text-gray-600 sm:mt-4 sm:line-clamp-4 sm:text-base sm:leading-8">
             {post.excerpt || post.description}
           </p>
 
-          <div className="mt-6">
+          <div className="mt-4 sm:mt-6">
             <Link
               href={`/blog/${post.slug}`}
-              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700"
+              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 sm:px-5 sm:py-3 sm:text-base"
             >
               Đọc bài viết
               <span>→</span>
@@ -149,46 +149,48 @@ function FeaturedPostCard({ post }: { post: BlogPost }) {
 function BlogGridCard({ post }: { post: BlogPost }) {
   return (
     <article className="overflow-hidden rounded-[24px] border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-      <Link
-        href={`/blog/${post.slug}`}
-        className="relative block aspect-[16/10] overflow-hidden bg-gray-100"
-      >
-        {post.thumbnail ? (
-          <Image
-            src={post.thumbnail}
-            alt={post.title}
-            fill
-            className="object-cover transition-transform duration-500 hover:scale-105"
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          />
-        ) : null}
-      </Link>
-
-      <div className="p-5 md:p-6">
-        <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-          <span className={`inline-flex rounded-full border px-3 py-1 font-semibold ${getCategoryClasses(post.category)}`}>
-            {post.category}
-          </span>
-          <span>{formatDate(post.publishedAt)}</span>
-        </div>
-
-        <h3 className="mt-4 text-xl font-bold leading-tight text-gray-900">
-          <Link href={`/blog/${post.slug}`} className="line-clamp-2 transition-colors hover:text-emerald-700">
-            {post.title}
-          </Link>
-        </h3>
-
-        <p className="mt-3 line-clamp-3 text-sm leading-7 text-gray-600 md:text-base">
-          {post.excerpt || post.description}
-        </p>
-
+      <div className="grid grid-cols-[112px_1fr] sm:grid-cols-[128px_1fr] md:block">
         <Link
           href={`/blog/${post.slug}`}
-          className="mt-5 inline-flex items-center gap-2 font-semibold text-emerald-700 transition hover:text-emerald-800"
+          className="relative block h-full min-h-[112px] overflow-hidden bg-gray-100 md:aspect-[16/10] md:min-h-0"
         >
-          Xem chi tiết
-          <span>→</span>
+          {post.thumbnail ? (
+            <Image
+              src={post.thumbnail}
+              alt={post.title}
+              fill
+              className="object-cover transition-transform duration-500 hover:scale-105"
+              sizes="(max-width: 768px) 128px, (max-width: 1280px) 50vw, 33vw"
+            />
+          ) : null}
         </Link>
+
+        <div className="p-4 sm:p-5 md:p-6">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 sm:text-xs">
+            <span className={`inline-flex rounded-full border px-2.5 py-1 font-semibold sm:px-3 ${getCategoryClasses(post.category)}`}>
+              {post.category}
+            </span>
+            <span>{formatDate(post.publishedAt)}</span>
+          </div>
+
+          <h3 className="mt-3 text-base font-bold leading-snug text-gray-900 sm:text-lg md:mt-4 md:text-xl md:leading-tight">
+            <Link href={`/blog/${post.slug}`} className="line-clamp-2 transition-colors hover:text-emerald-700">
+              {post.title}
+            </Link>
+          </h3>
+
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-600 md:mt-3 md:line-clamp-3 md:text-base md:leading-7">
+            {post.excerpt || post.description}
+          </p>
+
+          <Link
+            href={`/blog/${post.slug}`}
+            className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800 md:mt-5 md:text-base"
+          >
+            Xem chi tiết
+            <span>→</span>
+          </Link>
+        </div>
       </div>
     </article>
   )
@@ -209,18 +211,18 @@ export default async function BlogPage() {
       )}
 
       <section className="border-b border-gray-100">
-        <div className="mx-auto max-w-6xl px-4 py-10 md:py-14">
+        <div className="mx-auto max-w-6xl px-4 py-8 md:py-14">
           <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-semibold text-emerald-700">
             Blog du lịch
           </span>
-          <h1 className="mt-5 text-3xl font-bold text-gray-900 md:text-5xl">Blog Du Lịch Trung Quốc</h1>
-          <p className="mt-4 max-w-3xl text-base leading-8 text-gray-600 md:text-lg">
+          <h1 className="mt-4 text-2xl font-bold text-gray-900 sm:text-3xl md:mt-5 md:text-5xl">Blog Du Lịch Trung Quốc</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-600 sm:text-base md:mt-4 md:text-lg md:leading-8">
             Tổng hợp các bài viết mới về Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam cùng lịch khởi hành, ưu đãi và kinh nghiệm đi tour thực tế từ Sơn Hằng Travel.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+      <section className="mx-auto max-w-6xl px-4 py-6 md:py-12">
         {posts.length === 0 ? (
           <div className="rounded-[28px] border border-dashed border-emerald-200 bg-white p-8 text-center shadow-sm">
             <h2 className="text-2xl font-bold text-gray-900">Chưa có bài viết nào</h2>
@@ -230,19 +232,19 @@ export default async function BlogPage() {
           <>
             {featuredPost && (
               <div>
-                <div className="mb-5">
+                <div className="mb-4 md:mb-5">
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Mới nhất</p>
-                  <h2 className="mt-2 text-2xl font-bold text-gray-900 md:text-3xl">Bài nổi bật đầu trang</h2>
+                  <h2 className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl md:mt-2 md:text-3xl">Bài nổi bật đầu trang</h2>
                 </div>
                 <FeaturedPostCard post={featuredPost} />
               </div>
             )}
 
             {remainingPosts.length > 0 && (
-              <div className="mt-10">
-                <div className="mb-5">
+              <div className="mt-8 md:mt-10">
+                <div className="mb-4 md:mb-5">
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">Tất cả bài viết</p>
-                  <h2 className="mt-2 text-2xl font-bold text-gray-900 md:text-3xl">Danh sách bài viết</h2>
+                  <h2 className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl md:mt-2 md:text-3xl">Danh sách bài viết</h2>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
