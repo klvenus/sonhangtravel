@@ -131,9 +131,8 @@ function buildToursCollectionSchema() {
 
 // Transform tour for client component
 function transformTour(tour: TourData) {
-  const image = getImageUrl(tour.thumbnail, 'large')
-    || getImageUrl(tour.gallery?.[0], 'large')
-    || '/images/placeholder-tour.jpg'
+  const image = getImageUrl(tour.thumbnail || tour.gallery?.[0], 'large')
+    || DEFAULT_OG_IMAGE
 
   return {
     id: String(tour.id),

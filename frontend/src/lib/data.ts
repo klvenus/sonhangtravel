@@ -231,6 +231,6 @@ export async function getSiteSettings(): Promise<SiteSettingsData | null> {
 
 // Compatible getImageUrl - works with both Cloudinary URLs and direct URLs
 export function getImageUrl(url?: string | null, _size?: string): string {
-  if (!url) return '/images/placeholder-tour.jpg';
+  if (!url) return '';
   return url;
 }

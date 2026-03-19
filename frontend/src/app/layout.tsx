@@ -117,6 +117,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg';
   // Fetch site settings for Header and Footer
   const [siteSettings, searchToursData] = await Promise.all([
     getSiteSettings(),
@@ -132,7 +133,7 @@ export default async function RootLayout({
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
-    image: getImageUrl(tour.thumbnail),
+    image: getImageUrl(tour.thumbnail || tour.gallery?.[0]) || DEFAULT_OG_IMAGE,
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,

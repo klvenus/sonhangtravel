@@ -5,6 +5,7 @@ import TourCard from '@/components/TourCard'
 import { getTours, getCategoryBySlug, getCategories, getImageUrl } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
+const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
 function buildCategoryFaqItems(categoryName: string, slug: string, tourCount: number) {
   return [
@@ -164,7 +165,7 @@ export default async function CategoryToursPage({
           '@type': 'TouristTrip',
           name: tour.title,
           url: `${SITE_URL}/tour/${tour.slug}`,
-          image: getImageUrl(tour.thumbnail, 'large') || getImageUrl(tour.gallery?.[0], 'large') || undefined,
+          image: getImageUrl(tour.thumbnail || tour.gallery?.[0], 'large') || DEFAULT_OG_IMAGE,
           offers: {
             '@type': 'Offer',
             price: tour.price,
@@ -259,7 +260,7 @@ export default async function CategoryToursPage({
                         id={String(tour.id)}
                         title={tour.title}
                         slug={tour.slug}
-                        image={getImageUrl(tour.thumbnail, 'medium')}
+                        image={getImageUrl(tour.thumbnail || tour.gallery?.[0], 'medium') || DEFAULT_OG_IMAGE}
                         location={tour.destination}
                         duration={tour.duration}
                         price={tour.price}

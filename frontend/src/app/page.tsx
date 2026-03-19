@@ -54,12 +54,13 @@ function transformCategory(cat: CategoryData) {
 
 function transformTour(tour: TourData) {
   const galleryImages = (tour.gallery || []).map(img => getImageUrl(img, 'medium')).filter(Boolean)
+  const primaryImage = getImageUrl(tour.thumbnail || tour.gallery?.[0], 'medium') || DEFAULT_OG_IMAGE
 
   return {
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
-    image: getImageUrl(tour.thumbnail, 'medium'),
+    image: primaryImage,
     gallery: galleryImages,
     location: tour.destination,
     duration: tour.duration,
@@ -77,7 +78,7 @@ function transformTour(tour: TourData) {
 function transformBannerSlide(slide: BannerSlide, index: number) {
   return {
     id: index + 1,
-    image: getImageUrl(slide.image, 'large'),
+    image: getImageUrl(slide.image, 'large') || DEFAULT_OG_IMAGE,
     imageMobile: slide.imageMobile ? getImageUrl(slide.imageMobile, 'large') : undefined,
     title: slide.title,
     subtitle: slide.subtitle,

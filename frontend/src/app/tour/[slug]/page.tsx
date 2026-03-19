@@ -129,7 +129,7 @@ function transformRelatedTour(tour: TourData): RelatedTourCard {
     id: String(tour.id),
     title: formatSeoTourName(tour.title),
     slug: tour.slug,
-    image: getImageUrl(tour.thumbnail, 'medium'),
+    image: getImageUrl(tour.thumbnail || tour.gallery?.[0], 'medium') || DEFAULT_OG_IMAGE,
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,
