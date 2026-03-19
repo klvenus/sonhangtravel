@@ -101,7 +101,17 @@ function buildRelatedTours(post: NonNullable<Awaited<ReturnType<typeof getBlogPo
 }
 
 function normalizeMatchedUrl(url: string) {
-  return url.trim().replace(/[.,!?;:]+$/g, '')
+  const trimmedUrl = url.trim().replace(/[.,!?;:]+$/g, '')
+
+  try {
+    const parsedUrl = new URL(trimmedUrl)
+
+    if (parsedUrl.hostname === 'sonhangtravel.vercel.app') {
+      return trimmedUrl.replace('https://sonhangtravel.vercel.app', SITE_URL)
+    }
+  } catch {}
+
+  return trimmedUrl
 }
 
 function getFriendlyLinkLabel(href: string) {
@@ -219,7 +229,7 @@ function extractInlineLinks(text: string) {
   const seen = new Set<string>()
 
   return matches
-    .map((match) => match[0].trim().replace(/[.,!?;:]+$/g, ''))
+    .map((match) => normalizeMatchedUrl(match[0]))
     .filter((url) => {
       if (seen.has(url)) return false
       seen.add(url)
@@ -234,7 +244,7 @@ function extractMarkdownLinks(text: string) {
   return matches
     .map((match) => ({
       label: match[1].trim(),
-      href: match[2].trim().replace(/[.,!?;:]+$/g, ''),
+      href: normalizeMatchedUrl(match[2]),
     }))
     .filter((link) => {
       if (seen.has(link.href)) return false
