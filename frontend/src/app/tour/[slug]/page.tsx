@@ -485,79 +485,6 @@ export default async function TourDetailPage({ params }: PageProps) {
           />
         )}
         <TourDetailClient tourData={tourData} phoneNumber={phoneNumber} zaloNumber={zaloNumber} faqItems={faqItems} />
-        <section className="bg-white py-8">
-          <div className="container mx-auto max-w-7xl px-4">
-            <div className="rounded-3xl border border-gray-200 bg-gray-50 p-5 md:p-6">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="lg:max-w-2xl">
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#059669]">Cụm Điều Hướng</p>
-                  <h2 className="mt-2 text-2xl font-bold text-gray-900">Đi tiếp theo cụm tour đang bán</h2>
-                  <p className="mt-2 text-sm leading-7 text-gray-600">
-                    Ngoài trang tour hiện tại, bên em để thêm các link text đi thẳng tới landing page cùng nhóm, toàn bộ danh mục và các tour gần gu nhất để khách so sánh nhanh hơn.
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {tour.categorySlug && (
-                    <Link
-                      href={`/tours/${tour.categorySlug}`}
-                      className="rounded-full bg-[#059669] px-4 py-2 text-sm font-semibold text-white hover:bg-[#047857]"
-                    >
-                      Xem landing page {tour.categoryName || ''}
-                    </Link>
-                  )}
-                  <Link
-                    href="/so-do-tour"
-                    className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#059669] hover:text-[#059669]"
-                  >
-                    Sơ đồ tour
-                  </Link>
-                </div>
-              </div>
-
-              <div className="mt-5 grid gap-6 lg:grid-cols-2">
-                <div>
-                  <h3 className="text-base font-bold text-gray-900">Tour nên xem cùng cụm</h3>
-                  <ul className="mt-3 space-y-3">
-                    {relatedTours.map((item) => (
-                      <li key={item.id}>
-                        <Link
-                          href={`/tour/${item.slug}`}
-                          className="block rounded-2xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#059669] hover:bg-emerald-50/40"
-                        >
-                          <p className="font-semibold text-gray-900">{item.title}</p>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {item.duration}{item.location ? ` • ${item.location}` : ''}
-                          </p>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h3 className="text-base font-bold text-gray-900">Danh mục điểm đến khác</h3>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <Link
-                      href="/tours"
-                      className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#059669] hover:text-[#059669]"
-                    >
-                      Tất cả tour Trung Quốc
-                    </Link>
-                    {siblingCategories.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={`/tours/${item.slug}`}
-                        className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#059669] hover:text-[#059669]"
-                      >
-                        Tour {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
         {relatedTours.length > 0 && (
           <section className="bg-white pb-12">
             <div className="container mx-auto max-w-7xl px-4">
@@ -600,6 +527,79 @@ export default async function TourDetailPage({ params }: PageProps) {
             </div>
           </section>
         )}
+        <section className="bg-white pb-10">
+          <div className="container mx-auto max-w-7xl px-4">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 md:p-6">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="lg:max-w-2xl">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#059669]">Liên Kết Hỗ Trợ</p>
+                  <h2 className="mt-2 text-lg font-bold text-gray-900">Đi tiếp theo cụm tour đang bán</h2>
+                  <p className="mt-2 text-sm leading-7 text-gray-600">
+                    Để cuối trang vẫn có lối tắt sang landing page cùng cụm, toàn bộ danh mục và các tuyến gần gu nhất cho khách so sánh tiếp.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {tour.categorySlug && (
+                    <Link
+                      href={`/tours/${tour.categorySlug}`}
+                      className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-[#059669] hover:text-[#059669]"
+                    >
+                      Landing page {tour.categoryName || ''}
+                    </Link>
+                  )}
+                  <Link
+                    href="/so-do-tour"
+                    className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-[#059669] hover:text-[#059669]"
+                  >
+                    Sơ đồ tour
+                  </Link>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-6 lg:grid-cols-2">
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">Tour nên xem cùng cụm</h3>
+                  <ul className="mt-3 space-y-3">
+                    {relatedTours.map((item) => (
+                      <li key={item.id}>
+                        <Link
+                          href={`/tour/${item.slug}`}
+                          className="block rounded-xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:border-[#059669] hover:bg-emerald-50/40"
+                        >
+                          <p className="font-semibold text-gray-900">{item.title}</p>
+                          <p className="mt-1 text-sm text-gray-500">
+                            {item.duration}{item.location ? ` • ${item.location}` : ''}
+                          </p>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">Danh mục điểm đến khác</h3>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Link
+                      href="/tours"
+                      className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-[#059669] hover:text-[#059669]"
+                    >
+                      Tất cả tour Trung Quốc
+                    </Link>
+                    {siblingCategories.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/tours/${item.slug}`}
+                        className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-[#059669] hover:text-[#059669]"
+                      >
+                        Tour {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </>
     )
   } catch (error) {

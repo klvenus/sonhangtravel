@@ -260,63 +260,6 @@ export default async function CategoryToursPage({
               {/* Tours Grid */}
               {tours.length > 0 ? (
                 <>
-                  <section className="mb-6 rounded-2xl bg-white p-5 shadow-sm">
-                    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="lg:max-w-2xl">
-                        <h2 className="text-xl font-bold text-gray-900">Đi thẳng tới các tour {categoryName}</h2>
-                        <p className="mt-2 text-sm leading-7 text-gray-600">
-                          Link text bên dưới giúp khách xem nhanh từng tour trong cùng cụm {categoryName}, đồng thời gom tín hiệu internal link về đúng các money page đang bán.
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <Link
-                          href="/so-do-tour"
-                          className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#059669] hover:text-[#059669]"
-                        >
-                          Sơ đồ tour
-                        </Link>
-                        <Link
-                          href="/tours"
-                          className="rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:border-[#059669] hover:text-[#059669]"
-                        >
-                          Xem toàn bộ danh mục
-                        </Link>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 grid gap-3 md:grid-cols-2">
-                      {tours.map((tour) => (
-                        <Link
-                          key={tour.id}
-                          href={`/tour/${tour.slug}`}
-                          className="rounded-2xl border border-gray-200 px-4 py-3 transition-colors hover:border-[#059669] hover:bg-emerald-50/40"
-                        >
-                          <p className="font-semibold text-gray-900">{tour.title}</p>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {tour.duration || 'Nhiều lựa chọn lịch trình'}{tour.destination ? ` • ${tour.destination}` : ''}
-                          </p>
-                        </Link>
-                      ))}
-                    </div>
-
-                    {siblingCategories.length > 0 && (
-                      <div className="mt-5 border-t border-gray-100 pt-5">
-                        <p className="text-sm font-semibold text-gray-900">Điểm đến khác đang bán tốt</p>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {siblingCategories.map((item) => (
-                            <Link
-                              key={item.id}
-                              href={`/tours/${item.slug}`}
-                              className="rounded-full bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-[#059669]"
-                            >
-                              Tour {item.name}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </section>
-
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {tours.map((tour) => (
                       <TourCard
@@ -349,6 +292,64 @@ export default async function CategoryToursPage({
                         </div>
                       ))}
                     </div>
+                  </section>
+
+                  <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-5">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="lg:max-w-2xl">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#059669]">Liên Kết Hỗ Trợ</p>
+                        <h2 className="mt-2 text-lg font-bold text-gray-900">Lối tắt tới các tour {categoryName}</h2>
+                        <p className="mt-2 text-sm leading-7 text-gray-600">
+                          Phần này để khách kéo xuống cuối vẫn thấy đường đi nhanh sang từng tour trong cụm và các điểm đến liên quan.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <Link
+                          href="/so-do-tour"
+                          className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-[#059669] hover:text-[#059669]"
+                        >
+                          Sơ đồ tour
+                        </Link>
+                        <Link
+                          href="/tours"
+                          className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-[#059669] hover:text-[#059669]"
+                        >
+                          Toàn bộ danh mục
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 md:grid-cols-2">
+                      {tours.map((tour) => (
+                        <Link
+                          key={tour.id}
+                          href={`/tour/${tour.slug}`}
+                          className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors hover:border-[#059669] hover:bg-emerald-50/40"
+                        >
+                          <p className="font-semibold text-gray-900">{tour.title}</p>
+                          <p className="mt-1 text-sm text-gray-500">
+                            {tour.duration || 'Nhiều lựa chọn lịch trình'}{tour.destination ? ` • ${tour.destination}` : ''}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+
+                    {siblingCategories.length > 0 && (
+                      <div className="mt-5 border-t border-gray-100 pt-4">
+                        <p className="text-sm font-semibold text-gray-900">Điểm đến khác đang bán tốt</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {siblingCategories.map((item) => (
+                            <Link
+                              key={item.id}
+                              href={`/tours/${item.slug}`}
+                              className="rounded-full bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-[#059669]"
+                            >
+                              Tour {item.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </section>
                 </>
               ) : (
