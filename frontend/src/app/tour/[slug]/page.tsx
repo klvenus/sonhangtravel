@@ -378,13 +378,6 @@ export default async function TourDetailPage({ params }: PageProps) {
           description: item.description,
         })) || [],
       },
-      aggregateRating: tour.rating ? {
-        '@type': 'AggregateRating',
-        ratingValue: Number(tour.rating),
-        reviewCount: tour.reviewCount || 10,
-        bestRating: 5,
-        worstRating: 1,
-      } : undefined,
     }
 
     const serviceSchema = {
