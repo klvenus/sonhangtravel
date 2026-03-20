@@ -3,9 +3,22 @@ import Image from 'next/image'
 
 interface FooterProps {
   logoUrl?: string
+  categories?: Array<{
+    id: number
+    name: string
+    slug: string
+  }>
+  topTours?: Array<{
+    id: string
+    title: string
+    slug: string
+  }>
 }
 
-export default function Footer({ logoUrl }: FooterProps) {
+export default function Footer({ logoUrl, categories = [], topTours = [] }: FooterProps) {
+  const featuredCategories = categories.slice(0, 5)
+  const featuredTours = topTours.slice(0, 6)
+
   return (
     <footer className="bg-[#059669] text-white pb-20 md:pb-0">
       {/* Mobile Footer */}
@@ -70,6 +83,23 @@ export default function Footer({ logoUrl }: FooterProps) {
           </div>
 
           {/* Copyright */}
+          {featuredCategories.length > 0 && (
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Điểm đến hot</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {featuredCategories.map((category) => (
+                  <Link
+                    key={category.id}
+                    href={`/tours/${category.slug}`}
+                    className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/25"
+                  >
+                    Tour {category.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           <p className="text-center text-white/50 text-[11px] pt-1">
             &copy; 2026 Sơn Hằng Travel. All rights reserved.
           </p>
@@ -154,6 +184,9 @@ export default function Footer({ logoUrl }: FooterProps) {
                   <Link href="/tours" className="hover:text-white/70 transition-colors">Tất cả tour</Link>
                 </li>
                 <li>
+                  <Link href="/so-do-tour" className="hover:text-white/70 transition-colors">Sơ đồ tour Trung Quốc</Link>
+                </li>
+                <li>
                   <Link href="/blog" className="hover:text-white/70 transition-colors">Blog du lịch</Link>
                 </li>
                 <li>
@@ -163,6 +196,36 @@ export default function Footer({ logoUrl }: FooterProps) {
                   <Link href="/lien-he" className="hover:text-white/70 transition-colors">Liên hệ</Link>
                 </li>
               </ul>
+
+              {featuredCategories.length > 0 && (
+                <>
+                  <h4 className="text-white font-semibold mb-4">Điểm Đến Nổi Bật</h4>
+                  <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-white/90 mb-6">
+                    {featuredCategories.map((category) => (
+                      <li key={category.id}>
+                        <Link href={`/tours/${category.slug}`} className="hover:text-white/70 transition-colors">
+                          Tour {category.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {featuredTours.length > 0 && (
+                <>
+                  <h4 className="text-white font-semibold mb-4">Tour Bán Chạy</h4>
+                  <ul className="space-y-2 text-sm text-white/90 mb-6">
+                    {featuredTours.map((tour) => (
+                      <li key={tour.id}>
+                        <Link href={`/tour/${tour.slug}`} className="hover:text-white/70 transition-colors">
+                          {tour.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
 
               <h4 className="text-white font-semibold mb-4">Kết Nối</h4>
               <div className="flex gap-3">

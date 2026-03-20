@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 const SEARCH_STOP_WORDS = ['tour', 'du', 'lịch', 'du lịch', 'combo', 'gia', 'giá', 're', 'rẻ', 'di', 'đi', 'den', 'đến']
@@ -47,9 +47,17 @@ interface HeaderProps {
   phoneNumber?: string
   zaloNumber?: string
   searchTours?: SearchTour[]
+  categories?: Category[]
 }
 
-export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phoneNumber = '0123456789', zaloNumber, searchTours = [] }: HeaderProps) {
+export default function Header({
+  logoUrl,
+  siteName = 'Sơn Hằng Travel',
+  phoneNumber = '0123456789',
+  zaloNumber,
+  searchTours = [],
+  categories = [],
+}: HeaderProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [searchQuery, setSearchQuery] = useState('')
@@ -58,7 +66,6 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   const [isScrolled, setIsScrolled] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
-  const [categories, setCategories] = useState<Category[]>([])
 
   const zaloLink = zaloNumber || phoneNumber
   const isHomePage = pathname === '/'
@@ -91,20 +98,6 @@ export default function Header({ logoUrl, siteName = 'Sơn Hằng Travel', phone
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSearch()
   }
-
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const res = await fetch('/api/categories')
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const data = await res.json()
-        setCategories(Array.isArray(data) ? data : [])
-      } catch (error) {
-        console.error('Error fetching categories:', error)
-      }
-    }
-    fetchCategories()
-  }, [])
 
   useEffect(() => {
     const handleScroll = () => {

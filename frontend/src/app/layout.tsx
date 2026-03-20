@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
-import { getSiteSettings, getImageUrl, getTours } from "@/lib/data";
+import { getSiteSettings, getImageUrl, getTours, getCategories } from "@/lib/data";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -119,9 +119,11 @@ export default async function RootLayout({
 }>) {
   const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg';
   // Fetch site settings for Header and Footer
-  const [siteSettings, searchToursData] = await Promise.all([
+  const [siteSettings, searchToursData, topToursData, categoriesData] = await Promise.all([
     getSiteSettings(),
-    getTours({ pageSize: 50 })
+    getTours({ pageSize: 50, sort: 'bookingCount:desc' }),
+    getTours({ pageSize: 8, sort: 'bookingCount:desc' }),
+    getCategories(),
   ]);
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
   const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : logoUrl;
@@ -129,6 +131,13 @@ export default async function RootLayout({
   const phoneNumber = siteSettings?.phoneNumber || '0123456789';
   const zaloNumber = siteSettings?.zaloNumber || undefined;
   const email = siteSettings?.email || 'info@sonhangtravel.com';
+  const categories = (categoriesData || [])
+    .filter((category) => (category.tourCount || 0) > 0)
+    .map((category) => ({
+      id: category.id,
+      name: category.name || 'Danh mục',
+      slug: category.slug,
+    }));
   const searchTours = (searchToursData.data || []).map((tour) => ({
     id: String(tour.id),
     title: tour.title,
@@ -137,6 +146,11 @@ export default async function RootLayout({
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,
+  }));
+  const topTours = (topToursData.data || []).map((tour) => ({
+    id: String(tour.id),
+    title: tour.title,
+    slug: tour.slug,
   }));
 
   // JSON-LD Structured Data for SEO
@@ -212,11 +226,18 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header logoUrl={logoUrl} siteName={siteName} phoneNumber={phoneNumber} zaloNumber={zaloNumber} searchTours={searchTours} />
+        <Header
+          logoUrl={logoUrl}
+          siteName={siteName}
+          phoneNumber={phoneNumber}
+          zaloNumber={zaloNumber}
+          searchTours={searchTours}
+          categories={categories}
+        />
         <div className="pb-16 md:pb-0">
           {children}
         </div>
-        <Footer logoUrl={logoUrl} />
+        <Footer logoUrl={logoUrl} categories={categories} topTours={topTours} />
         <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <SpeedInsights />
         <Analytics />
