@@ -548,6 +548,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 fill
                 className={`object-cover ${isSalePost ? 'scale-[1.02] transition-transform duration-700' : ''}`}
                 sizes="(max-width: 768px) 100vw, 1024px"
+                quality={100}
                 priority
               />
               {isSalePost && (

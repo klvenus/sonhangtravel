@@ -43,6 +43,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
               fill
               className="object-cover"
               sizes="100vw"
+              quality={100}
               priority
             />
           </button>
@@ -88,6 +89,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
                   fill
                   className="object-cover"
                   sizes="80px"
+                  quality={100}
                 />
               </button>
             ))}
@@ -140,6 +142,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
                 fill
                 className="object-contain"
                 sizes="100vw"
+                quality={100}
                 priority
               />
             </div>
