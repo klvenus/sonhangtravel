@@ -70,7 +70,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const discountPercent = tourData.originalPrice > tourData.price 
     ? Math.round(((tourData.originalPrice - tourData.price) / tourData.originalPrice) * 100)
     : 0
-  const isTetTour = /tết|tet/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
+  const isHoliday3041 = /30\/4|1\/5|30-4|1-5/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
 
   const formatDepartureDateLabel = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -566,26 +566,26 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     )}
 
                     {/* Price */}
-                    <div className={`mb-6 rounded-2xl p-5 border-2 shadow-sm ${isTetTour ? 'border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50' : 'border-[#00CBA9]/20 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10'}`}>
+                    <div className={`mb-6 rounded-2xl p-5 border-2 shadow-sm ${isHoliday3041 ? 'border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50' : 'border-[#00CBA9]/20 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10'}`}>
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className={`text-xs font-bold uppercase tracking-[0.2em] ${isTetTour ? 'text-red-500' : 'text-[#00A88A]'}`}>
-                            {isTetTour ? 'Tour Tết' : 'Giá ưu đãi'}
+                          <p className={`text-xs font-bold uppercase tracking-[0.2em] ${isHoliday3041 ? 'text-red-500' : 'text-[#00A88A]'}`}>
+                            {isHoliday3041 ? 'Lễ 30/4 - 1/5' : 'Giá ưu đãi'}
                           </p>
                           <div className="mt-2 flex items-end gap-2 mb-2">
-                            <span className={`text-4xl font-bold ${isTetTour ? 'text-red-600 animate-pulse' : 'text-[#FF6B35]'}`}>{formatPrice(displayPrice)}đ</span>
+                            <span className={`text-4xl font-bold ${isHoliday3041 ? 'text-red-600 animate-pulse' : 'text-[#FF6B35]'}`}>{formatPrice(displayPrice)}đ</span>
                             {tourData.originalPrice > displayPrice && (
                               <span className="text-gray-400 line-through text-lg">{formatPrice(tourData.originalPrice)}đ</span>
                             )}
                           </div>
                           <p className="text-sm text-gray-600">Giá/khách • Chưa bao gồm VAT</p>
                         </div>
-                        {isTetTour && (
-                          <div className="rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-sm">Lộc xuân</div>
+                        {isHoliday3041 && (
+                          <div className="rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-sm">Cao điểm lễ</div>
                         )}
                       </div>
                       {discountPercent > 0 && (
-                        <div className={`mt-3 inline-block text-white text-xs font-bold px-3 py-1 rounded-full ${isTetTour ? 'bg-red-600' : 'bg-red-600'}`}>
+                        <div className={`mt-3 inline-block text-white text-xs font-bold px-3 py-1 rounded-full ${isHoliday3041 ? 'bg-red-600' : 'bg-red-600'}`}>
                           TIẾT KIỆM {discountPercent}%
                         </div>
                       )}
@@ -596,7 +596,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Lịch khởi hành</label>
                       {departureDates.length > 0 ? (
                         <div className="space-y-4">
-                          {isTetTour && (
+                          {isHoliday3041 && (
                             <>
                               <div className="relative overflow-hidden rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-amber-50 to-yellow-50 p-4 shadow-sm">
                                 <div className="absolute -right-3 -top-3 h-14 w-14 rounded-full bg-rose-200/40 blur-2xl" />
@@ -604,8 +604,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                 <div className="relative mb-3 flex items-center gap-2">
                                   <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-base shadow-sm">🧧</span>
                                   <div>
-                                    <p className="text-sm font-bold text-rose-600">Đợt khởi hành Tour Tết</p>
-                                    <p className="text-[11px] text-gray-500">Chọn đợt đẹp để giá nhảy theo đúng ngày đi</p>
+                                    <p className="text-sm font-bold text-rose-600">Đợt khởi hành lễ 30/4 - 1/5</p>
+                                    <p className="text-[11px] text-gray-500">Chọn đợt để giá nhảy theo đúng ngày khởi hành</p>
                                   </div>
                                 </div>
                                 <div className="relative">
@@ -630,7 +630,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                   <div className="mt-3 flex items-center justify-between rounded-2xl bg-white/80 px-4 py-3 text-sm shadow-sm ring-1 ring-rose-100">
                                     <div>
                                       <p className="text-[11px] uppercase tracking-[0.16em] text-rose-500">Đang chọn</p>
-                                      <p className="font-bold text-rose-600">Đợt {formatDepartureDateLabel(selectedDepartureDate)}</p>
+                                      <p className="font-bold text-rose-600">Lễ {formatDepartureDateLabel(selectedDepartureDate)}</p>
                                     </div>
                                     <div className="text-right">
                                       <p className="text-[11px] uppercase tracking-[0.16em] text-gray-400">Giá hiện tại</p>
@@ -668,7 +668,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                             </>
                           )}
 
-                          {!isTetTour && (
+                          {!isHoliday3041 && (
                             <>
                               <div className="grid grid-cols-2 gap-2">
                                 {departureDates.slice(0, 6).map((item) => {
