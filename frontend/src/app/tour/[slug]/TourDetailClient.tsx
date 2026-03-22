@@ -59,18 +59,24 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const departureDates = (tourData.departureDates || []).filter((item) => item?.date)
-  const [selectedDepartureDate, setSelectedDepartureDate] = useState(departureDates[0]?.date || '')
+  const isHoliday3041 = /30\/4|1\/5|30-4|1-5/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
+  const basePrice = departureDates.length > 0
+    ? Math.min(...departureDates.map((item) => item.price || tourData.price), tourData.price)
+    : tourData.price
+  const normalDepartureDates = departureDates.filter((item) => (item.price || basePrice) <= basePrice)
+  const holidayDepartureDates = departureDates.filter((item) => (item.price || basePrice) > basePrice)
+  const initialDepartureDate = (isHoliday3041 && holidayDepartureDates.length > 0 ? holidayDepartureDates[0]?.date : normalDepartureDates[0]?.date || departureDates[0]?.date || '')
+  const [selectedDepartureDate, setSelectedDepartureDate] = useState(initialDepartureDate)
   const selectedDeparture = departureDates.find((item) => item.date === selectedDepartureDate)
-  const displayPrice = selectedDeparture?.price || tourData.price
+  const displayPrice = selectedDeparture?.price || basePrice
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price)
   }
 
-  const discountPercent = tourData.originalPrice > tourData.price 
-    ? Math.round(((tourData.originalPrice - tourData.price) / tourData.originalPrice) * 100)
+  const discountPercent = tourData.originalPrice > basePrice 
+    ? Math.round(((tourData.originalPrice - basePrice) / tourData.originalPrice) * 100)
     : 0
-  const isHoliday3041 = /30\/4|1\/5|30-4|1-5/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
 
   const formatDepartureDateLabel = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -614,7 +620,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                     onChange={(e) => setSelectedDepartureDate(e.target.value)}
                                     className="w-full appearance-none rounded-2xl border border-rose-200 bg-white/90 px-4 py-3 pr-10 text-sm font-semibold text-gray-700 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-100"
                                   >
-                                    {departureDates.map((item) => (
+                                    {holidayDepartureDates.map((item) => (
                                       <option key={item.date} value={item.date}>
                                         Đợt {formatDepartureDateLabel(item.date)} • {getDepartureDateMeta(item).label} • {formatPrice(item.price || tourData.price)}đ
                                       </option>
@@ -643,7 +649,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                               <div>
                                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Ngày thường</p>
                                 <div className="grid grid-cols-2 gap-2">
-                                  {departureDates.slice(0, 6).map((item) => {
+                                  {normalDepartureDates.slice(0, 6).map((item) => {
                                     const isActive = selectedDepartureDate === item.date
                                     return (
                                       <button
@@ -671,7 +677,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                           {!isHoliday3041 && (
                             <>
                               <div className="grid grid-cols-2 gap-2">
-                                {departureDates.slice(0, 6).map((item) => {
+                                {(normalDepartureDates.length > 0 ? normalDepartureDates : departureDates).slice(0, 6).map((item) => {
                                   const isActive = selectedDepartureDate === item.date
                                   return (
                                     <button
