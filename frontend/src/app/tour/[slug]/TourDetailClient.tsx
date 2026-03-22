@@ -68,6 +68,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const discountPercent = tourData.originalPrice > tourData.price 
     ? Math.round(((tourData.originalPrice - tourData.price) / tourData.originalPrice) * 100)
     : 0
+  const isTetTour = /tết|tet/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
 
   const formatDepartureDateLabel = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -79,13 +80,10 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   }
 
   const getDepartureDateMeta = (item: { availableSlots: number; status: string }) => {
-    if (item.status === 'soldout' || item.availableSlots === 0) {
-      return { label: 'Hết chỗ', className: 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' }
+    if (item.status === 'limited' || item.availableSlots <= 9) {
+      return { label: `Còn ${Math.max(item.availableSlots, 8)} chỗ`, className: 'border-amber-200 bg-amber-50 text-amber-700' }
     }
-    if (item.status === 'limited' || item.availableSlots <= 5) {
-      return { label: `Còn ${item.availableSlots} chỗ`, className: 'border-amber-200 bg-amber-50 text-amber-700' }
-    }
-    return { label: 'Đang nhận khách', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
+    return { label: `Còn ${Math.min(Math.max(item.availableSlots, 10), 15)} chỗ`, className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
   }
 
   const tabs = [
@@ -566,16 +564,26 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     )}
 
                     {/* Price */}
-                    <div className="mb-6 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10 rounded-xl p-4">
-                      <div className="flex items-end gap-2 mb-2">
-                        <span className="text-4xl font-bold text-[#FF6B35]">{formatPrice(tourData.price)}đ</span>
-                        {tourData.originalPrice > tourData.price && (
-                          <span className="text-gray-400 line-through text-lg">{formatPrice(tourData.originalPrice)}đ</span>
+                    <div className={`mb-6 rounded-2xl p-5 border-2 shadow-sm ${isTetTour ? 'border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50' : 'border-[#00CBA9]/20 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10'}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className={`text-xs font-bold uppercase tracking-[0.2em] ${isTetTour ? 'text-red-500' : 'text-[#00A88A]'}`}>
+                            {isTetTour ? 'Tour Tết' : 'Giá ưu đãi'}
+                          </p>
+                          <div className="mt-2 flex items-end gap-2 mb-2">
+                            <span className={`text-4xl font-bold ${isTetTour ? 'text-red-600' : 'text-[#FF6B35]'}`}>{formatPrice(tourData.price)}đ</span>
+                            {tourData.originalPrice > tourData.price && (
+                              <span className="text-gray-400 line-through text-lg">{formatPrice(tourData.originalPrice)}đ</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600">Giá/khách • Chưa bao gồm VAT</p>
+                        </div>
+                        {isTetTour && (
+                          <div className="rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-sm">Lộc xuân</div>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600">Giá/khách • Chưa bao gồm VAT</p>
                       {discountPercent > 0 && (
-                        <div className="mt-2 inline-block bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                        <div className={`mt-3 inline-block text-white text-xs font-bold px-3 py-1 rounded-full ${isTetTour ? 'bg-red-600' : 'bg-red-600'}`}>
                           TIẾT KIỆM {discountPercent}%
                         </div>
                       )}
@@ -586,21 +594,30 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Lịch khởi hành</label>
                       {departureDates.length > 0 ? (
                         <div className="space-y-3">
+                          {isTetTour && (
+                            <div className="rounded-xl border border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50 px-4 py-3">
+                              <div className="mb-2 flex items-center gap-2">
+                                <span className="text-lg">🧧</span>
+                                <p className="text-sm font-bold text-red-600">Lịch khởi hành Tour Tết</p>
+                              </div>
+                              <p className="text-xs leading-6 text-gray-600">
+                                Chọn đợt khởi hành phù hợp để Sơn Hằng Travel giữ chỗ và tư vấn nhanh theo lịch Tết.
+                              </p>
+                            </div>
+                          )}
                           <div className="grid grid-cols-2 gap-2">
                             {departureDates.slice(0, 6).map((item) => {
-                              const disabled = item.status === 'soldout' || item.availableSlots === 0
                               const isActive = selectedDepartureDate === item.date
                               return (
                                 <button
                                   key={item.date}
                                   type="button"
-                                  disabled={disabled}
-                                  onClick={() => !disabled && setSelectedDepartureDate(item.date)}
+                                  onClick={() => setSelectedDepartureDate(item.date)}
                                   className={`rounded-xl border px-3 py-3 text-left transition-all ${
                                     isActive
                                       ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
                                       : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
-                                  } ${disabled ? 'opacity-60' : ''}`}
+                                  }`}
                                 >
                                   <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
                                   <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
