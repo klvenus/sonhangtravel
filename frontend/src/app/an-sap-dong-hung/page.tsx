@@ -38,7 +38,10 @@ function isDongHungFoodPost(post: BlogPost) {
     .join(' ')
     .toLowerCase()
 
-  return /(đông hưng|dong hung|food|ăn vặt|banh|bánh|quán|tiệm|ẩm thực|ẩm-thực|city sweet|rolling)/.test(haystack)
+  const foodSignals = /(city sweet|rolling|tiệm bánh|bánh ngọt|đồ ngọt|ăn vặt|quán nhỏ|quán ăn|mua về làm quà|món ngọt|dessert|bakery|cake|sweet)/.test(haystack)
+  const badSignals = /(đi tour|khởi hành|chốt khách|chốt sớm|lịch khởi hành|ưu đãi|flash sale|cửa khẩu|hộ chiếu|feedback đoàn)/.test(haystack)
+
+  return foodSignals && !badSignals
 }
 
 function formatDate(dateString: string) {
@@ -167,11 +170,11 @@ export default async function AnSapDongHungPage() {
                 <div className="absolute inset-y-6 left-0 hidden w-px bg-[linear-gradient(180deg,transparent,rgba(244,114,182,0.35),transparent)] lg:block" />
                 <div className="flex items-center justify-between gap-4 border-b border-dashed border-rose-200 pb-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#d07a9b]">Trang gợi ý đầu bếp</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#d07a9b]">Trang đầu thực đơn</p>
                     <h2 className="mt-2 text-2xl font-bold text-[#5f3b4d]">Gợi ý nên mở trước</h2>
                   </div>
                   <span className="rounded-full border border-rose-200 bg-[#fff7fb] px-4 py-2 text-sm font-semibold text-[#b85f84] shadow-sm">
-                    Signature pick
+                    Quán nổi bật
                   </span>
                 </div>
 
@@ -187,12 +190,12 @@ export default async function AnSapDongHungPage() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-rose-950/20 via-transparent to-transparent" />
                       <div className="absolute left-4 top-4 rounded-full border border-white/60 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[#d07a9b]">
-                        Cover menu
+                        Trang mở đầu
                       </div>
                     </div>
                     <div className="flex flex-col justify-between rounded-[26px] border border-rose-200 bg-white p-5 shadow-[0_6px_14px_rgba(244,114,182,0.05)]">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#d07a9b]">Món mở đầu</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#d07a9b]">Gợi ý mở đầu</p>
                         <h3 className="mt-3 text-2xl font-bold leading-tight text-[#5f3b4d] sm:text-3xl">
                           <Link href={`/blog/${featured.slug}`} className="transition-colors hover:text-[#c45b8e]">
                             {featured.title}
@@ -217,7 +220,11 @@ export default async function AnSapDongHungPage() {
                       </div>
                     </div>
                   </div>
-                ) : null}
+                ) : (
+                  <div className="mt-5 rounded-[26px] border border-rose-200 bg-white p-6 text-[#7d6170] shadow-[0_6px_14px_rgba(244,114,182,0.05)] sm:p-8">
+                    Hiện phần này sẽ để dành cho các bài đúng mood quán bánh, đồ ngọt và ăn vặt ở Đông Hưng. Em không kéo bài tour sang đây nữa để tránh lệch vibe của trang.
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -241,11 +248,9 @@ export default async function AnSapDongHungPage() {
           <div className="mt-6 grid gap-5 lg:grid-cols-2">
             {menuItems.length > 0 ? (
               menuItems.map((post, index) => <MenuListItem key={post.id} post={post} index={index + 1} />)
-            ) : featured ? (
-              <MenuListItem post={featured} index={1} />
             ) : (
-              <div className="rounded-[28px] border border-rose-200 bg-white p-8 text-center text-[#b85f84] shadow-[0_14px_34px_rgba(236,72,153,0.10)]">
-                Chưa có món nào trong menu Đông Hưng.
+              <div className="rounded-[28px] border border-rose-200 bg-white p-8 text-center text-[#b85f84] shadow-[0_10px_22px_rgba(244,114,182,0.08)]">
+                Chưa có thêm bài nào đúng vibe đồ ngọt, quán xinh và ăn vặt để xếp tiếp vào menu này.
               </div>
             )}
           </div>
