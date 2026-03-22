@@ -11,6 +11,8 @@ import TourCard from '@/components/TourCard'
 import { getAllBlogPosts, getBlogPostBySlug } from '@/lib/blog'
 import { getTours, getImageUrl } from '@/lib/data'
 
+export const revalidate = 60
+
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 const ZALO_OA_URL = 'https://zalo.me/561113801789156735'
