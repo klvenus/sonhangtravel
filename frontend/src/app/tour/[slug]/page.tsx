@@ -214,7 +214,7 @@ const fallbackPolicies = {
     'Trẻ bằng hoặc dưới 5 tuổi: tính 80% giá tour',
     'Trẻ em từ 6 tuổi trở lên: tính 100% giá tour',
   ],
-  surcharge: 'Lễ tết phụ thu 200.000 VNĐ/người',
+  surcharge: '',
   documents: [
     'Người lớn: ảnh 4x6 nền trắng + ảnh CCCD 2 mặt',
     'Trẻ em: xác nhận TK8 + bản sao giấy khai sinh + ảnh 4x6',
