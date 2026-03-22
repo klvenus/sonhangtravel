@@ -252,6 +252,7 @@ function transformTour(tour: TourData) {
     departure: tour.departure || 'Móng Cái',
     destination: tour.destination,
     schedule: '',
+    departureDates: tour.departureDates || [],
     rating: Number(tour.rating || 5),
     reviewCount: tour.reviewCount || 0,
     bookedCount: tour.bookingCount || 0,

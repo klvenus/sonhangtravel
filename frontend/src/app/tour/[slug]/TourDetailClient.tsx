@@ -17,6 +17,12 @@ interface TourDetailProps {
     departure: string
     destination: string
     schedule: string
+    departureDates?: Array<{
+      date: string
+      price?: number
+      availableSlots: number
+      status: string
+    }>
     rating: number
     reviewCount: number
     bookedCount: number
@@ -52,6 +58,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
+  const departureDates = (tourData.departureDates || []).filter((item) => item?.date)
+  const [selectedDepartureDate, setSelectedDepartureDate] = useState(departureDates[0]?.date || '')
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price)
@@ -60,6 +68,25 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const discountPercent = tourData.originalPrice > tourData.price 
     ? Math.round(((tourData.originalPrice - tourData.price) / tourData.originalPrice) * 100)
     : 0
+
+  const formatDepartureDateLabel = (dateStr: string) => {
+    const date = new Date(dateStr)
+    if (Number.isNaN(date.getTime())) return dateStr
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+    }).format(date)
+  }
+
+  const getDepartureDateMeta = (item: { availableSlots: number; status: string }) => {
+    if (item.status === 'soldout' || item.availableSlots === 0) {
+      return { label: 'Hết chỗ', className: 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed' }
+    }
+    if (item.status === 'limited' || item.availableSlots <= 5) {
+      return { label: `Còn ${item.availableSlots} chỗ`, className: 'border-amber-200 bg-amber-50 text-amber-700' }
+    }
+    return { label: 'Đang nhận khách', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
+  }
 
   const tabs = [
     { id: 'overview', label: 'Tổng quan' },
@@ -554,13 +581,46 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       )}
                     </div>
 
-                    {/* Date Selection */}
+                    {/* Departure Dates */}
                     <div className="mb-4">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Chọn ngày khởi hành</label>
-                      <input
-                        type="date"
-                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#00CBA9] focus:border-transparent transition-all"
-                      />
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Lịch khởi hành</label>
+                      {departureDates.length > 0 ? (
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-2">
+                            {departureDates.slice(0, 6).map((item) => {
+                              const disabled = item.status === 'soldout' || item.availableSlots === 0
+                              const isActive = selectedDepartureDate === item.date
+                              return (
+                                <button
+                                  key={item.date}
+                                  type="button"
+                                  disabled={disabled}
+                                  onClick={() => !disabled && setSelectedDepartureDate(item.date)}
+                                  className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                                    isActive
+                                      ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
+                                      : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
+                                  } ${disabled ? 'opacity-60' : ''}`}
+                                >
+                                  <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
+                                  <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
+                                    {getDepartureDateMeta(item).label}
+                                  </div>
+                                </button>
+                              )
+                            })}
+                          </div>
+                          {selectedDepartureDate && (
+                            <p className="text-xs text-gray-500">
+                              Đang chọn ngày khởi hành: <span className="font-semibold text-gray-700">{formatDepartureDateLabel(selectedDepartureDate)}</span>
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                          Tour này đang cập nhật lịch khởi hành. Anh chị nhắn Zalo để Sơn Hằng Travel chốt ngày gần nhất.
+                        </div>
+                      )}
                     </div>
 
                     {/* Quantity */}
