@@ -66,23 +66,16 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
     : tourData.price
   const normalDepartureDates = departureDates.filter((item) => (item.price || basePrice) <= basePrice)
   const holidayDepartureDates = departureDates.filter((item) => (item.price || basePrice) > basePrice)
-  const initialDepartureDate = (isHoliday3041 && holidayDepartureDates.length > 0 ? holidayDepartureDates[0]?.date : normalDepartureDates[0]?.date || departureDates[0]?.date || '')
+  const initialDepartureDate = (normalDepartureDates[0]?.date || departureDates[0]?.date || '')
   const [selectedDepartureDate, setSelectedDepartureDate] = useState(initialDepartureDate)
   const selectedDeparture = departureDates.find((item) => item.date === selectedDepartureDate)
   const displayPrice = selectedDeparture?.price || basePrice
+  const isSelectedHolidayDeparture = !!selectedDeparture && (selectedDeparture.price || basePrice) > basePrice
 
   useEffect(() => {
-    if (!selectedDepartureDate) return
-    const existsInHoliday = holidayDepartureDates.some((item) => item.date === selectedDepartureDate)
-    const existsInNormal = normalDepartureDates.some((item) => item.date === selectedDepartureDate)
-    if (isHoliday3041 && holidayDepartureDates.length > 0 && !existsInHoliday) {
-      setSelectedDepartureDate(holidayDepartureDates[0]?.date || '')
-      return
-    }
-    if (!isHoliday3041 && normalDepartureDates.length > 0 && !existsInNormal) {
-      setSelectedDepartureDate(normalDepartureDates[0]?.date || '')
-    }
-  }, [selectedDepartureDate, isHoliday3041, holidayDepartureDates, normalDepartureDates])
+    if (selectedDepartureDate) return
+    setSelectedDepartureDate(normalDepartureDates[0]?.date || departureDates[0]?.date || '')
+  }, [selectedDepartureDate, normalDepartureDates, departureDates])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price)
@@ -586,26 +579,26 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     )}
 
                     {/* Price */}
-                    <div className={`mb-6 rounded-2xl p-5 border-2 shadow-sm ${isHoliday3041 ? 'border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50' : 'border-[#00CBA9]/20 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10'}`}>
+                    <div className={`mb-6 rounded-2xl p-5 border-2 shadow-sm ${isSelectedHolidayDeparture ? 'border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50' : 'border-[#00CBA9]/20 bg-linear-to-r from-[#00CBA9]/10 to-[#00A88A]/10'}`}>
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className={`text-xs font-bold uppercase tracking-[0.2em] ${isHoliday3041 ? 'text-red-500' : 'text-[#00A88A]'}`}>
-                            {isHoliday3041 ? 'Lễ 30/4 - 1/5' : 'Giá ưu đãi'}
+                          <p className={`text-xs font-bold uppercase tracking-[0.2em] ${isSelectedHolidayDeparture ? 'text-red-500' : 'text-[#00A88A]'}`}>
+                            {isSelectedHolidayDeparture ? 'Lễ 30/4 - 1/5' : 'Giá ưu đãi'}
                           </p>
                           <div className="mt-2 flex items-end gap-2 mb-2">
-                            <span className={`text-4xl font-bold ${isHoliday3041 ? 'text-red-600 animate-pulse' : 'text-[#FF6B35]'}`}>{formatPrice(displayPrice)}đ</span>
+                            <span className={`text-4xl font-bold ${isSelectedHolidayDeparture ? 'text-red-600 animate-pulse' : 'text-[#FF6B35]'}`}>{formatPrice(displayPrice)}đ</span>
                             {tourData.originalPrice > displayPrice && (
                               <span className="text-gray-400 line-through text-lg">{formatPrice(tourData.originalPrice)}đ</span>
                             )}
                           </div>
                           <p className="text-sm text-gray-600">Giá/khách • Chưa bao gồm VAT</p>
                         </div>
-                        {isHoliday3041 && (
-                          <div className="rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-sm">Cao điểm lễ</div>
+                        {isSelectedHolidayDeparture && (
+                          <div className="rounded-full bg-red-500/10 px-3 py-1 text-xs font-bold text-red-600 ring-1 ring-red-200">Giá lễ</div>
                         )}
                       </div>
                       {discountPercent > 0 && (
-                        <div className={`mt-3 inline-block text-white text-xs font-bold px-3 py-1 rounded-full ${isHoliday3041 ? 'bg-red-600' : 'bg-red-600'}`}>
+                        <div className={`mt-3 inline-block text-white text-xs font-bold px-3 py-1 rounded-full ${isSelectedHolidayDeparture ? 'bg-red-600' : 'bg-red-600'}`}>
                           TIẾT KIỆM {discountPercent}%
                         </div>
                       )}
@@ -630,10 +623,11 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                 </div>
                                 <div className="relative">
                                   <select
-                                    value={selectedDepartureDate}
+                                    value={isSelectedHolidayDeparture ? selectedDepartureDate : ''}
                                     onChange={(e) => setSelectedDepartureDate(e.target.value)}
                                     className="w-full appearance-none rounded-2xl border border-rose-200 bg-white/90 px-4 py-3 pr-10 text-sm font-semibold text-gray-700 shadow-sm transition-all focus:border-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-100"
                                   >
+                                    <option value="">Chọn ngày lễ 30/4 - 1/5</option>
                                     {holidayDepartureDates.map((item) => (
                                       <option key={item.date} value={item.date}>
                                         Đợt {formatDepartureDateLabel(item.date)} • {getDepartureDateMeta(item).label} • {formatPrice(item.price || tourData.price)}đ
@@ -646,7 +640,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                     </svg>
                                   </div>
                                 </div>
-                                {selectedDepartureDate && (
+                                {isSelectedHolidayDeparture && selectedDepartureDate && (
                                   <div className="mt-3 flex items-center justify-between rounded-2xl bg-white/80 px-4 py-3 text-sm shadow-sm ring-1 ring-rose-100">
                                     <div>
                                       <p className="text-[11px] uppercase tracking-[0.16em] text-rose-500">Đang chọn</p>
@@ -733,7 +727,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden bg-white">
                         <button
                           type="button"
-                          onClick={() => setGuestCount((prev) => Math.max(1, prev - 1))}
+                          onClick={() => setGuestCount((prev) => Math.max(2, prev - 1))}
                           className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
