@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -58,6 +58,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
+  const [guestCount, setGuestCount] = useState(2)
   const departureDates = (tourData.departureDates || []).filter((item) => item?.date)
   const isHoliday3041 = /30\/4|1\/5|30-4|1-5/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
   const basePrice = departureDates.length > 0
@@ -69,6 +70,19 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [selectedDepartureDate, setSelectedDepartureDate] = useState(initialDepartureDate)
   const selectedDeparture = departureDates.find((item) => item.date === selectedDepartureDate)
   const displayPrice = selectedDeparture?.price || basePrice
+
+  useEffect(() => {
+    if (!selectedDepartureDate) return
+    const existsInHoliday = holidayDepartureDates.some((item) => item.date === selectedDepartureDate)
+    const existsInNormal = normalDepartureDates.some((item) => item.date === selectedDepartureDate)
+    if (isHoliday3041 && holidayDepartureDates.length > 0 && !existsInHoliday) {
+      setSelectedDepartureDate(holidayDepartureDates[0]?.date || '')
+      return
+    }
+    if (!isHoliday3041 && normalDepartureDates.length > 0 && !existsInNormal) {
+      setSelectedDepartureDate(normalDepartureDates[0]?.date || '')
+    }
+  }, [selectedDepartureDate, isHoliday3041, holidayDepartureDates, normalDepartureDates])
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price)
@@ -716,19 +730,24 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                     {/* Quantity */}
                     <div className="mb-6">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Số lượng khách</label>
-                      <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden">
-                        <button className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden bg-white">
+                        <button
+                          type="button"
+                          onClick={() => setGuestCount((prev) => Math.max(1, prev - 1))}
+                          className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+                        >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                           </svg>
                         </button>
-                        <input
-                          type="number"
-                          defaultValue="1"
-                          min="1"
-                          className="flex-1 text-center border-x-2 border-gray-200 py-3 text-sm font-semibold"
-                        />
-                        <button className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+                        <div className="flex-1 border-x-2 border-gray-200 py-3 text-center text-sm font-semibold text-gray-900 select-none">
+                          {guestCount}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setGuestCount((prev) => Math.min(20, prev + 1))}
+                          className="w-12 h-12 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+                        >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                           </svg>
