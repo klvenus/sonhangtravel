@@ -140,11 +140,15 @@ export default async function Home() {
     }
     
     if (featuredToursData.data && featuredToursData.data.length > 0) {
-      tours = featuredToursData.data.map(transformTour)
+      tours = featuredToursData.data
+        .filter((tour) => tour.price > 0)
+        .map(transformTour)
     }
     
     if (allToursData.data && allToursData.data.length > 0) {
-      allTours = allToursData.data.map(transformTour)
+      allTours = allToursData.data
+        .filter((tour) => tour.price > 0)
+        .map(transformTour)
     }
 
     // Extract banner slides from site settings
