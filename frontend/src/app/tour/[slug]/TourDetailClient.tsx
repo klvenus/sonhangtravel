@@ -60,6 +60,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const departureDates = (tourData.departureDates || []).filter((item) => item?.date)
   const [selectedDepartureDate, setSelectedDepartureDate] = useState(departureDates[0]?.date || '')
+  const selectedDeparture = departureDates.find((item) => item.date === selectedDepartureDate)
+  const displayPrice = selectedDeparture?.price || tourData.price
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN').format(price)
@@ -571,8 +573,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                             {isTetTour ? 'Tour Tết' : 'Giá ưu đãi'}
                           </p>
                           <div className="mt-2 flex items-end gap-2 mb-2">
-                            <span className={`text-4xl font-bold ${isTetTour ? 'text-red-600' : 'text-[#FF6B35]'}`}>{formatPrice(tourData.price)}đ</span>
-                            {tourData.originalPrice > tourData.price && (
+                            <span className={`text-4xl font-bold ${isTetTour ? 'text-red-600 animate-pulse' : 'text-[#FF6B35]'}`}>{formatPrice(displayPrice)}đ</span>
+                            {tourData.originalPrice > displayPrice && (
                               <span className="text-gray-400 line-through text-lg">{formatPrice(tourData.originalPrice)}đ</span>
                             )}
                           </div>
@@ -594,43 +596,66 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Lịch khởi hành</label>
                       {departureDates.length > 0 ? (
                         <div className="space-y-3">
-                          {isTetTour && (
-                            <div className="rounded-xl border border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50 px-4 py-3">
-                              <div className="mb-2 flex items-center gap-2">
-                                <span className="text-lg">🧧</span>
-                                <p className="text-sm font-bold text-red-600">Lịch khởi hành Tour Tết</p>
+                          {isTetTour ? (
+                            <>
+                              <div className="rounded-xl border border-red-200 bg-linear-to-r from-red-50 via-amber-50 to-yellow-50 px-4 py-3 shadow-sm">
+                                <div className="mb-2 flex items-center gap-2">
+                                  <span className="text-lg animate-bounce">🧧</span>
+                                  <p className="text-sm font-bold text-red-600">Lịch khởi hành Tour Tết</p>
+                                </div>
+                                <p className="text-xs leading-6 text-gray-600">
+                                  Chọn đợt khởi hành Tour Tết để giá nhảy theo đúng ngày đi và Sơn Hằng Travel giữ chỗ nhanh cho anh chị.
+                                </p>
                               </div>
-                              <p className="text-xs leading-6 text-gray-600">
-                                Chọn đợt khởi hành phù hợp để Sơn Hằng Travel giữ chỗ và tư vấn nhanh theo lịch Tết.
-                              </p>
-                            </div>
-                          )}
-                          <div className="grid grid-cols-2 gap-2">
-                            {departureDates.slice(0, 6).map((item) => {
-                              const isActive = selectedDepartureDate === item.date
-                              return (
-                                <button
-                                  key={item.date}
-                                  type="button"
-                                  onClick={() => setSelectedDepartureDate(item.date)}
-                                  className={`rounded-xl border px-3 py-3 text-left transition-all ${
-                                    isActive
-                                      ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
-                                      : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
-                                  }`}
+                              <div>
+                                <select
+                                  value={selectedDepartureDate}
+                                  onChange={(e) => setSelectedDepartureDate(e.target.value)}
+                                  className="w-full rounded-xl border-2 border-red-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-all focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100"
                                 >
-                                  <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
-                                  <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
-                                    {getDepartureDateMeta(item).label}
-                                  </div>
-                                </button>
-                              )
-                            })}
-                          </div>
-                          {selectedDepartureDate && (
-                            <p className="text-xs text-gray-500">
-                              Đang chọn ngày khởi hành: <span className="font-semibold text-gray-700">{formatDepartureDateLabel(selectedDepartureDate)}</span>
-                            </p>
+                                  {departureDates.map((item) => (
+                                    <option key={item.date} value={item.date}>
+                                      Đợt {formatDepartureDateLabel(item.date)} • {getDepartureDateMeta(item).label} • {formatPrice(item.price || tourData.price)}đ
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              {selectedDepartureDate && (
+                                <div className="rounded-xl border border-red-100 bg-red-50/70 px-4 py-3 text-sm text-gray-700">
+                                  Đang chọn đợt khởi hành Tết: <span className="font-bold text-red-600">{formatDepartureDateLabel(selectedDepartureDate)}</span>
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <div className="grid grid-cols-2 gap-2">
+                                {departureDates.slice(0, 6).map((item) => {
+                                  const isActive = selectedDepartureDate === item.date
+                                  return (
+                                    <button
+                                      key={item.date}
+                                      type="button"
+                                      onClick={() => setSelectedDepartureDate(item.date)}
+                                      className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                                        isActive
+                                          ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
+                                          : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
+                                      }`}
+                                    >
+                                      <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
+                                      <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
+                                        {getDepartureDateMeta(item).label}
+                                      </div>
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                              {selectedDepartureDate && (
+                                <p className="text-xs text-gray-500">
+                                  Đang chọn ngày khởi hành: <span className="font-semibold text-gray-700">{formatDepartureDateLabel(selectedDepartureDate)}</span>
+                                </p>
+                              )}
+                            </>
                           )}
                         </div>
                       ) : (
