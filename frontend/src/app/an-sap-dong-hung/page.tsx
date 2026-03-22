@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Ăn sập Đông Hưng | Sơn Hằng Travel',
     description:
-      'Khám phá tiệm bánh, món ăn vặt và những quán nhỏ xinh đáng ghé ở Đông Hưng trong một giao diện như quyển menu gọi món.',
+      'Khám phá tiệm bánh, món ăn vặt và những quán nhỏ xinh đáng ghé ở Đông Hưng trong giao diện như một quyển menu gọi món.',
     url: `${SITE_URL}/an-sap-dong-hung`,
     type: 'website',
     images: [
@@ -33,103 +33,74 @@ export const metadata: Metadata = {
   },
 }
 
-const moodTabs = [
-  { label: 'Bánh ngọt', color: 'bg-rose-100 text-rose-800 border-rose-200' },
-  { label: 'Ăn vặt', color: 'bg-amber-100 text-amber-800 border-amber-200' },
-  { label: 'Mua quà', color: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-  { label: 'Quán nhỏ xinh', color: 'bg-sky-100 text-sky-800 border-sky-200' },
-  { label: 'Ghé nhanh', color: 'bg-stone-100 text-stone-800 border-stone-200' },
-]
-
-const quickNotes = [
-  'Ưu tiên những điểm dừng nhỏ, xinh và dễ ghé giữa hành trình dạo phố.',
-  'Bài viết ngắn, dễ đọc, hợp kiểu xem nhanh rồi lưu lại để ghé thử.',
-  'Giọng điệu tự nhiên, không nhồi quảng cáo thô, giữ cảm giác như một cuốn food guide.',
-]
-
 function isDongHungFoodPost(post: BlogPost) {
-  const haystack = [
-    post.title,
-    post.description,
-    post.excerpt,
-    post.category,
-    ...(post.keywords || []),
-  ]
+  const haystack = [post.title, post.description, post.excerpt, post.category, ...(post.keywords || [])]
     .join(' ')
     .toLowerCase()
 
-  return /(đông hưng|dong hung|food|ăn vặt|banh|bánh|quán|tiệm|ẩm thực|ẩm-thực)/.test(haystack)
-}
-
-function pickTags(post: BlogPost) {
-  const haystack = [post.title, post.description, post.excerpt, ...(post.keywords || [])].join(' ').toLowerCase()
-  const tags: string[] = ['Đông Hưng']
-
-  if (/(bánh|cake|sweet|ngọt|tiệm bánh)/.test(haystack)) tags.push('Bánh ngọt')
-  if (/(quà|mua về|mang về)/.test(haystack)) tags.push('Mua quà')
-  if (/(ăn vặt|snack|đồ ăn)/.test(haystack)) tags.push('Ăn vặt')
-  if (tags.length === 1) tags.push('Ghé thử')
-
-  return tags.slice(0, 3)
+  return /(đông hưng|dong hung|food|ăn vặt|banh|bánh|quán|tiệm|ẩm thực|ẩm-thực|city sweet|rolling)/.test(haystack)
 }
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('vi-VN')
 }
 
-function MenuCard({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
-  const tags = pickTags(post)
+function pickMeta(post: BlogPost) {
+  const haystack = [post.title, post.description, post.excerpt, ...(post.keywords || [])].join(' ').toLowerCase()
+  const mood = /(bánh|cake|sweet|ngọt)/.test(haystack)
+    ? 'Bánh ngọt'
+    : /(ăn vặt|snack|đồ ăn)/.test(haystack)
+      ? 'Ăn vặt'
+      : 'Ghé thử'
+  const note = /(quà|mua về|mang về)/.test(haystack)
+    ? 'Hợp mua về làm quà'
+    : /(xinh|check-in|đẹp)/.test(haystack)
+      ? 'Quán nhỏ xinh dễ ghé'
+      : 'Điểm dừng nhẹ giữa hành trình'
+
+  return { mood, note }
+}
+
+function MenuListItem({ post, index }: { post: BlogPost; index: number }) {
   const image = post.thumbnail || post.gallery?.[0] || DEFAULT_COVER
+  const { mood, note } = pickMeta(post)
 
   return (
-    <article
-      className={`group relative overflow-hidden rounded-[28px] border border-[#d8c6ac] bg-[#fbf4e8] shadow-[0_18px_40px_rgba(62,44,33,0.12)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_48px_rgba(62,44,33,0.18)] ${featured ? 'lg:min-h-[540px]' : ''}`}
-    >
-      <div className="absolute inset-x-6 top-0 h-3 rounded-b-full bg-[#d9b66b]/55 blur-[1px]" />
-      <div className={`grid h-full ${featured ? 'lg:grid-cols-[1.08fr_0.92fr]' : ''}`}>
-        <Link href={`/blog/${post.slug}`} className={`relative block overflow-hidden bg-[#eadcc7] ${featured ? 'min-h-[320px]' : 'aspect-[4/3]'}`}>
+    <article className="rounded-[28px] border border-[#d6c0a1] bg-[#fffaf1] p-4 shadow-[0_10px_24px_rgba(90,62,38,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_30px_rgba(90,62,38,0.12)] sm:p-5">
+      <div className="flex gap-4">
+        <Link href={`/blog/${post.slug}`} className="relative block h-28 w-24 shrink-0 overflow-hidden rounded-[20px] border border-[#ddccb3] bg-[#efe2cb] sm:h-32 sm:w-28">
           <Image
             src={image}
             alt={post.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes={featured ? '(max-width: 1024px) 100vw, 52vw' : '(max-width: 768px) 100vw, 33vw'}
+            className="object-cover"
+            sizes="(max-width: 640px) 96px, 112px"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#3e2c21]/40 via-transparent to-transparent" />
-          <div className="absolute left-4 top-4 inline-flex rounded-full border border-white/60 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[#6b4f3a] backdrop-blur">
-            Menu chọn món
-          </div>
         </Link>
 
-        <div className="relative flex h-full flex-col justify-between p-5 sm:p-6 lg:p-8">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 text-xs text-[#7b634c]">
-              <span className="rounded-full border border-[#d8c6ac] bg-white/70 px-3 py-1 font-semibold">{formatDate(post.publishedAt)}</span>
-              {tags.map((tag) => (
-                <span key={tag} className="rounded-full border border-[#e2d3bd] bg-[#fffaf2] px-3 py-1 font-medium">
-                  {tag}
-                </span>
-              ))}
-            </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.26em] text-[#9a7457]">
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <span>•</span>
+            <span>{mood}</span>
+          </div>
+          <h2 className="mt-2 text-lg font-bold leading-tight text-[#4a3325] sm:text-xl">
+            <Link href={`/blog/${post.slug}`} className="transition-colors hover:text-[#8f3c34]">
+              {post.title}
+            </Link>
+          </h2>
+          <p className="mt-2 line-clamp-2 text-sm leading-7 text-[#6e5543] sm:text-[15px]">
+            {post.excerpt || post.description}
+          </p>
 
-            <h2 className={`mt-4 font-bold tracking-tight text-[#3e2c21] ${featured ? 'text-2xl sm:text-3xl' : 'text-xl'}`}>
-              <Link href={`/blog/${post.slug}`} className="transition-colors hover:text-[#8b3a3a]">
-                {post.title}
-              </Link>
-            </h2>
-
-            <p className={`mt-4 text-[#5e4c3f] ${featured ? 'text-base leading-8' : 'line-clamp-3 text-sm leading-7'}`}>
-              {post.excerpt || post.description}
-            </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[#7a5a45]">
+            <span className="rounded-full border border-[#dfccb0] bg-[#f9efdd] px-3 py-1 font-semibold">{note}</span>
+            <span>{formatDate(post.publishedAt)}</span>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-4 border-t border-dashed border-[#d8c6ac] pt-4">
-            <span className="text-sm font-medium text-[#7b634c]">Ghé xem gợi ý này</span>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="inline-flex items-center gap-2 rounded-full bg-[#6b4f3a] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#8b3a3a]"
-            >
-              Mở trang
+          <div className="mt-4 border-t border-dashed border-[#dbc6a8] pt-3">
+            <Link href={`/blog/${post.slug}`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#7f3f32] transition hover:text-[#5c2e25]">
+              Xem món này
               <span aria-hidden>→</span>
             </Link>
           </div>
@@ -143,97 +114,135 @@ export default async function AnSapDongHungPage() {
   const allPosts = await getAllBlogPosts()
   const filteredPosts = allPosts.filter(isDongHungFoodPost)
   const posts = filteredPosts.length > 0 ? filteredPosts : allPosts.slice(0, 6)
-  const [featuredPost, ...restPosts] = posts
+  const featured = posts[0]
+  const menuItems = posts.slice(1, 7)
+  const featuredImage = featured?.thumbnail || featured?.gallery?.[0] || DEFAULT_COVER
 
   return (
-    <main className="min-h-screen bg-[#f3eadc] text-[#3e2c21]">
-      <section className="relative overflow-hidden border-b border-[#d9c4a6] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.72),_rgba(243,234,220,0.98))]">
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(217,182,107,0.14),transparent_38%,rgba(107,79,58,0.08))]" />
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-16">
-          <div className="relative overflow-hidden rounded-[34px] border border-[#c7ad89] bg-[#5e4333] p-7 text-[#f9f1e6] shadow-[0_28px_60px_rgba(62,44,33,0.26)] sm:p-8">
-            <div className="absolute right-5 top-5 h-24 w-24 rounded-full border border-white/10 bg-white/5 blur-2xl" />
-            <div className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-[#f3d9a3]">
-              Menu đặc biệt
-            </div>
-            <h1 className="mt-6 text-4xl font-bold leading-tight sm:text-5xl">Ăn sập Đông Hưng</h1>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-[#f5ead9] sm:text-base sm:leading-8">
-              Cẩm nang quán ngon, tiệm bánh, đồ ăn vặt và những điểm dừng nhỏ đáng thử khi khám phá Đông Hưng. Giao diện được làm như một cuốn menu gọi món để lướt nhanh, chọn nhanh và lưu lại những chỗ đáng ghé.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              {moodTabs.map((tab) => (
-                <span
-                  key={tab.label}
-                  className={`inline-flex rounded-full border px-4 py-2 text-sm font-semibold shadow-sm ${tab.color}`}
-                >
-                  {tab.label}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-8 rounded-[26px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#f3d9a3]">Note mở đầu</p>
-              <p className="mt-3 text-base leading-8 text-[#f8f0e5]">
-                Không chỉ để mua sắm, Đông Hưng còn có rất nhiều quán nhỏ xinh, tiệm bánh và những món ăn vặt khiến chuyến đi trở nên dễ nhớ hơn.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-5 self-stretch sm:grid-cols-2">
-            {quickNotes.map((note, index) => (
-              <div
-                key={note}
-                className={`rounded-[28px] border border-[#dcc9af] bg-[#fbf5eb] p-5 shadow-[0_18px_38px_rgba(62,44,33,0.10)] ${index === 0 ? 'sm:col-span-2' : ''}`}
-              >
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#ead8bf] text-sm font-bold text-[#6b4f3a]">
-                  0{index + 1}
+    <main className="min-h-screen bg-[#efe3d0] py-8 text-[#4a3325] sm:py-10 lg:py-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section className="relative overflow-hidden rounded-[36px] border border-[#b88c68] bg-[#6b4732] p-3 shadow-[0_30px_80px_rgba(62,44,33,0.28)] sm:p-5 lg:p-6">
+          <div className="rounded-[30px] border border-[#d0b08e]/60 bg-[#f7ead5] p-5 sm:p-6 lg:p-8">
+            <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-0">
+              <div className="relative rounded-[28px] border border-[#d7c3a5] bg-[linear-gradient(180deg,#fbf4e8_0%,#f2e2c8_100%)] p-5 shadow-inner sm:p-7 lg:rounded-r-[10px] lg:border-r-0">
+                <div className="absolute inset-y-6 right-0 hidden w-px bg-[linear-gradient(180deg,transparent,#c8a884,transparent)] lg:block" />
+                <div className="inline-flex rounded-full border border-[#ceb08a] bg-[#fff7eb] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.35em] text-[#8d6648]">
+                  Sổ menu gọi món
                 </div>
-                <p className="mt-4 text-base leading-8 text-[#4c3c2f]">{note}</p>
-              </div>
-            ))}
+                <h1 className="mt-5 text-4xl font-bold leading-tight text-[#4a3325] sm:text-5xl">
+                  Ăn sập Đông Hưng
+                </h1>
+                <p className="mt-4 max-w-xl text-sm leading-7 text-[#654d3d] sm:text-base sm:leading-8">
+                  Một cuốn menu online dành cho những quán nhỏ xinh, tiệm bánh, món ăn vặt và các điểm dừng dễ khiến chuyến đi Đông Hưng trở nên đáng nhớ hơn.
+                </p>
 
-            <div className="rounded-[28px] border border-[#dcc9af] bg-[linear-gradient(180deg,#fff7ea_0%,#f5ead8_100%)] p-6 shadow-[0_18px_38px_rgba(62,44,33,0.10)] sm:col-span-2">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#8b3a3a]">Câu chốt brand</p>
-              <blockquote className="mt-4 text-xl font-semibold leading-9 text-[#3e2c21] sm:text-2xl">
-                “Trong hành trình khám phá Đông Hưng cùng Sơn Hằng Travel, những điểm dừng nhỏ như vậy thường là phần khiến chuyến đi trở nên dễ nhớ hơn.”
-              </blockquote>
+                <div className="mt-6 rounded-[24px] border border-[#dbc6a8] bg-[#fffaf1] p-4 sm:p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#9d7255]">Gợi ý theo mood</p>
+                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm font-semibold text-[#5f4636] sm:grid-cols-3">
+                    {['Bánh ngọt', 'Ăn vặt', 'Mua quà', 'Quán nhỏ xinh', 'Ghé nhanh', 'Đi dạo ghé thử'].map((item) => (
+                      <div key={item} className="rounded-2xl border border-[#e2d3bc] bg-[#f9efde] px-4 py-3 text-center shadow-sm">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6 rounded-[24px] border border-[#d9c4a6] bg-[#5f3f2e] p-5 text-[#fff5ea] shadow-[0_12px_28px_rgba(62,44,33,0.18)]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#f1d5a9]">Note mở đầu</p>
+                  <p className="mt-3 text-sm leading-7 sm:text-base sm:leading-8">
+                    Không chỉ để mua sắm, Đông Hưng còn có rất nhiều quán nhỏ, tiệm bánh và những món ăn vặt khiến hành trình trở nên mềm hơn, vui hơn và dễ nhớ hơn.
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative rounded-[28px] border border-[#d7c3a5] bg-[linear-gradient(180deg,#fffaf1_0%,#f7ead6_100%)] p-5 shadow-inner sm:p-7 lg:rounded-l-[10px] lg:border-l-0">
+                <div className="absolute inset-y-6 left-0 hidden w-px bg-[linear-gradient(180deg,transparent,#c8a884,transparent)] lg:block" />
+                <div className="flex items-center justify-between gap-4 border-b border-dashed border-[#d7c3a5] pb-4">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#9d7255]">Trang gợi ý đầu bếp</p>
+                    <h2 className="mt-2 text-2xl font-bold text-[#4a3325]">Món nên mở trước</h2>
+                  </div>
+                  <span className="rounded-full border border-[#d7c3a5] bg-[#fbf0de] px-4 py-2 text-sm font-semibold text-[#7a5a45]">
+                    Signature pick
+                  </span>
+                </div>
+
+                {featured ? (
+                  <div className="mt-5 grid gap-5 md:grid-cols-[0.82fr_1.18fr]">
+                    <div className="relative min-h-[260px] overflow-hidden rounded-[26px] border border-[#dcc6aa] bg-[#efe2cb]">
+                      <Image
+                        src={featuredImage}
+                        alt={featured.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 32vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#4a3325]/50 via-transparent to-transparent" />
+                      <div className="absolute left-4 top-4 rounded-full border border-white/40 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-[#7a5a45]">
+                        Cover menu
+                      </div>
+                    </div>
+                    <div className="flex flex-col justify-between rounded-[26px] border border-[#dcc6aa] bg-[#fffdf8] p-5 shadow-sm">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#9d7255]">Món mở đầu</p>
+                        <h3 className="mt-3 text-2xl font-bold leading-tight text-[#4a3325] sm:text-3xl">
+                          <Link href={`/blog/${featured.slug}`} className="transition-colors hover:text-[#8f3c34]">
+                            {featured.title}
+                          </Link>
+                        </h3>
+                        <p className="mt-4 text-sm leading-7 text-[#6e5543] sm:text-base sm:leading-8">
+                          {featured.excerpt || featured.description}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 border-t border-dashed border-[#dcc6aa] pt-4">
+                        <p className="text-sm italic leading-7 text-[#6b4f3a]">
+                          “Trong hành trình khám phá Đông Hưng cùng Sơn Hằng Travel, những điểm dừng nhỏ như vậy thường là phần khiến chuyến đi trở nên dễ nhớ hơn.”
+                        </p>
+                        <Link
+                          href={`/blog/${featured.slug}`}
+                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#7f3f32] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#5f2e26]"
+                        >
+                          Mở bài này
+                          <span aria-hidden>→</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#8b3a3a]">Chọn món để ghé</p>
-            <h2 className="mt-3 text-3xl font-bold text-[#3e2c21]">Gợi ý nổi bật trong cuốn menu Đông Hưng</h2>
+        <section className="mt-8 rounded-[34px] border border-[#c9a37f] bg-[#f8ecd8] p-4 shadow-[0_22px_48px_rgba(90,62,38,0.14)] sm:p-6 lg:p-8">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-dashed border-[#d7c3a5] pb-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#9d7255]">Các món trong menu</p>
+              <h2 className="mt-2 text-3xl font-bold text-[#4a3325]">Lật tiếp để chọn quán nên ghé</h2>
+            </div>
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 rounded-full border border-[#cfb08c] bg-[#fff8ed] px-5 py-2.5 text-sm font-semibold text-[#6b4f3a] transition hover:border-[#8f3c34] hover:text-[#8f3c34]"
+            >
+              Xem toàn bộ blog
+              <span aria-hidden>→</span>
+            </Link>
           </div>
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 rounded-full border border-[#cbb28d] bg-white/80 px-5 py-2.5 text-sm font-semibold text-[#6b4f3a] transition hover:border-[#8b3a3a] hover:text-[#8b3a3a]"
-          >
-            Xem toàn bộ blog
-            <span aria-hidden>→</span>
-          </Link>
-        </div>
 
-        {featuredPost ? (
-          <div className="grid gap-6">
-            <MenuCard post={featuredPost} featured />
-            {restPosts.length > 0 && (
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {restPosts.map((post) => (
-                  <MenuCard key={post.id} post={post} />
-                ))}
+          <div className="mt-6 grid gap-5 lg:grid-cols-2">
+            {menuItems.length > 0 ? (
+              menuItems.map((post, index) => <MenuListItem key={post.id} post={post} index={index + 1} />)
+            ) : featured ? (
+              <MenuListItem post={featured} index={1} />
+            ) : (
+              <div className="rounded-[28px] border border-[#d6c0a1] bg-[#fffaf1] p-8 text-center text-[#6e5543]">
+                Chưa có món nào trong menu Đông Hưng.
               </div>
             )}
           </div>
-        ) : (
-          <div className="rounded-[28px] border border-[#dcc9af] bg-[#fbf4e8] p-8 text-center text-[#5e4c3f] shadow-[0_18px_38px_rgba(62,44,33,0.10)]">
-            Chưa có bài nào trong thực đơn Đông Hưng. Khi có bài mới, trang này sẽ tự hiện theo phong cách menu gọi món.
-          </div>
-        )}
-      </section>
+        </section>
+      </div>
     </main>
   )
 }
