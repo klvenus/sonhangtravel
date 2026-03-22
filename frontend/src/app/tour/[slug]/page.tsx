@@ -257,7 +257,7 @@ function transformTour(tour: TourData) {
     bookedCount: tour.bookingCount || 0,
     images,
     highlights: buildTourHighlights(tour),
-    tourFileUrl: undefined,
+    tourFileUrl: tour.policy && /^https?:\/\//i.test(tour.policy) ? tour.policy : undefined,
     itinerary: tour.itinerary?.map(item => ({
       time: item.time || '',
       title: item.title,
