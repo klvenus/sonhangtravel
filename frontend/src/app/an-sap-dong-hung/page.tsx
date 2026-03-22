@@ -38,10 +38,11 @@ function isDongHungFoodPost(post: BlogPost) {
     .join(' ')
     .toLowerCase()
 
+  const dongHungSignals = /(đông hưng|dong hung)/.test(haystack)
   const foodSignals = /(city sweet|rolling|tiệm bánh|bánh ngọt|đồ ngọt|ăn vặt|quán nhỏ|quán ăn|mua về làm quà|món ngọt|dessert|bakery|cake|sweet)/.test(haystack)
   const badSignals = /(đi tour|khởi hành|chốt khách|chốt sớm|lịch khởi hành|ưu đãi|flash sale|cửa khẩu|hộ chiếu|feedback đoàn)/.test(haystack)
 
-  return foodSignals && !badSignals
+  return dongHungSignals && foodSignals && !badSignals
 }
 
 function formatDate(dateString: string) {
