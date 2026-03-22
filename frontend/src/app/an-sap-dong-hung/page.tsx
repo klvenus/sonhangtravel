@@ -66,14 +66,14 @@ function MenuListItem({ post, index }: { post: BlogPost; index: number }) {
   const { mood, note } = pickMeta(post)
 
   return (
-    <article className="group rounded-[30px] border border-rose-200 bg-white/90 p-4 shadow-[0_14px_34px_rgba(236,72,153,0.10)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(236,72,153,0.16)] sm:p-5">
+    <article className="group rounded-[30px] border border-rose-200 bg-white p-4 shadow-[0_8px_20px_rgba(236,72,153,0.08)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(236,72,153,0.12)] sm:p-5">
       <div className="flex gap-4">
         <Link href={`/blog/${post.slug}`} className="relative block h-28 w-24 shrink-0 overflow-hidden rounded-[22px] border border-rose-200 bg-rose-50 sm:h-32 sm:w-28">
           <Image
             src={image}
             alt={post.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             sizes="(max-width: 640px) 96px, 112px"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-rose-900/15 via-transparent to-transparent" />
@@ -120,13 +120,12 @@ export default async function AnSapDongHungPage() {
   const featuredImage = featured?.thumbnail || featured?.gallery?.[0] || DEFAULT_COVER
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,#fff8fc_0%,#ffeef6_30%,#fde7f1_100%)] py-8 text-rose-950 sm:py-10 lg:py-14">
+    <main className="min-h-screen bg-[#fff6fb] py-8 text-rose-950 sm:py-10 lg:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <section className="relative overflow-hidden rounded-[38px] border border-rose-200 bg-[linear-gradient(180deg,#ffd8ea_0%,#ffc4df_100%)] p-3 shadow-[0_30px_80px_rgba(236,72,153,0.18)] sm:p-5 lg:p-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.55),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.45),transparent_28%)]" />
-          <div className="relative rounded-[30px] border border-white/70 bg-white/45 p-5 backdrop-blur-sm sm:p-6 lg:p-8">
+        <section className="relative overflow-hidden rounded-[38px] border border-rose-200 bg-[linear-gradient(180deg,#ffd8ea_0%,#ffc4df_100%)] p-3 shadow-[0_18px_44px_rgba(236,72,153,0.14)] sm:p-5 lg:p-6">
+          <div className="relative rounded-[30px] border border-white/70 bg-white/70 p-5 sm:p-6 lg:p-8">
             <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-0">
-              <div className="relative rounded-[28px] border border-rose-200 bg-[linear-gradient(180deg,#fffafc_0%,#ffeef5_100%)] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] sm:p-7 lg:rounded-r-[10px] lg:border-r-0">
+              <div className="relative rounded-[28px] border border-rose-200 bg-[linear-gradient(180deg,#fffafc_0%,#ffeef5_100%)] p-5 sm:p-7 lg:rounded-r-[10px] lg:border-r-0">
                 <div className="absolute inset-y-6 right-0 hidden w-px bg-[linear-gradient(180deg,transparent,rgba(244,114,182,0.35),transparent)] lg:block" />
                 <div className="inline-flex rounded-full border border-rose-200 bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.35em] text-rose-500 shadow-sm">
                   Menu gọi món cute pink
@@ -138,7 +137,7 @@ export default async function AnSapDongHungPage() {
                   Một cuốn menu online dành cho những quán nhỏ xinh, tiệm bánh, món ăn vặt và các điểm dừng dễ khiến chuyến đi Đông Hưng trở nên ngọt ngào, vui mắt và đáng nhớ hơn.
                 </p>
 
-                <div className="mt-6 rounded-[24px] border border-rose-200 bg-white/80 p-4 shadow-[0_10px_24px_rgba(236,72,153,0.06)] sm:p-5">
+                <div className="mt-6 rounded-[24px] border border-rose-200 bg-white p-4 shadow-[0_6px_16px_rgba(236,72,153,0.05)] sm:p-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.28em] text-rose-500">Gợi ý theo mood</p>
                   <div className="mt-4 grid grid-cols-2 gap-3 text-sm font-semibold text-rose-900 sm:grid-cols-3">
                     {[
@@ -156,7 +155,7 @@ export default async function AnSapDongHungPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 rounded-[24px] border border-rose-200 bg-[linear-gradient(135deg,#ff7fb6_0%,#ff92c2_55%,#ffb4d6_100%)] p-5 text-white shadow-[0_16px_34px_rgba(236,72,153,0.22)]">
+                <div className="mt-6 rounded-[24px] border border-rose-200 bg-[linear-gradient(135deg,#ff7fb6_0%,#ff92c2_55%,#ffb4d6_100%)] p-5 text-white shadow-[0_10px_22px_rgba(236,72,153,0.16)]">
                   <p className="text-xs font-semibold uppercase tracking-[0.32em] text-white/85">Note mở đầu</p>
                   <p className="mt-3 text-sm leading-7 sm:text-base sm:leading-8">
                     Không chỉ để mua sắm, Đông Hưng còn có rất nhiều quán nhỏ, tiệm bánh và những món ăn vặt khiến hành trình trở nên mềm hơn, xinh hơn và dễ nhớ hơn rất nhiều.
@@ -164,7 +163,7 @@ export default async function AnSapDongHungPage() {
                 </div>
               </div>
 
-              <div className="relative rounded-[28px] border border-rose-200 bg-[linear-gradient(180deg,#fffafd_0%,#fff1f7_100%)] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] sm:p-7 lg:rounded-l-[10px] lg:border-l-0">
+              <div className="relative rounded-[28px] border border-rose-200 bg-[linear-gradient(180deg,#fffafd_0%,#fff1f7_100%)] p-5 sm:p-7 lg:rounded-l-[10px] lg:border-l-0">
                 <div className="absolute inset-y-6 left-0 hidden w-px bg-[linear-gradient(180deg,transparent,rgba(244,114,182,0.35),transparent)] lg:block" />
                 <div className="flex items-center justify-between gap-4 border-b border-dashed border-rose-200 pb-4">
                   <div>
@@ -178,7 +177,7 @@ export default async function AnSapDongHungPage() {
 
                 {featured ? (
                   <div className="mt-5 grid gap-5 md:grid-cols-[0.82fr_1.18fr]">
-                    <div className="relative min-h-[260px] overflow-hidden rounded-[26px] border border-rose-200 bg-rose-50 shadow-[0_16px_30px_rgba(236,72,153,0.10)]">
+                    <div className="relative min-h-[260px] overflow-hidden rounded-[26px] border border-rose-200 bg-rose-50 shadow-[0_10px_22px_rgba(236,72,153,0.08)]">
                       <Image
                         src={featuredImage}
                         alt={featured.title}
@@ -191,7 +190,7 @@ export default async function AnSapDongHungPage() {
                         Cover menu
                       </div>
                     </div>
-                    <div className="flex flex-col justify-between rounded-[26px] border border-rose-200 bg-white/90 p-5 shadow-[0_14px_30px_rgba(236,72,153,0.08)]">
+                    <div className="flex flex-col justify-between rounded-[26px] border border-rose-200 bg-white p-5 shadow-[0_8px_18px_rgba(236,72,153,0.06)]">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-rose-500">Món mở đầu</p>
                         <h3 className="mt-3 text-2xl font-bold leading-tight text-rose-950 sm:text-3xl">
@@ -210,7 +209,7 @@ export default async function AnSapDongHungPage() {
                         </p>
                         <Link
                           href={`/blog/${featured.slug}`}
-                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#ec4899_0%,#d946ef_100%)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_26px_rgba(217,70,239,0.22)] transition hover:translate-y-[-1px]"
+                          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#ec4899_0%,#d946ef_100%)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_18px_rgba(217,70,239,0.16)] transition hover:translate-y-[-1px]"
                         >
                           Mở bài này
                           <span aria-hidden>→</span>
@@ -224,7 +223,7 @@ export default async function AnSapDongHungPage() {
           </div>
         </section>
 
-        <section className="mt-8 rounded-[36px] border border-rose-200 bg-[linear-gradient(180deg,#fff8fc_0%,#fff1f7_100%)] p-4 shadow-[0_22px_48px_rgba(236,72,153,0.12)] sm:p-6 lg:p-8">
+        <section className="mt-8 rounded-[36px] border border-rose-200 bg-[linear-gradient(180deg,#fff8fc_0%,#fff1f7_100%)] p-4 shadow-[0_14px_30px_rgba(236,72,153,0.10)] sm:p-6 lg:p-8">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-dashed border-rose-200 pb-5">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.32em] text-rose-500">Các món trong menu</p>
