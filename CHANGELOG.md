@@ -14,3 +14,7 @@
 - Added a local admin Backup page with one-click backup, backup picker, and restore actions via `/api/backup` and `/api/backup/restore`.
 - Added macOS launchd automation to run deploy backups automatically at 09:00 and 21:00 daily.
 - Added a custom styled 404 page and a new `/lienhe` contact landing page with direct hotline, Zalo, email, and fanpage actions.
+
+## [Unreleased]
+### Added
+- Add \"Ăn sập Đông Hưng\" menu-style landing page for Đông Hưng food content.

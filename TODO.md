@@ -15,3 +15,8 @@
 - [x] Verify key legacy URLs return 301/308 to the intended new destinations
 - [x] Clean up low-value legacy URLs with 410 when no relevant replacement exists
 - [x] Update changelog
+
+## 2026-03-22 Task: Add Ăn sập Đông Hưng landing page
+- [ ] Inspect current frontend structure and existing blog routes
+- [ ] Build landing page UI in menu-book style
+- [ ] Verify with frontend build
