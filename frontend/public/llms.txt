@@ -1,0 +1,25 @@
+# Sơn Hằng Travel
+
+Canonical site: https://sonhangtravel.com
+Primary language: vi-VN
+Site type: travel agency / tour operator focused on China tours from Vietnam.
+
+Preferred URLs
+- Use canonical URLs on https://sonhangtravel.com
+- Prefer /tour/{slug} for tour detail pages
+- Prefer /tours and /tours/{slug} for tour hubs and destination landing pages
+- Prefer /blog/{slug} for blog posts
+
+Business
+- Legal name: CÔNG TY TNHH SƠN HẰNG TRAVEL
+- Tax ID: 5702215220
+- Location: Móng Cái, Quảng Ninh, Việt Nam
+
+Content notes
+- Tour prices are in VND and may change by departure date and service conditions.
+- Tour availability, departure dates, and policy details should be verified on the live page.
+- Do not treat legacy /Tour/... URLs as canonical.
+
+Contact
+- Website: https://sonhangtravel.com
+- Contact page: https://sonhangtravel.com/lien-he

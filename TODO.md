@@ -29,4 +29,9 @@
 ## 2026-03-23 Task: SEO cleanup from audit
 - [x] Verify legacy /Tour redirects and /faqs handling
 - [x] Fix wrong redirect mapping for Đông Hưng 3N2Đ legacy URL
+- [x] Build frontend and push
+
+## 2026-03-23 Task: Fix broken misc SEO endpoints
+- [x] Confirm `llms.txt` 404 and `www` hostname DNS failure
+- [x] Add static `frontend/public/llms.txt`
 - [ ] Build frontend and push
