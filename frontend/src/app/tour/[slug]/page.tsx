@@ -183,6 +183,35 @@ function transformRelatedTour(tour: TourData): RelatedTourCard {
   }
 }
 
+function buildTourSeoTitle(tour: TourData, seoTourName: string) {
+  const departure = toPlainText(tour.departure)
+  const duration = toPlainText(tour.duration)
+  const parts = [seoTourName]
+
+  if (duration && !seoTourName.toLowerCase().includes(duration.toLowerCase())) {
+    parts.push(duration)
+  }
+
+  if (departure && !seoTourName.toLowerCase().includes(departure.toLowerCase())) {
+    parts.push(`từ ${departure}`)
+  }
+
+  return parts.join(' | ')
+}
+
+function buildTourSeoDescription(tour: TourData, seoTourName: string) {
+  const shortDescription = shortenText(tour.shortDescription, 155)
+  if (shortDescription) return shortDescription
+
+  const departure = toPlainText(tour.departure || 'Móng Cái')
+  const duration = toPlainText(tour.duration || '')
+  const destination = toPlainText(tour.destination || 'Trung Quốc')
+  const priceText = tour.price > 0 ? `Giá từ ${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/người.` : ''
+  const summary = `${seoTourName}${duration ? `, ${duration}` : ''}${departure ? `, khởi hành từ ${departure}` : ''}, khám phá ${destination}. ${priceText}`
+
+  return shortenText(summary, 160)
+}
+
 // Generate dynamic metadata for each tour (SEO)
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -200,28 +229,29 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       : DEFAULT_OG_IMAGE
 
     const seoTourName = formatSeoTourName(tour.title)
-    const priceFormatted = new Intl.NumberFormat('vi-VN').format(tour.price)
-    const destinationText = tour.destination || 'Trung Quốc'
-    const departureText = tour.departure || 'Móng Cái'
-    const description = tour.shortDescription || `${seoTourName}. Khởi hành từ ${departureText}, lịch trình ${tour.duration}, giá từ ${priceFormatted}đ/người. Phù hợp cho khách muốn đi Trung Quốc trong ngày nhanh gọn.`
+    const destinationText = toPlainText(tour.destination || 'Trung Quốc')
+    const departureText = toPlainText(tour.departure || 'Móng Cái')
+    const durationText = toPlainText(tour.duration || '')
+    const description = buildTourSeoDescription(tour, seoTourName)
+    const pageTitle = buildTourSeoTitle(tour, seoTourName)
     const keywordSet = new Set([
       seoTourName,
       seoTourName.toLowerCase(),
       `tour ${destinationText.toLowerCase()}`,
       `du lịch ${destinationText.toLowerCase()}`,
-      `tour ${tour.duration}`,
-      `tour ${departureText.toLowerCase()}`,
-      `${seoTourName.toLowerCase()} giá rẻ`,
-      'tour trung quốc giá rẻ',
+      durationText ? `tour ${durationText.toLowerCase()}` : '',
+      departureText ? `tour ${departureText.toLowerCase()}` : '',
+      `tour ${tour.title.toLowerCase()}`,
+      'tour trung quốc',
       'sơn hằng travel',
-    ])
+    ].filter(Boolean))
 
     return {
-      title: `${seoTourName} - Giá ${priceFormatted}đ`,
+      title: pageTitle,
       description,
       keywords: Array.from(keywordSet),
       openGraph: {
-        title: `${seoTourName} | Sơn Hằng Travel`,
+        title: `${pageTitle} | Sơn Hằng Travel`,
         description,
         url: `${SITE_URL}/tour/${slug}`,
         type: 'website',
@@ -236,7 +266,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${seoTourName} | Sơn Hằng Travel`,
+        title: `${pageTitle} | Sơn Hằng Travel`,
         description,
         images: [imageUrl],
       },
