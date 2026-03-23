@@ -59,9 +59,17 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const [guestCount, setGuestCount] = useState(2)
-  const isDongHungOneDayDaily = tourData.slug === 'dong-hung-1-ngay'
+  const isDailyShortBorderTour = (() => {
+    const slug = tourData.slug || ''
+    const title = tourData.title || ''
+    const duration = tourData.duration || ''
+    const isDongHungShort = /dong-hung/.test(slug) && /(1 ngày|2 ngày 1 đêm|3 ngày 2 đêm)/i.test(duration)
+    const isHaKhauShort = /ha-khau/.test(slug) && /(1 ngày|2 ngày 1 đêm)/i.test(duration)
+    const isNamedShort = ['dong-hung-1-ngay', 'dong-hung-2-ngay-1-dem', 'dong-hung-3-ngay-2-dem', 'ha-khau-1-ngay'].includes(slug)
+    return isNamedShort || isDongHungShort || isHaKhauShort || /(Đông Hưng|Hà Khẩu)/i.test(title) && /(1 ngày|2 ngày 1 đêm|3 ngày 2 đêm)/i.test(duration)
+  })()
   const generatedDailyDates = (() => {
-    if (!isDongHungOneDayDaily) return [] as Array<{ date: string; price?: number; availableSlots: number; status: string }>
+    if (!isDailyShortBorderTour) return [] as Array<{ date: string; price?: number; availableSlots: number; status: string }>
 
     const items: Array<{ date: string; price?: number; availableSlots: number; status: string }> = []
     const today = new Date()
@@ -732,7 +740,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
                           {!isHoliday3041 && (
                             <>
-                              {isDongHungOneDayDaily && departureMonths.length > 1 && (
+                              {isDailyShortBorderTour && departureMonths.length > 1 && (
                                 <div className="space-y-2">
                                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn tháng</p>
                                   <div className="grid grid-cols-2 gap-2">
@@ -765,7 +773,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                               <div>
                                 <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn ngày</p>
                                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                                  {(isDongHungOneDayDaily ? visibleDepartureDates : (normalDepartureDates.length > 0 ? normalDepartureDates : departureDates)).slice(0, isDongHungOneDayDaily ? 31 : 6).map((item) => {
+                                  {(isDailyShortBorderTour ? visibleDepartureDates : (normalDepartureDates.length > 0 ? normalDepartureDates : departureDates)).slice(0, isDailyShortBorderTour ? 31 : 6).map((item) => {
                                     const isActive = selectedDepartureDate === item.date
                                     return (
                                       <button
@@ -780,7 +788,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                       >
                                         <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
                                         <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
-                                          {isDongHungOneDayDaily ? 'Khởi hành hằng ngày' : getDepartureDateMeta(item).label}
+                                          {isDailyShortBorderTour ? 'Khởi hành hằng ngày' : getDepartureDateMeta(item).label}
                                         </div>
                                       </button>
                                     )
