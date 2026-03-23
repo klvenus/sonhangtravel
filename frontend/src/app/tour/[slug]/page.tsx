@@ -43,15 +43,36 @@ function formatSeoTourName(title: string) {
   return /^tour\b/i.test(normalizedTitle) ? normalizedTitle : `Tour ${normalizedTitle}`
 }
 
+function toPlainText(value?: string | null) {
+  return (value || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function shortenText(value?: string | null, maxLength = 220) {
+  const text = toPlainText(value)
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength).replace(/[\s,;:.!?-]+$/g, '')}…`
+}
+
+function cleanSchemaAnswer(value?: string | null, maxLength = 260) {
+  return shortenText(value, maxLength)
+}
+
 function buildTourFaqItems(tour: TourData): TourFaqItem[] {
   const seoTourName = formatSeoTourName(tour.title)
   const price = `${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/khách`
   const departure = tour.departure || 'Móng Cái'
   const duration = tour.duration || '1 ngày'
-  const documents = (fallbackPolicies.documents || []).slice(0, 2).join('; ')
-  const includedItems = (tour.includes || []).slice(0, 3).join(', ')
-  const childPolicy = fallbackPolicies.children.join(' ')
-  const note = (tour.notes || fallbackPolicies.notes)[0]
+  const documents = cleanSchemaAnswer((fallbackPolicies.documents || []).slice(0, 2).join('; '), 200)
+  const includedItems = cleanSchemaAnswer((tour.includes || []).slice(0, 3).join(', '), 200)
+  const childPolicy = cleanSchemaAnswer(fallbackPolicies.children.join(' '), 220)
+  const note = cleanSchemaAnswer((tour.notes || fallbackPolicies.notes)[0], 180)
   const title = tour.title || ''
   const destination = tour.destination || ''
   const isShortBorderTour = /(Đông Hưng|Hà Khẩu)/i.test(title) && /(1 ngày|2 ngày 1 đêm|3 ngày 2 đêm)/i.test(duration)
@@ -364,7 +385,13 @@ export default async function TourDetailPage({ params }: PageProps) {
     const seoTourName = formatSeoTourName(tour.title)
     const destinationText = tour.destination || 'Trung Quốc'
     const departureText = tour.departure || 'Móng Cái'
-    const description = tour.shortDescription || `${seoTourName}. Khởi hành từ ${departureText}, lịch trình ${tour.duration}, giá từ ${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/người.`
+    const description = shortenText(tour.shortDescription || `${seoTourName}. Khởi hành từ ${departureText}, lịch trình ${tour.duration}, giá từ ${new Intl.NumberFormat('vi-VN').format(tour.price)}đ/người.`, 220)
+    const schemaItinerary = (tour.itinerary || []).slice(0, 8).map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: shortenText(item.title, 120),
+      description: shortenText(item.description, 180),
+    }))
 
     const tourSchema = {
       '@context': 'https://schema.org',
@@ -381,7 +408,7 @@ export default async function TourDetailPage({ params }: PageProps) {
         telephone: phoneNumber,
         url: SITE_URL,
       },
-      departureLocation: {
+      tripOrigin: {
         '@type': 'Place',
         name: departureText,
       },
@@ -395,16 +422,17 @@ export default async function TourDetailPage({ params }: PageProps) {
         priceCurrency: 'VND',
         availability: 'https://schema.org/InStock',
         url: canonicalUrl,
+        seller: {
+          '@type': 'TravelAgency',
+          name: 'Sơn Hằng Travel',
+          url: SITE_URL,
+          telephone: phoneNumber,
+        },
       },
-      itinerary: {
+      itinerary: schemaItinerary.length > 0 ? {
         '@type': 'ItemList',
-        itemListElement: tour.itinerary?.map((item, index) => ({
-          '@type': 'ListItem',
-          position: index + 1,
-          name: item.title,
-          description: item.description,
-        })) || [],
-      },
+        itemListElement: schemaItinerary,
+      } : undefined,
     }
 
     const serviceSchema = {
@@ -462,10 +490,10 @@ export default async function TourDetailPage({ params }: PageProps) {
       '@type': 'FAQPage',
       mainEntity: faqItems.map((item) => ({
         '@type': 'Question',
-        name: item.question,
+        name: shortenText(item.question, 140),
         acceptedAnswer: {
           '@type': 'Answer',
-          text: item.answer,
+          text: cleanSchemaAnswer(item.answer, 220),
         },
       })),
     } : null

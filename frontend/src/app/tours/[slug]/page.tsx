@@ -7,6 +7,23 @@ import { getTours, getCategoryBySlug, getCategories, getImageUrl } from '@/lib/d
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
+function toPlainText(value?: string | null) {
+  return (value || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function shortenText(value?: string | null, maxLength = 220) {
+  const text = toPlainText(value)
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength).replace(/[\s,;:.!?-]+$/g, '')}…`
+}
+
 function buildCategoryFaqItems(categoryName: string, slug: string, tourCount: number) {
   return [
     {
@@ -131,7 +148,7 @@ export default async function CategoryToursPage({
       .slice(0, 5)
     const categoryName = category.name || 'Danh mục'
     const canonicalUrl = `${SITE_URL}/tours/${slug}`
-    const categoryDescription = category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`
+    const categoryDescription = shortenText(category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`, 220)
     const categoryImage = category.image ? getImageUrl(category.image, 'large') : undefined
     const categorySchema = {
       '@context': 'https://schema.org',
@@ -170,7 +187,7 @@ export default async function CategoryToursPage({
         url: `${SITE_URL}/tour/${tour.slug}`,
         item: {
           '@type': 'TouristTrip',
-          name: tour.title,
+          name: shortenText(tour.title, 120),
           url: `${SITE_URL}/tour/${tour.slug}`,
           image: getImageUrl(tour.thumbnail || tour.gallery?.[0], 'large') || DEFAULT_OG_IMAGE,
           offers: {
@@ -189,10 +206,10 @@ export default async function CategoryToursPage({
       '@type': 'FAQPage',
       mainEntity: faqItems.map((item) => ({
         '@type': 'Question',
-        name: item.question,
+        name: shortenText(item.question, 140),
         acceptedAnswer: {
           '@type': 'Answer',
-          text: item.answer,
+          text: shortenText(item.answer, 220),
         },
       })),
     }

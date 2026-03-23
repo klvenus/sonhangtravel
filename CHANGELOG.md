@@ -16,6 +16,7 @@
 - Added a custom styled 404 page and a new `/lienhe` contact landing page with direct hotline, Zalo, email, and fanpage actions.
 - Corrected the legacy `/Tour/tour-dong-hung-3-ngay-2-dem` redirect so old SEO traffic lands on the actual Đông Hưng 3N2Đ page instead of the Nam Ninh route.
 - Added a static `llms.txt` file so the canonical domain no longer returns 404 for that crawler-facing endpoint.
+- Tightened tour/blog/category JSON-LD output by trimming long descriptions, sanitizing FAQ answers, limiting itinerary payloads, and using cleaner provider/offer fields for schema consumers.
 
 ## [Unreleased]
 ### Added

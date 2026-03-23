@@ -34,4 +34,10 @@
 ## 2026-03-23 Task: Fix broken misc SEO endpoints
 - [x] Confirm `llms.txt` 404 and `www` hostname DNS failure
 - [x] Add static `frontend/public/llms.txt`
+- [x] Build frontend and push
+
+## 2026-03-23 Task: Tighten schema output for tour/blog/category pages
+- [x] Audit current JSON-LD output on live pages
+- [x] Sanitize long/dirty answer text for FAQ schema
+- [x] Tighten tour/blog/category schema descriptions and itinerary fields
 - [ ] Build frontend and push

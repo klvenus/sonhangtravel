@@ -32,6 +32,23 @@ function normalizeVietnamese(text: string) {
     .trim()
 }
 
+function toPlainText(value?: string | null) {
+  return (value || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function shortenText(value?: string | null, maxLength = 220) {
+  const text = toPlainText(value)
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength).replace(/[\s,;:.!?-]+$/g, '')}…`
+}
+
 function tokenizeForMatch(text: string) {
   return Array.from(new Set(
     normalizeVietnamese(text)
@@ -448,8 +465,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: post.title,
-    description: post.description,
+    headline: shortenText(post.title, 110),
+    description: shortenText(post.description, 220),
     image: [articleImage],
     datePublished: post.publishedAt,
     dateModified: post.updatedAt || post.publishedAt,
@@ -479,17 +496,17 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   const faqItems = post.content
     .filter((block) => block.type === 'paragraph' && typeof block.text === 'string' && block.text.includes('?'))
     .map((block) => {
-      const text = block.text || ''
+      const text = toPlainText(block.text || '')
       const parts = text.split('?')
       const question = parts[0]?.trim()
       const answer = parts.slice(1).join('?').trim()
       return question && answer
         ? {
             '@type': 'Question',
-            name: `${question}?`,
+            name: `${shortenText(question, 140)}?`,
             acceptedAnswer: {
               '@type': 'Answer',
-              text: answer,
+              text: shortenText(answer, 220),
             },
           }
         : null
