@@ -68,6 +68,13 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
     const isNamedShort = ['dong-hung-1-ngay', 'dong-hung-2-ngay-1-dem', 'dong-hung-3-ngay-2-dem', 'ha-khau-1-ngay'].includes(slug)
     return isNamedShort || isDongHungShort || isHaKhauShort || /(Đông Hưng|Hà Khẩu)/i.test(title) && /(1 ngày|2 ngày 1 đêm|3 ngày 2 đêm)/i.test(duration)
   })()
+  const toLocalDateKey = (date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   const generatedDailyDates = (() => {
     if (!isDailyShortBorderTour) return [] as Array<{ date: string; price?: number; availableSlots: number; status: string }>
 
@@ -78,7 +85,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
     for (let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
       items.push({
-        date: cursor.toISOString().slice(0, 10),
+        date: toLocalDateKey(cursor),
         price: tourData.price,
         availableSlots: 12,
         status: 'available',
@@ -151,7 +158,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
     for (let i = 0; i < leadingEmpty; i += 1) cells.push({ key: `empty-${i}`, inMonth: false })
     for (let day = 1; day <= daysInMonth; day += 1) {
       const date = new Date(year, month - 1, day)
-      cells.push({ key: date.toISOString(), date: date.toISOString().slice(0, 10), day, inMonth: true })
+      cells.push({ key: `${selectedDepartureMonth}-${day}`, date: toLocalDateKey(date), day, inMonth: true })
     }
     return cells
   })()
@@ -805,7 +812,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                           }
 
                                           const isActive = selectedDepartureDate === cell.date
-                                          const isPast = cell.date < new Date().toISOString().slice(0, 10)
+                                          const isPast = cell.date < toLocalDateKey(new Date())
                                           return (
                                             <button
                                               key={cell.key}
