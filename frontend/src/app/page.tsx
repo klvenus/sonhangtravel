@@ -13,14 +13,14 @@ const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v177
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Tour Du Lịch Trung Quốc 2026 - Đông Hưng, Nam Ninh, Quế Lâm',
-  description: 'Sơn Hằng Travel chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng 1-2 ngày, Nam Ninh, Quế Lâm, Trương Gia Giới. Lịch khởi hành đều, giá tốt, hỗ trợ nhanh.',
+  title: 'Tour du lịch Trung Quốc | Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam',
+  description: 'Sơn Hằng Travel chuyên tour Trung Quốc từ Móng Cái và Lào Cai: Đông Hưng, Hà Khẩu, Nam Ninh, Côn Minh, Đại Lý và nhiều tuyến Vân Nam đang bán.',
   alternates: {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: 'Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel',
-    description: 'Danh mục tour Trung Quốc nổi bật từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới và nhiều hành trình bán chạy.',
+    title: 'Tour du lịch Trung Quốc | Sơn Hằng Travel',
+    description: 'Danh mục tour Trung Quốc đang bán tại Sơn Hằng Travel: Đông Hưng, Hà Khẩu, Nam Ninh, Côn Minh, Đại Lý, Thành Đô và nhiều hành trình nổi bật khác.',
     url: SITE_URL,
     type: 'website',
     images: [
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel',
-    description: 'Danh mục tour Trung Quốc nổi bật từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới và nhiều hành trình bán chạy.',
+    title: 'Tour du lịch Trung Quốc | Sơn Hằng Travel',
+    description: 'Danh mục tour Trung Quốc đang bán tại Sơn Hằng Travel: Đông Hưng, Hà Khẩu, Nam Ninh, Côn Minh, Đại Lý, Thành Đô và nhiều hành trình nổi bật khác.',
     images: [DEFAULT_OG_IMAGE],
   },
 }
