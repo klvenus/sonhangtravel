@@ -22,11 +22,11 @@
 - [ ] Verify with frontend build
 
 ## 2026-03-23 Task: Add monthly departure picker for Dong Hung 1 Day
-- [ ] Inspect tour detail departure UI and current data flow
-- [ ] Add 2-month month/day selector for daily-selling Dong Hung 1 Day
-- [ ] Build frontend and push
+- [x] Inspect tour detail departure UI and current data flow
+- [x] Add 2-month month/day selector for daily-selling Dong Hung 1 Day
+- [x] Build frontend and push
 
-## 2026-03-23 Task: Add monthly departure picker for Dong Hung 1 Day
-- [ ] Inspect tour detail departure UI and current data flow
-- [ ] Add 2-month month/day selector for daily-selling Dong Hung 1 Day
+## 2026-03-23 Task: SEO cleanup from audit
+- [x] Verify legacy /Tour redirects and /faqs handling
+- [x] Fix wrong redirect mapping for Đông Hưng 3N2Đ legacy URL
 - [ ] Build frontend and push

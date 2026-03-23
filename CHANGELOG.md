@@ -14,6 +14,7 @@
 - Added a local admin Backup page with one-click backup, backup picker, and restore actions via `/api/backup` and `/api/backup/restore`.
 - Added macOS launchd automation to run deploy backups automatically at 09:00 and 21:00 daily.
 - Added a custom styled 404 page and a new `/lienhe` contact landing page with direct hotline, Zalo, email, and fanpage actions.
+- Corrected the legacy `/Tour/tour-dong-hung-3-ngay-2-dem` redirect so old SEO traffic lands on the actual Đông Hưng 3N2Đ page instead of the Nam Ninh route.
 
 ## [Unreleased]
 ### Added
