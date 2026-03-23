@@ -18,3 +18,9 @@
 ## [Unreleased]
 ### Added
 - Add \"Ăn sập Đông Hưng\" menu-style landing page for Đông Hưng food content.
+
+### Changed
+- Add month/day departure selector for daily-selling Đông Hưng 1 Ngày tour.
+
+### Changed
+- Add month/day departure selector for daily-selling Đông Hưng 1 Ngày tour.

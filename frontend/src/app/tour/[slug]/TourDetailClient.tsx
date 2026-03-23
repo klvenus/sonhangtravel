@@ -59,7 +59,27 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [currentImage, setCurrentImage] = useState(0)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const [guestCount, setGuestCount] = useState(2)
-  const departureDates = (tourData.departureDates || []).filter((item) => item?.date)
+  const isDongHungOneDayDaily = tourData.slug === 'dong-hung-1-ngay'
+  const generatedDailyDates = (() => {
+    if (!isDongHungOneDayDaily) return [] as Array<{ date: string; price?: number; availableSlots: number; status: string }>
+
+    const items: Array<{ date: string; price?: number; availableSlots: number; status: string }> = []
+    const today = new Date()
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const end = new Date(today.getFullYear(), today.getMonth() + 2, 0)
+
+    for (let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
+      items.push({
+        date: cursor.toISOString().slice(0, 10),
+        price: tourData.price,
+        availableSlots: 12,
+        status: 'available',
+      })
+    }
+
+    return items
+  })()
+  const departureDates = ((tourData.departureDates && tourData.departureDates.length > 0) ? tourData.departureDates : generatedDailyDates).filter((item) => item?.date)
   const isHoliday3041 = /30\/4|1\/5|30-4|1-5/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
   const basePrice = departureDates.length > 0
     ? Math.min(...departureDates.map((item) => item.price || tourData.price), tourData.price)
@@ -93,6 +113,34 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
       month: '2-digit',
     }).format(date)
   }
+
+  const formatDepartureMonthLabel = (monthKey: string) => {
+    const [year, month] = monthKey.split('-').map(Number)
+    if (!year || !month) return monthKey
+    return `Tháng ${month}/${year}`
+  }
+
+  const departureMonthGroups = departureDates.reduce<Record<string, typeof departureDates>>((acc, item) => {
+    const monthKey = item.date.slice(0, 7)
+    if (!acc[monthKey]) acc[monthKey] = []
+    acc[monthKey].push(item)
+    return acc
+  }, {})
+  const departureMonths = Object.keys(departureMonthGroups).sort()
+  const initialDepartureMonth = selectedDepartureDate ? selectedDepartureDate.slice(0, 7) : departureMonths[0] || ''
+  const [selectedDepartureMonth, setSelectedDepartureMonth] = useState(initialDepartureMonth)
+  const visibleDepartureDates = selectedDepartureMonth ? (departureMonthGroups[selectedDepartureMonth] || []) : departureDates
+
+  useEffect(() => {
+    if (!selectedDepartureDate) return
+    const monthKey = selectedDepartureDate.slice(0, 7)
+    if (monthKey !== selectedDepartureMonth) setSelectedDepartureMonth(monthKey)
+  }, [selectedDepartureDate, selectedDepartureMonth])
+
+  useEffect(() => {
+    if (!selectedDepartureMonth || visibleDepartureDates.length > 0) return
+    setSelectedDepartureMonth(departureMonths[0] || '')
+  }, [selectedDepartureMonth, visibleDepartureDates, departureMonths])
 
   const getDepartureDateMeta = (item: { availableSlots: number; status: string }) => {
     if (item.status === 'limited' || item.availableSlots <= 9) {
@@ -684,27 +732,60 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
                           {!isHoliday3041 && (
                             <>
-                              <div className="grid grid-cols-2 gap-2">
-                                {(normalDepartureDates.length > 0 ? normalDepartureDates : departureDates).slice(0, 6).map((item) => {
-                                  const isActive = selectedDepartureDate === item.date
-                                  return (
-                                    <button
-                                      key={item.date}
-                                      type="button"
-                                      onClick={() => setSelectedDepartureDate(item.date)}
-                                      className={`rounded-xl border px-3 py-3 text-left transition-all ${
-                                        isActive
-                                          ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
-                                          : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
-                                      }`}
-                                    >
-                                      <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
-                                      <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
-                                        {getDepartureDateMeta(item).label}
-                                      </div>
-                                    </button>
-                                  )
-                                })}
+                              {isDongHungOneDayDaily && departureMonths.length > 1 && (
+                                <div className="space-y-2">
+                                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn tháng</p>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    {departureMonths.map((monthKey) => {
+                                      const isActive = selectedDepartureMonth === monthKey
+                                      return (
+                                        <button
+                                          key={monthKey}
+                                          type="button"
+                                          onClick={() => {
+                                            setSelectedDepartureMonth(monthKey)
+                                            const firstDate = departureMonthGroups[monthKey]?.[0]?.date
+                                            if (firstDate) setSelectedDepartureDate(firstDate)
+                                          }}
+                                          className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                                            isActive
+                                              ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
+                                              : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
+                                          }`}
+                                        >
+                                          <div className="text-sm font-bold text-gray-900">{formatDepartureMonthLabel(monthKey)}</div>
+                                          <div className="mt-1 text-[11px] text-gray-500">Khởi hành hằng ngày</div>
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              <div>
+                                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn ngày</p>
+                                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                  {(isDongHungOneDayDaily ? visibleDepartureDates : (normalDepartureDates.length > 0 ? normalDepartureDates : departureDates)).slice(0, isDongHungOneDayDaily ? 31 : 6).map((item) => {
+                                    const isActive = selectedDepartureDate === item.date
+                                    return (
+                                      <button
+                                        key={item.date}
+                                        type="button"
+                                        onClick={() => setSelectedDepartureDate(item.date)}
+                                        className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                                          isActive
+                                            ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
+                                            : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
+                                        }`}
+                                      >
+                                        <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
+                                        <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
+                                          {isDongHungOneDayDaily ? 'Khởi hành hằng ngày' : getDepartureDateMeta(item).label}
+                                        </div>
+                                      </button>
+                                    )
+                                  })}
+                                </div>
                               </div>
                               {selectedDepartureDate && (
                                 <p className="text-xs text-gray-500">
@@ -716,7 +797,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                         </div>
                       ) : (
                         <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
-                          Tour này đang cập nhật lịch khởi hành. Anh chị nhắn Zalo để Sơn Hằng Travel chốt ngày gần nhất.
+                          Lịch khởi hành đang được cập nhật.
                         </div>
                       )}
                     </div>

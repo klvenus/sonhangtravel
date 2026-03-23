@@ -20,3 +20,13 @@
 - [ ] Inspect current frontend structure and existing blog routes
 - [ ] Build landing page UI in menu-book style
 - [ ] Verify with frontend build
+
+## 2026-03-23 Task: Add monthly departure picker for Dong Hung 1 Day
+- [ ] Inspect tour detail departure UI and current data flow
+- [ ] Add 2-month month/day selector for daily-selling Dong Hung 1 Day
+- [ ] Build frontend and push
+
+## 2026-03-23 Task: Add monthly departure picker for Dong Hung 1 Day
+- [ ] Inspect tour detail departure UI and current data flow
+- [ ] Add 2-month month/day selector for daily-selling Dong Hung 1 Day
+- [ ] Build frontend and push
