@@ -81,10 +81,11 @@ export async function generateMetadata({
     const canonicalUrl = `${SITE_URL}/tours/${slug}`
     const categoryImage = category.image ? getImageUrl(category.image, 'large') : undefined
     const hasPublishedTours = toursRes.total > 0
+    const categoryDescription = shortenText(category.description || `Xem các tour ${categoryName} đang bán tại Sơn Hằng Travel, phù hợp cho khách muốn so sánh lịch trình, thời gian đi và mức giá theo từng tuyến.`, 160)
     
     return {
-      title: `Tour ${categoryName}`,
-      description: category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`,
+      title: `Tour ${categoryName} | Danh sách tuyến đang bán`,
+      description: categoryDescription,
       alternates: {
         canonical: canonicalUrl,
       },
@@ -93,8 +94,8 @@ export async function generateMetadata({
         follow: true,
       },
       openGraph: {
-        title: `Tour ${categoryName}`,
-        description: category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName}`,
+        title: `Tour ${categoryName} | Sơn Hằng Travel`,
+        description: categoryDescription,
         url: canonicalUrl,
         type: 'website',
         images: categoryImage ? [categoryImage] : [],
@@ -102,7 +103,7 @@ export async function generateMetadata({
       twitter: {
         card: 'summary_large_image',
         title: `Tour ${categoryName} | Sơn Hằng Travel`,
-        description: category.description || `Khám phá các tour du lịch hấp dẫn tại ${categoryName} cùng Sơn Hằng Travel`,
+        description: categoryDescription,
         images: categoryImage ? [categoryImage] : [],
       },
     }

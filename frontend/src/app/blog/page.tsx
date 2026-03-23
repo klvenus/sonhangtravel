@@ -10,16 +10,16 @@ const DEFAULT_OG_IMAGE =
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Blog Du Lịch Trung Quốc',
+  title: 'Blog du lịch Trung Quốc | Kinh nghiệm, lịch khởi hành, điểm đến',
   description:
-    'Chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam và các tuyến du lịch Trung Quốc từ Móng Cái, Lào Cai.',
+    'Blog Sơn Hằng Travel chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam, lịch khởi hành, ưu đãi và các điểm đến đang bán.',
   alternates: {
     canonical: `${SITE_URL}/blog`,
   },
   openGraph: {
-    title: 'Blog Du Lịch Trung Quốc | Sơn Hằng Travel',
+    title: 'Blog du lịch Trung Quốc | Sơn Hằng Travel',
     description:
-      'Chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam và các tuyến du lịch Trung Quốc từ Móng Cái, Lào Cai.',
+      'Blog Sơn Hằng Travel chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam, lịch khởi hành, ưu đãi và các điểm đến đang bán.',
     url: `${SITE_URL}/blog`,
     type: 'website',
     images: [
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog Du Lịch Trung Quốc | Sơn Hằng Travel',
+    title: 'Blog du lịch Trung Quốc | Sơn Hằng Travel',
     description:
-      'Chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam và các tuyến du lịch Trung Quốc từ Móng Cái, Lào Cai.',
+      'Blog Sơn Hằng Travel chia sẻ kinh nghiệm đi Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam, lịch khởi hành, ưu đãi và các điểm đến đang bán.',
     images: [DEFAULT_OG_IMAGE],
   },
 }

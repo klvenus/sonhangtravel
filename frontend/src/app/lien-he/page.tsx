@@ -60,15 +60,27 @@ export default async function ContactPage() {
     '@context': 'https://schema.org',
     '@type': 'TravelAgency',
     name: 'Sơn Hằng Travel',
+    legalName: 'CÔNG TY TNHH SƠN HẰNG TRAVEL',
     url: `${SITE_URL}/lien-he`,
     telephone: phone,
     email,
+    taxID: '5702215220',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Móng Cái',
       addressRegion: 'Quảng Ninh',
       addressCountry: 'VN',
       streetAddress: address,
+    },
+    areaServed: {
+      '@type': 'Country',
+      name: 'Trung Quốc',
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '07:00',
+      closes: '22:00',
     },
     sameAs: [facebookUrl, `https://zalo.me/${normalizedZalo}`].filter(Boolean),
   }
