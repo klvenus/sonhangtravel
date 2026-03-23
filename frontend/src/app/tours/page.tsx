@@ -8,12 +8,12 @@ const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
 const baseMetadata: Metadata = {
-  title: "Tour Du Lịch Trung Quốc 2026 - Đông Hưng, Nam Ninh, Quế Lâm",
-  description: "🎯 Danh sách tour du lịch Trung Quốc hot nhất 2026: Tour Đông Hưng 1-2 ngày, Tour Nam Ninh shopping, Tour Quế Lâm Dương Sóc, Tour Trương Gia Giới. Giá từ 999K!",
-  keywords: ["tour trung quốc 2026", "tour đông hưng giá rẻ", "tour nam ninh mua sắm", "tour quế lâm", "du lịch trung quốc từ móng cái"],
+  title: "Tour du lịch Trung Quốc | Đông Hưng, Hà Khẩu, Nam Ninh, Vân Nam",
+  description: "Danh sách tour Trung Quốc của Sơn Hằng Travel: Đông Hưng, Hà Khẩu, Nam Ninh, Côn Minh, Đại Lý, Thành Đô và các tuyến Vân Nam đang bán.",
+  keywords: ["tour trung quốc", "tour đông hưng", "tour hà khẩu", "tour nam ninh", "tour vân nam", "du lịch trung quốc từ móng cái"],
   openGraph: {
-    title: "Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel",
-    description: "Khám phá Trung Quốc với các tour chất lượng: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất thị trường!",
+    title: "Tour du lịch Trung Quốc | Sơn Hằng Travel",
+    description: "Xem danh sách tour Trung Quốc đang bán tại Sơn Hằng Travel: Đông Hưng, Hà Khẩu, Nam Ninh, Côn Minh, Đại Lý, Thành Đô và nhiều tuyến khác.",
     url: `${SITE_URL}/tours`,
     type: "website",
     images: [
@@ -27,8 +27,8 @@ const baseMetadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tour Du Lịch Trung Quốc 2026 | Sơn Hằng Travel',
-    description: 'Khám phá Trung Quốc với các tour chất lượng: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới. Giá tốt nhất thị trường!',
+    title: 'Tour du lịch Trung Quốc | Sơn Hằng Travel',
+    description: 'Xem danh sách tour Trung Quốc đang bán tại Sơn Hằng Travel: Đông Hưng, Hà Khẩu, Nam Ninh, Côn Minh, Đại Lý, Thành Đô và nhiều tuyến khác.',
     images: [DEFAULT_OG_IMAGE],
   },
   alternates: {

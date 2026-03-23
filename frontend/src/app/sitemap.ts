@@ -3,43 +3,50 @@ import { getCategories, getTours } from '@/lib/data'
 import { getAllBlogPosts } from '@/lib/blog'
 
 const SITE_URL = 'https://sonhangtravel.com'
+const DEFAULT_LAST_MODIFIED = new Date('2026-03-23T00:00:00+07:00')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
-      lastModified: new Date(),
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${SITE_URL}/tours`,
-      lastModified: new Date(),
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'daily',
       priority: 0.95,
     },
     {
       url: `${SITE_URL}/blog`,
-      lastModified: new Date(),
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'weekly',
       priority: 0.6,
     },
     {
       url: `${SITE_URL}/uu-dai`,
-      lastModified: new Date(),
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'daily',
       priority: 0.7,
     },
     {
       url: `${SITE_URL}/so-do-tour`,
-      lastModified: new Date(),
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/ve-chung-toi`,
-      lastModified: new Date(),
+      lastModified: DEFAULT_LAST_MODIFIED,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${SITE_URL}/lien-he`,
+      lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
