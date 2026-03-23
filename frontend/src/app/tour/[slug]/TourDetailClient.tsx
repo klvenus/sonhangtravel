@@ -138,6 +138,23 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const initialDepartureMonth = selectedDepartureDate ? selectedDepartureDate.slice(0, 7) : departureMonths[0] || ''
   const [selectedDepartureMonth, setSelectedDepartureMonth] = useState(initialDepartureMonth)
   const visibleDepartureDates = selectedDepartureMonth ? (departureMonthGroups[selectedDepartureMonth] || []) : departureDates
+  const monthCalendarDays = (() => {
+    if (!isDailyShortBorderTour || !selectedDepartureMonth) return [] as Array<{ key: string; date?: string; day?: number; inMonth: boolean }>
+    const [year, month] = selectedDepartureMonth.split('-').map(Number)
+    if (!year || !month) return [] as Array<{ key: string; date?: string; day?: number; inMonth: boolean }>
+
+    const firstDay = new Date(year, month - 1, 1)
+    const daysInMonth = new Date(year, month, 0).getDate()
+    const leadingEmpty = (firstDay.getDay() + 6) % 7
+    const cells: Array<{ key: string; date?: string; day?: number; inMonth: boolean }> = []
+
+    for (let i = 0; i < leadingEmpty; i += 1) cells.push({ key: `empty-${i}`, inMonth: false })
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const date = new Date(year, month - 1, day)
+      cells.push({ key: date.toISOString(), date: date.toISOString().slice(0, 10), day, inMonth: true })
+    }
+    return cells
+  })()
 
   useEffect(() => {
     if (!selectedDepartureDate) return
@@ -740,61 +757,104 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
                           {!isHoliday3041 && (
                             <>
-                              {isDailyShortBorderTour && departureMonths.length > 1 && (
-                                <div className="space-y-2">
-                                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn tháng</p>
-                                  <div className="grid grid-cols-2 gap-2">
-                                    {departureMonths.map((monthKey) => {
-                                      const isActive = selectedDepartureMonth === monthKey
+                              {isDailyShortBorderTour ? (
+                                <div className="space-y-3">
+                                  <div className="space-y-2">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn tháng</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {departureMonths.map((monthKey) => {
+                                        const isActive = selectedDepartureMonth === monthKey
+                                        return (
+                                          <button
+                                            key={monthKey}
+                                            type="button"
+                                            onClick={() => {
+                                              setSelectedDepartureMonth(monthKey)
+                                              const firstDate = departureMonthGroups[monthKey]?.[0]?.date
+                                              if (firstDate) setSelectedDepartureDate(firstDate)
+                                            }}
+                                            className={`rounded-xl border px-3 py-3 text-left transition-all ${
+                                              isActive
+                                                ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
+                                                : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
+                                            }`}
+                                          >
+                                            <div className="text-sm font-bold text-gray-900">{formatDepartureMonthLabel(monthKey)}</div>
+                                            <div className="mt-1 text-[11px] text-gray-500">Khởi hành hằng ngày</div>
+                                          </button>
+                                        )
+                                      })}
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <div className="mb-2 flex items-center justify-between">
+                                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn ngày</p>
+                                      <span className="text-[11px] text-gray-500">T2 - CN</span>
+                                    </div>
+                                    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                                      <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50 text-center text-[11px] font-semibold text-gray-500">
+                                        {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((label) => (
+                                          <div key={label} className="py-2">{label}</div>
+                                        ))}
+                                      </div>
+                                      <div className="grid grid-cols-7 gap-px bg-gray-100">
+                                        {monthCalendarDays.map((cell) => {
+                                          if (!cell.inMonth || !cell.date) {
+                                            return <div key={cell.key} className="aspect-square bg-white/60" />
+                                          }
+
+                                          const isActive = selectedDepartureDate === cell.date
+                                          const isPast = cell.date < new Date().toISOString().slice(0, 10)
+                                          return (
+                                            <button
+                                              key={cell.key}
+                                              type="button"
+                                              disabled={isPast}
+                                              onClick={() => setSelectedDepartureDate(cell.date!)}
+                                              className={`aspect-square bg-white text-sm font-semibold transition-all ${
+                                                isActive
+                                                  ? 'bg-[#00CBA9] text-white'
+                                                  : isPast
+                                                    ? 'text-gray-300'
+                                                    : 'text-gray-700 hover:bg-[#00CBA9]/8'
+                                              }`}
+                                            >
+                                              {cell.day}
+                                            </button>
+                                          )
+                                        })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn ngày</p>
+                                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                    {(normalDepartureDates.length > 0 ? normalDepartureDates : departureDates).slice(0, 6).map((item) => {
+                                      const isActive = selectedDepartureDate === item.date
                                       return (
                                         <button
-                                          key={monthKey}
+                                          key={item.date}
                                           type="button"
-                                          onClick={() => {
-                                            setSelectedDepartureMonth(monthKey)
-                                            const firstDate = departureMonthGroups[monthKey]?.[0]?.date
-                                            if (firstDate) setSelectedDepartureDate(firstDate)
-                                          }}
+                                          onClick={() => setSelectedDepartureDate(item.date)}
                                           className={`rounded-xl border px-3 py-3 text-left transition-all ${
                                             isActive
                                               ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
                                               : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
                                           }`}
                                         >
-                                          <div className="text-sm font-bold text-gray-900">{formatDepartureMonthLabel(monthKey)}</div>
-                                          <div className="mt-1 text-[11px] text-gray-500">Khởi hành hằng ngày</div>
+                                          <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
+                                          <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
+                                            {getDepartureDateMeta(item).label}
+                                          </div>
                                         </button>
                                       )
                                     })}
                                   </div>
                                 </div>
                               )}
-
-                              <div>
-                                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn ngày</p>
-                                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                                  {(isDailyShortBorderTour ? visibleDepartureDates : (normalDepartureDates.length > 0 ? normalDepartureDates : departureDates)).slice(0, isDailyShortBorderTour ? 31 : 6).map((item) => {
-                                    const isActive = selectedDepartureDate === item.date
-                                    return (
-                                      <button
-                                        key={item.date}
-                                        type="button"
-                                        onClick={() => setSelectedDepartureDate(item.date)}
-                                        className={`rounded-xl border px-3 py-3 text-left transition-all ${
-                                          isActive
-                                            ? 'border-[#00CBA9] bg-[#00CBA9]/10 shadow-sm'
-                                            : 'border-gray-200 bg-white hover:border-[#00CBA9]/40'
-                                        }`}
-                                      >
-                                        <div className="text-sm font-bold text-gray-900">{formatDepartureDateLabel(item.date)}</div>
-                                        <div className={`mt-1 inline-flex rounded-full border px-2 py-1 text-[11px] font-semibold ${getDepartureDateMeta(item).className}`}>
-                                          {isDailyShortBorderTour ? 'Khởi hành hằng ngày' : getDepartureDateMeta(item).label}
-                                        </div>
-                                      </button>
-                                    )
-                                  })}
-                                </div>
-                              </div>
                               {selectedDepartureDate && (
                                 <p className="text-xs text-gray-500">
                                   Đang chọn ngày khởi hành: <span className="font-semibold text-gray-700">{formatDepartureDateLabel(selectedDepartureDate)}</span>
