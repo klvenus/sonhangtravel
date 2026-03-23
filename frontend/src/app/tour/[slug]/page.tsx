@@ -32,8 +32,8 @@ const TourDetailClient = dynamic(() => import('./TourDetailClient'), {
   loading: () => null, // loading.tsx handles this
 })
 
-// SSG + ISR: Build HTML at deploy time, revalidate every 30 minutes for updates
-export const revalidate = 1800
+// SSG + ISR: Build HTML at deploy time, revalidate quickly so tour UI updates ship faster
+export const revalidate = 60
 
 // Allow new tours to be generated on-demand (not 404)
 export const dynamicParams = true
