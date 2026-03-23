@@ -57,6 +57,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const zaloBookingUrl = `https://zalo.me/${zaloLink}`
   const [activeTab, setActiveTab] = useState('overview')
   const [currentImage, setCurrentImage] = useState(0)
+  const [showGalleryModal, setShowGalleryModal] = useState(false)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const [guestCount, setGuestCount] = useState(2)
   const isDailyShortBorderTour = (() => {
@@ -188,6 +189,14 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
     { id: 'policy', label: 'Chính sách' },
   ]
 
+  const openGalleryAt = (index: number) => {
+    setCurrentImage(index)
+    setShowGalleryModal(true)
+  }
+
+  const showPrevImage = () => setCurrentImage((prev) => (prev === 0 ? tourData.images.length - 1 : prev - 1))
+  const showNextImage = () => setCurrentImage((prev) => (prev === tourData.images.length - 1 ? 0 : prev + 1))
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
@@ -218,7 +227,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             </div>
           </div>
           
-          <div className="relative h-72 overflow-hidden">
+          <button type="button" onClick={() => openGalleryAt(currentImage)} className="relative block h-72 w-full overflow-hidden">
             <Image
               src={tourData.images[currentImage]}
               alt={tourData.title}
@@ -240,7 +249,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                 {currentImage + 1}/{tourData.images.length}
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Thumbnail images */}
           <div className="flex gap-2 p-4 overflow-x-auto bg-white">
@@ -271,8 +280,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               />
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-3 h-[450px]">
-              <div className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group">
+            <div className="relative grid grid-cols-4 gap-3 h-[450px]">
+              <button type="button" onClick={() => openGalleryAt(0)} className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group">
                 <Image
                   src={tourData.images[0]}
                   alt={tourData.title}
@@ -280,14 +289,14 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
                 />
-              </div>
+              </button>
               {tourData.images.slice(1, 5).map((img: string, idx: number) => (
-                <div key={idx} className="relative rounded-2xl overflow-hidden group">
+                <button type="button" onClick={() => openGalleryAt(idx + 1)} key={idx} className="relative rounded-2xl overflow-hidden group">
                   <Image src={img} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
+                </button>
               ))}
               {tourData.images.length > 5 && (
-                <button className="absolute bottom-6 right-6 bg-white hover:bg-gray-50 px-6 py-3 rounded-xl shadow-lg font-medium text-gray-700 flex items-center gap-2 transition-all">
+                <button type="button" onClick={() => openGalleryAt(0)} className="absolute bottom-6 right-6 z-10 bg-white hover:bg-gray-50 px-6 py-3 rounded-xl shadow-lg font-medium text-gray-700 flex items-center gap-2 transition-all">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -777,8 +786,11 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                             type="button"
                                             onClick={() => {
                                               setSelectedDepartureMonth(monthKey)
-                                              const firstDate = departureMonthGroups[monthKey]?.[0]?.date
-                                              if (firstDate) setSelectedDepartureDate(firstDate)
+                                              const currentDay = selectedDepartureDate ? Number(selectedDepartureDate.slice(8, 10)) : 1
+                                              const monthDates = departureMonthGroups[monthKey] || []
+                                              const matchedDate = monthDates.find((entry) => Number(entry.date.slice(8, 10)) === currentDay)?.date
+                                              const fallbackDate = monthDates[0]?.date
+                                              setSelectedDepartureDate(matchedDate || fallbackDate || '')
                                             }}
                                             className={`rounded-xl border px-3 py-3 text-left transition-all ${
                                               isActive
@@ -965,6 +977,34 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
           </div>
         </div>
       </main>
+
+      {showGalleryModal && (
+        <div className="fixed inset-0 z-50 bg-black/90 p-4">
+          <div className="relative mx-auto flex h-full max-w-5xl flex-col justify-center">
+            <button
+              type="button"
+              onClick={() => setShowGalleryModal(false)}
+              className="absolute right-0 top-0 z-10 rounded-full bg-white/10 px-3 py-2 text-sm font-semibold text-white backdrop-blur"
+            >
+              Đóng
+            </button>
+            <div className="relative h-[70vh] overflow-hidden rounded-2xl">
+              <Image src={tourData.images[currentImage]} alt={tourData.title} fill className="object-contain" sizes="100vw" />
+            </div>
+            <div className="mt-4 flex items-center justify-between gap-3 text-white">
+              <button type="button" onClick={showPrevImage} className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">
+                ← Ảnh trước
+              </button>
+              <div className="text-sm font-medium">
+                {currentImage + 1}/{tourData.images.length}
+              </div>
+              <button type="button" onClick={showNextImage} className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">
+                Ảnh sau →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Fixed Bottom Bar */}
       <div className="md:hidden fixed bottom-[3.6rem] left-0 right-0 bg-white border-t border-gray-200 px-3 py-2 z-40 shadow-xl">
