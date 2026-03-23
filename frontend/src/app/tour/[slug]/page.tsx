@@ -52,35 +52,57 @@ function buildTourFaqItems(tour: TourData): TourFaqItem[] {
   const includedItems = (tour.includes || []).slice(0, 3).join(', ')
   const childPolicy = fallbackPolicies.children.join(' ')
   const note = (tour.notes || fallbackPolicies.notes)[0]
+  const title = tour.title || ''
+  const destination = tour.destination || ''
+  const isShortBorderTour = /(Đông Hưng|Hà Khẩu)/i.test(title) && /(1 ngày|2 ngày 1 đêm|3 ngày 2 đêm)/i.test(duration)
+  const isLongYunnan = /(Đại Lý|Lệ Giang|Shangrila|Côn Minh|Tây Song Bản Nạp|Cửu Trại Câu|Thành Đô)/i.test(`${title} ${destination}`)
 
-  return [
+  const faqItems: TourFaqItem[] = [
     {
       question: `${seoTourName} giá bao nhiêu?`,
-      answer: `${seoTourName} hiện có giá từ ${price}. Giá thực tế có thể thay đổi theo ngày khởi hành, số lượng khách và thời điểm lễ tết.`,
+      answer: `${seoTourName} hiện có giá từ ${price}. Giá thực tế có thể thay đổi theo ngày khởi hành, hạng dịch vụ và thời điểm cụ thể.`,
     },
     {
-      question: `${seoTourName} khởi hành từ đâu và đi trong bao lâu?`,
-      answer: `${seoTourName} khởi hành từ ${departure}, thời lượng ${duration}, phù hợp cho khách muốn đi nhanh gọn trong ngày.`,
+      question: `${seoTourName} đi trong bao lâu và xuất phát từ đâu?`,
+      answer: `${seoTourName} xuất phát từ ${departure}, thời lượng ${duration}. Đây là tuyến ${isShortBorderTour ? 'khá gọn, hợp với khách muốn đi nhanh và linh hoạt.' : 'có lịch trình rõ ràng để khách chủ động sắp xếp thời gian.'}`,
     },
-    includedItems
-      ? {
-          question: `Giá ${seoTourName.toLowerCase()} đã bao gồm những gì?`,
-          answer: `Giá tour thường đã bao gồm các hạng mục chính như ${includedItems}. Chi tiết cuối cùng sẽ được Sơn Hằng Travel xác nhận khi chốt lịch.`,
-        }
-      : null,
-    {
-      question: `Đi ${seoTourName.toLowerCase()} cần chuẩn bị giấy tờ gì?`,
-      answer: `Khách nên chuẩn bị đầy đủ hồ sơ theo hướng dẫn của đơn vị tổ chức. Với tour đường bộ qua cửa khẩu, các giấy tờ thường gặp là ${documents}.`,
-    },
-    {
-      question: `${seoTourName} có phù hợp cho trẻ em không?`,
+  ]
+
+  if (includedItems) {
+    faqItems.push({
+      question: `${seoTourName} thường bao gồm những hạng mục nào?`,
+      answer: `Các hạng mục chính thường bao gồm ${includedItems}. Phần dịch vụ cuối cùng sẽ được Sơn Hằng Travel xác nhận theo từng đợt khởi hành.`,
+    })
+  }
+
+  faqItems.push({
+    question: `Đi ${seoTourName.toLowerCase()} cần chuẩn bị giấy tờ gì?`,
+    answer: `Khách nên chuẩn bị đầy đủ hồ sơ theo hướng dẫn của đơn vị tổ chức. Với tour đường bộ qua cửa khẩu, các giấy tờ thường gặp là ${documents}.`,
+  })
+
+  if (isShortBorderTour) {
+    faqItems.push({
+      question: `${seoTourName} hợp với nhóm khách nào?`,
+      answer: `${seoTourName} hợp với khách muốn đi ngắn ngày, thích nhịp gọn, dễ xin nghỉ và vẫn có đủ thời gian ăn uống, dạo phố hoặc mua sắm.`,
+    })
+  } else if (isLongYunnan) {
+    faqItems.push({
+      question: `${seoTourName} hợp với ai?`,
+      answer: `${seoTourName} phù hợp với khách thích tuyến phong cảnh, muốn đi nhiều điểm hơn và ưu tiên trải nghiệm trọn hành trình thay vì một chuyến quá ngắn.`,
+    })
+  } else {
+    faqItems.push({
+      question: `${seoTourName} có phù hợp cho trẻ em hoặc gia đình không?`,
       answer: childPolicy,
-    },
-    {
-      question: `Nên đặt ${seoTourName.toLowerCase()} trước bao lâu?`,
-      answer: note || 'Anh chị nên đặt sớm để giữ chỗ đẹp, chủ động hồ sơ và tránh tăng giá sát ngày đi.',
-    },
-  ].filter((item): item is TourFaqItem => Boolean(item))
+    })
+  }
+
+  faqItems.push({
+    question: `Nên theo dõi ${seoTourName.toLowerCase()} như thế nào để chọn đúng đợt đi?`,
+    answer: note || 'Anh chị nên theo dõi lịch khởi hành sớm để giữ chỗ, chủ động hồ sơ và chọn thời điểm phù hợp với nhu cầu của nhóm mình.',
+  })
+
+  return faqItems
 }
 
 function cleanHighlightText(text: string) {
@@ -94,11 +116,11 @@ function buildTourHighlights(tour: TourData): string[] {
   const highlightSet = new Set<string>()
 
   if (tour.destination && tour.duration) {
-    highlightSet.add(`Khám phá ${tour.destination} với lịch trình ${tour.duration}`)
+    highlightSet.add(`${tour.duration} khám phá ${tour.destination}`)
   }
 
   if (tour.departure) {
-    highlightSet.add(`Khởi hành thuận tiện từ ${tour.departure}`)
+    highlightSet.add(`Xuất phát từ ${tour.departure}`)
   }
 
   for (const item of tour.itinerary || []) {
