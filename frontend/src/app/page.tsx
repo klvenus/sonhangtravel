@@ -102,20 +102,9 @@ function buildTourItemListSchema(
     itemListElement: tours.map((tour, index) => ({
       '@type': 'ListItem',
       position: index + 1,
+      name: tour.title,
       url: `${SITE_URL}/tour/${tour.slug}`,
-      item: {
-        '@type': 'TouristTrip',
-        name: tour.title,
-        url: `${SITE_URL}/tour/${tour.slug}`,
-        image: tour.image || undefined,
-        offers: {
-          '@type': 'Offer',
-          price: tour.price,
-          priceCurrency: 'VND',
-          availability: 'https://schema.org/InStock',
-          url: `${SITE_URL}/tour/${tour.slug}`,
-        },
-      },
+      image: tour.image || undefined,
     })),
   }
 }
