@@ -43,6 +43,11 @@
 - [ ] Build frontend and push
 
 ## 2026-03-25 Task: Improve homepage banner LCP safely
-- [ ] Stop lazy-loading the LCP banner image
-- [ ] Reduce banner slide/image work on initial render
-- [ ] Build frontend and push
+- [x] Stop lazy-loading the LCP banner image
+- [x] Reduce banner slide/image work on initial render
+- [x] Build frontend and push
+
+## 2026-03-25 Task: Add safe navigation performance hints
+- [x] Add lightweight speculationrules for key internal routes
+- [x] Add bfcache-friendly UI reset handling for header overlays/menus
+- [x] Build frontend and verify

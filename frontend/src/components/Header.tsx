@@ -103,8 +103,20 @@ export default function Header({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }
+
+    const resetTransientUi = () => {
+      setIsSearchOpen(false)
+      setShowCategoryMenu(false)
+      setShowMobileMenu(false)
+    }
+
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('sonhang:reset-transient-ui', resetTransientUi)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('sonhang:reset-transient-ui', resetTransientUi)
+    }
   }, [])
 
   return (
