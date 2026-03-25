@@ -46,19 +46,43 @@ export default function TourCard({
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [isImageVisible, setIsImageVisible] = useState(true)
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
-  
-  // Auto-slide every 4 seconds (only if multiple images)
-  useEffect(() => {
+  const slideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearSlideTimers = useCallback(() => {
+    if (slideTimeoutRef.current) {
+      clearTimeout(slideTimeoutRef.current)
+      slideTimeoutRef.current = null
+    }
+    if (fadeTimeoutRef.current) {
+      clearTimeout(fadeTimeoutRef.current)
+      fadeTimeoutRef.current = null
+    }
+  }, [])
+
+  const scheduleNextSlide = useCallback((index: number) => {
+    clearSlideTimers()
+
     if (allImages.length <= 1 || isPaused) return
-    
-    const interval = setInterval(() => {
-      setCurrentImageIndex(prev => (prev + 1) % allImages.length)
-    }, 4000)
-    
-    return () => clearInterval(interval)
-  }, [allImages.length, isPaused])
+
+    const displayMs = index === 0 ? 5000 : 3200
+
+    slideTimeoutRef.current = setTimeout(() => {
+      setIsImageVisible(false)
+      fadeTimeoutRef.current = setTimeout(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
+        setIsImageVisible(true)
+      }, 180)
+    }, displayMs)
+  }, [allImages.length, clearSlideTimers, isPaused])
+
+  useEffect(() => {
+    scheduleNextSlide(currentImageIndex)
+    return () => clearSlideTimers()
+  }, [currentImageIndex, isPaused, scheduleNextSlide, clearSlideTimers])
   
   // Handle swipe gestures
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -77,6 +101,7 @@ export default function TourCard({
     const threshold = 50 // Minimum swipe distance
     
     if (Math.abs(diff) > threshold) {
+      setIsImageVisible(true)
       if (diff > 0) {
         // Swipe left - next image
         setCurrentImageIndex(prev => (prev + 1) % allImages.length)
@@ -200,7 +225,7 @@ export default function TourCard({
             src={allImages[currentImageIndex] || image}
             alt={`${title} - ${currentImageIndex + 1}`}
             fill
-            className="object-cover transition-opacity duration-300"
+            className={`object-cover transition-opacity duration-500 ${isImageVisible ? 'opacity-100' : 'opacity-0'}`}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
           
@@ -211,6 +236,7 @@ export default function TourCard({
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
+                  setIsImageVisible(true)
                   setCurrentImageIndex(prev => prev === 0 ? allImages.length - 1 : prev - 1)
                 }}
                 className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
@@ -223,6 +249,7 @@ export default function TourCard({
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
+                  setIsImageVisible(true)
                   setCurrentImageIndex(prev => prev === allImages.length - 1 ? 0 : prev + 1)
                 }}
                 className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
@@ -240,6 +267,7 @@ export default function TourCard({
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
+                      setIsImageVisible(true)
                       setCurrentImageIndex(index)
                     }}
                     className={`w-1.5 h-1.5 rounded-full transition-all ${

@@ -26,3 +26,5 @@
 - Add month/day departure selector for daily-selling Đông Hưng 1 Ngày tour.
 - Reduced homepage hero banner render cost by prioritizing the active slide image, avoiding lazy LCP loading, and cutting stacked off-screen slide images from the initial render path.
 - Added safe speculation rules for key internal routes and bfcache-friendly header state resets so repeat navigations/back-forward flows feel faster without aggressive prerendering.
+- Normalized new admin image uploads to WebP in the upload API so future tour/blog/settings images are lighter by default.
+- Smoothed the homepage tour card slideshow so the first image stays longer and subsequent image changes feel less jumpy.

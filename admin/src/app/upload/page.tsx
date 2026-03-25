@@ -39,7 +39,8 @@ export default function UploadPage() {
         <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 hover:border-green-400 transition-colors">
           <p className="text-4xl mb-4">📸</p>
           <p className="text-gray-600 mb-2">Chọn ảnh để upload lên Cloudinary</p>
-          <p className="text-xs text-gray-400 mb-4">Hỗ trợ: JPG, PNG, WebP, GIF</p>
+          <p className="text-xs text-gray-400 mb-2">Hỗ trợ: JPG, PNG, WebP, GIF</p>
+          <p className="text-xs text-emerald-600 mb-4">Ảnh mới từ admin sẽ tự động chuẩn hoá sang WebP (trừ GIF/SVG/WebP sẵn có) để nhẹ hơn cho tour, blog và banner.</p>
           <input type="file" accept="image/*" multiple onChange={handleUpload} className="text-sm" disabled={uploading} />
           {uploading && <p className="text-green-600 mt-4 animate-pulse">⏳ Đang upload...</p>}
         </div>

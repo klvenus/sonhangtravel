@@ -51,3 +51,13 @@
 - [x] Add lightweight speculationrules for key internal routes
 - [x] Add bfcache-friendly UI reset handling for header overlays/menus
 - [x] Build frontend and verify
+
+## 2026-03-26 Task: Auto-convert admin uploads to WebP
+- [x] Update admin upload API to normalize image uploads to WebP
+- [x] Update admin upload UI copy so behavior is clear
+- [x] Build admin and verify
+
+## 2026-03-26 Task: Smooth homepage tour card slideshow
+- [x] Make the first tour card image stay longer before sliding
+- [x] Smooth the follow-up card image transitions
+- [x] Build frontend and verify
