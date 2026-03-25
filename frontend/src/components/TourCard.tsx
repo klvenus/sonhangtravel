@@ -46,6 +46,7 @@ export default function TourCard({
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [previousImageIndex, setPreviousImageIndex] = useState<number | null>(null)
+  const [isSliding, setIsSliding] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
@@ -66,12 +67,14 @@ export default function TourCard({
   const goToImage = useCallback((nextIndex: number) => {
     setPreviousImageIndex(currentImageIndex)
     setCurrentImageIndex(nextIndex)
+    setIsSliding(true)
     if (fadeTimeoutRef.current) {
       clearTimeout(fadeTimeoutRef.current)
     }
     fadeTimeoutRef.current = setTimeout(() => {
       setPreviousImageIndex(null)
-    }, 450)
+      setIsSliding(false)
+    }, 520)
   }, [currentImageIndex])
 
   const scheduleNextSlide = useCallback((index: number) => {
@@ -225,7 +228,7 @@ export default function TourCard({
           onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
           onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
         >
-          {/* Crossfade giữa ảnh cũ và ảnh mới để tránh flash trắng */}
+          {/* Slide ngang nhẹ + zoom rất ít để đỡ cảm giác fade cũ */}
           {previousImageIndex !== null && previousImageIndex !== currentImageIndex && (
             <Image
               key={`previous-${previousImageIndex}`}
@@ -233,7 +236,7 @@ export default function TourCard({
               alt={`${title} - ${previousImageIndex + 1}`}
               fill
               className="object-cover"
-              style={{ animation: 'tourCardFadeOut 450ms ease forwards' }}
+              style={{ animation: 'tourCardSlideOut 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards' }}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             />
           )}
@@ -242,7 +245,8 @@ export default function TourCard({
             src={allImages[currentImageIndex] || image}
             alt={`${title} - ${currentImageIndex + 1}`}
             fill
-            className="object-cover opacity-100 transition-opacity duration-500"
+            className="object-cover"
+            style={isSliding ? { animation: 'tourCardSlideIn 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards' } : undefined}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
           
@@ -349,12 +353,25 @@ export default function TourCard({
         </div>
       </div>
       <style jsx>{`
-        @keyframes tourCardFadeOut {
+        @keyframes tourCardSlideOut {
           from {
             opacity: 1;
+            transform: translateX(0) scale(1);
           }
           to {
-            opacity: 0;
+            opacity: 0.72;
+            transform: translateX(-8%) scale(1.015);
+          }
+        }
+
+        @keyframes tourCardSlideIn {
+          from {
+            opacity: 0.88;
+            transform: translateX(8%) scale(1.03);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0) scale(1);
           }
         }
       `}</style>
