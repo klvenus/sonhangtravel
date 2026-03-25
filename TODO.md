@@ -41,3 +41,8 @@
 - [x] Sanitize long/dirty answer text for FAQ schema
 - [x] Tighten tour/blog/category schema descriptions and itinerary fields
 - [ ] Build frontend and push
+
+## 2026-03-25 Task: Improve homepage banner LCP safely
+- [ ] Stop lazy-loading the LCP banner image
+- [ ] Reduce banner slide/image work on initial render
+- [ ] Build frontend and push

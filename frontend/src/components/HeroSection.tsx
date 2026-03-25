@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 
 // Default banner when no admin slides configured
 const defaultSlides = [
@@ -41,17 +40,12 @@ interface HeroSectionProps {
   searchTours?: SearchTour[]
 }
 
-export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSectionProps) {
+export default function HeroSection({ bannerSlides, searchTours: _searchTours = [] }: HeroSectionProps) {
   const slides = bannerSlides && bannerSlides.length > 0 ? bannerSlides : defaultSlides
   const [current, setCurrent] = useState(0)
-  const [searchQuery, setSearchQuery] = useState('')
 
   const next = useCallback(() => {
     setCurrent(prev => (prev + 1) % slides.length)
-  }, [slides.length])
-
-  const prev = useCallback(() => {
-    setCurrent(prev => (prev - 1 + slides.length) % slides.length)
   }, [slides.length])
 
   // Auto-slide every 5 seconds
@@ -76,14 +70,6 @@ export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSect
     </>
   )
 
-  const normalizedQuery = searchQuery.trim().toLowerCase()
-  const liveResults = normalizedQuery
-    ? searchTours.filter((tour) => {
-        const haystack = [tour.title, tour.location, tour.duration].join(' ').toLowerCase()
-        return haystack.includes(normalizedQuery)
-      }).slice(0, 6)
-    : []
-
   // Render a single slide image with link wrapper
   const SlideImg = ({ src, alt, priority, sizes, fit = 'cover' }: { src: string; alt: string; priority: boolean; sizes: string; fit?: 'cover' | 'contain' }) => (
     <Image
@@ -95,6 +81,8 @@ export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSect
       quality={100}
       unoptimized
       priority={priority}
+      fetchPriority={priority ? 'high' : undefined}
+      loading={priority ? 'eager' : 'lazy'}
     />
   )
 
@@ -103,37 +91,41 @@ export default function HeroSection({ bannerSlides, searchTours = [] }: HeroSect
       {/* ========== MOBILE: ưu tiên ảnh mobile full chiều rộng, hạn chế crop ========== */}
       {/* Kích thước đề xuất: 1080×600, 1080×1350 hoặc ảnh ngang tối ưu cho mobile */}
       <div className="md:hidden relative aspect-[9/5] w-full min-h-[220px] overflow-hidden bg-white">
-        {slides.map((s, i) => {
-          const mobileSrc = ('imageMobile' in s && s.imageMobile) ? s.imageMobile : s.image
+        {(() => {
+          const activeSlide = slides[current]
+          const mobileSrc = ('imageMobile' in activeSlide && activeSlide.imageMobile) ? activeSlide.imageMobile : activeSlide.image
           return (
-            <div key={s.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-              {s.linkUrl ? (
-                <a href={s.linkUrl} className="block w-full h-full">
-                  <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" fit="contain" />
+            <div key={`${activeSlide.id || current}-${current}`} className="absolute inset-0 transition-opacity duration-700 opacity-100">
+              {activeSlide.linkUrl ? (
+                <a href={activeSlide.linkUrl} className="block w-full h-full">
+                  <SlideImg src={mobileSrc} alt={activeSlide.title || 'Banner'} priority={current === 0} sizes="100vw" fit="contain" />
                 </a>
               ) : (
-                <SlideImg src={mobileSrc} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" fit="contain" />
+                <SlideImg src={mobileSrc} alt={activeSlide.title || 'Banner'} priority={current === 0} sizes="100vw" fit="contain" />
               )}
             </div>
           )
-        })}
+        })()}
         <NavOverlay />
       </div>
 
       {/* ========== DESKTOP: hiển thị ảnh PC ========== */}
       {/* Kích thước đề xuất: 1920×500 (tỷ lệ ~3.84:1) hoặc 2560×680 */}
       <div className="hidden md:block relative h-[28vw] min-h-[350px] max-h-[550px] overflow-hidden">
-        {slides.map((s, i) => (
-          <div key={s.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-            {s.linkUrl ? (
-              <a href={s.linkUrl} className="block w-full h-full">
-                <SlideImg src={s.image} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
-              </a>
-            ) : (
-              <SlideImg src={s.image} alt={s.title || 'Banner'} priority={i === 0} sizes="100vw" />
-            )}
-          </div>
-        ))}
+        {(() => {
+          const activeSlide = slides[current]
+          return (
+            <div key={`${activeSlide.id || current}-${current}`} className="absolute inset-0 transition-opacity duration-700 opacity-100">
+              {activeSlide.linkUrl ? (
+                <a href={activeSlide.linkUrl} className="block w-full h-full">
+                  <SlideImg src={activeSlide.image} alt={activeSlide.title || 'Banner'} priority={current === 0} sizes="100vw" />
+                </a>
+              ) : (
+                <SlideImg src={activeSlide.image} alt={activeSlide.title || 'Banner'} priority={current === 0} sizes="100vw" />
+              )}
+            </div>
+          )
+        })()}
         <NavOverlay />
       </div>
     </section>

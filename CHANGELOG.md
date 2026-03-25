@@ -24,6 +24,4 @@
 
 ### Changed
 - Add month/day departure selector for daily-selling Đông Hưng 1 Ngày tour.
-
-### Changed
-- Add month/day departure selector for daily-selling Đông Hưng 1 Ngày tour.
+- Reduced homepage hero banner render cost by prioritizing the active slide image, avoiding lazy LCP loading, and cutting stacked off-screen slide images from the initial render path.
