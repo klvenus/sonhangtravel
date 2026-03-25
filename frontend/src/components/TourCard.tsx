@@ -45,8 +45,8 @@ export default function TourCard({
     : [image]
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [previousImageIndex, setPreviousImageIndex] = useState<number | null>(null)
   const [isPaused, setIsPaused] = useState(false)
-  const [isImageVisible, setIsImageVisible] = useState(true)
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
   const slideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -63,6 +63,17 @@ export default function TourCard({
     }
   }, [])
 
+  const goToImage = useCallback((nextIndex: number) => {
+    setPreviousImageIndex(currentImageIndex)
+    setCurrentImageIndex(nextIndex)
+    if (fadeTimeoutRef.current) {
+      clearTimeout(fadeTimeoutRef.current)
+    }
+    fadeTimeoutRef.current = setTimeout(() => {
+      setPreviousImageIndex(null)
+    }, 450)
+  }, [currentImageIndex])
+
   const scheduleNextSlide = useCallback((index: number) => {
     clearSlideTimers()
 
@@ -71,13 +82,9 @@ export default function TourCard({
     const displayMs = index === 0 ? 5000 : 3200
 
     slideTimeoutRef.current = setTimeout(() => {
-      setIsImageVisible(false)
-      fadeTimeoutRef.current = setTimeout(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
-        setIsImageVisible(true)
-      }, 180)
+      goToImage((index + 1) % allImages.length)
     }, displayMs)
-  }, [allImages.length, clearSlideTimers, isPaused])
+  }, [allImages.length, clearSlideTimers, goToImage, isPaused])
 
   useEffect(() => {
     scheduleNextSlide(currentImageIndex)
@@ -101,16 +108,15 @@ export default function TourCard({
     const threshold = 50 // Minimum swipe distance
     
     if (Math.abs(diff) > threshold) {
-      setIsImageVisible(true)
       if (diff > 0) {
         // Swipe left - next image
-        setCurrentImageIndex(prev => (prev + 1) % allImages.length)
+        goToImage((currentImageIndex + 1) % allImages.length)
       } else {
         // Swipe right - previous image
-        setCurrentImageIndex(prev => prev === 0 ? allImages.length - 1 : prev - 1)
+        goToImage(currentImageIndex === 0 ? allImages.length - 1 : currentImageIndex - 1)
       }
     }
-  }, [allImages.length])
+  }, [allImages.length, currentImageIndex, goToImage])
   
   const formatPrice = (p: number) => {
     return new Intl.NumberFormat('vi-VN').format(p)
@@ -219,13 +225,24 @@ export default function TourCard({
           onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
           onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
         >
-          {/* Active image only - keep layout, reduce image work per card */}
+          {/* Crossfade giữa ảnh cũ và ảnh mới để tránh flash trắng */}
+          {previousImageIndex !== null && previousImageIndex !== currentImageIndex && (
+            <Image
+              key={`previous-${previousImageIndex}`}
+              src={allImages[previousImageIndex] || image}
+              alt={`${title} - ${previousImageIndex + 1}`}
+              fill
+              className="object-cover"
+              style={{ animation: 'tourCardFadeOut 450ms ease forwards' }}
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            />
+          )}
           <Image
-            key={currentImageIndex}
+            key={`current-${currentImageIndex}`}
             src={allImages[currentImageIndex] || image}
             alt={`${title} - ${currentImageIndex + 1}`}
             fill
-            className={`object-cover transition-opacity duration-500 ${isImageVisible ? 'opacity-100' : 'opacity-0'}`}
+            className="object-cover opacity-100 transition-opacity duration-500"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           />
           
@@ -236,8 +253,7 @@ export default function TourCard({
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  setIsImageVisible(true)
-                  setCurrentImageIndex(prev => prev === 0 ? allImages.length - 1 : prev - 1)
+                  goToImage(currentImageIndex === 0 ? allImages.length - 1 : currentImageIndex - 1)
                 }}
                 className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
               >
@@ -249,8 +265,7 @@ export default function TourCard({
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  setIsImageVisible(true)
-                  setCurrentImageIndex(prev => prev === allImages.length - 1 ? 0 : prev + 1)
+                  goToImage((currentImageIndex + 1) % allImages.length)
                 }}
                 className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white"
               >
@@ -267,8 +282,9 @@ export default function TourCard({
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      setIsImageVisible(true)
-                      setCurrentImageIndex(index)
+                      if (index !== currentImageIndex) {
+                        goToImage(index)
+                      }
                     }}
                     className={`w-1.5 h-1.5 rounded-full transition-all ${
                       index === currentImageIndex 
@@ -332,6 +348,16 @@ export default function TourCard({
           </div>
         </div>
       </div>
+      <style jsx>{`
+        @keyframes tourCardFadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+      `}</style>
     </Link>
   )
 }
