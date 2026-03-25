@@ -182,6 +182,34 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
     return { label: `Còn ${Math.min(Math.max(item.availableSlots, 10), 15)} chỗ`, className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
   }
 
+  const formatTourContentHtml = (content: string) => {
+    const withImages = content.replace(/!\[.*?\]\((.*?)\)/g, '<img src="$1" class="rounded-xl my-4 max-w-full shadow-md" />')
+    const blocks = withImages
+      .split(/\n\s*\n/)
+      .map((block) => block.trim())
+      .filter(Boolean)
+
+    if (blocks.length === 0) {
+      return withImages.replace(/\n/g, '<br/>')
+    }
+
+    return blocks
+      .map((block) => {
+        if (/^<(h[1-6]|ul|ol|li|img|table|blockquote|div|section|p|figure)\b/i.test(block)) {
+          return block
+        }
+
+        const lines = block
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean)
+
+        if (lines.length === 0) return ''
+        return `<p>${lines.join('<br/>')}</p>`
+      })
+      .join('')
+  }
+
   const tabs = [
     { id: 'overview', label: 'Tổng quan' },
     { id: 'itinerary', label: 'Lịch trình' },
@@ -417,28 +445,26 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                       </div>
 
                       {tourData.content && (
-                        <div className="prose prose-sm max-w-none">
-                          <h3 className="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
+                        <section className="prose prose-sm max-w-none">
+                          <h2 className="font-bold text-lg text-gray-900 mb-3 flex items-center gap-2">
                             <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
                             Giới thiệu chi tiết
-                          </h3>
+                          </h2>
                           <div 
-                            className="text-gray-700 leading-relaxed"
+                            className="text-gray-700 leading-relaxed [&>p]:mb-4 [&>p]:leading-7 [&>ul]:mb-4 [&>ol]:mb-4 [&>h3]:mt-6 [&>h3]:mb-3 [&>h3]:text-base [&>h3]:font-bold [&>img]:rounded-xl [&>img]:shadow-md"
                             dangerouslySetInnerHTML={{ 
-                              __html: tourData.content
-                                .replace(/!\[.*?\]\((.*?)\)/g, '<img src="$1" class="rounded-xl my-4 max-w-full shadow-md" />')
-                                .replace(/\n/g, '<br/>') 
+                              __html: formatTourContentHtml(tourData.content)
                             }}
                           />
-                        </div>
+                        </section>
                       )}
 
                       {tourData.highlights.length > 0 && (
-                        <div>
-                          <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
+                        <section>
+                          <h2 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
                             <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
                             Điểm đến nổi bật
-                          </h3>
+                          </h2>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {tourData.highlights.map((highlight: string, idx: number) => (
                               <div key={idx} className="flex items-center gap-3 bg-gradient-to-r from-[#00CBA9]/5 to-transparent p-3 rounded-xl">
@@ -449,18 +475,18 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                               </div>
                             ))}
                           </div>
-                        </div>
+                        </section>
                       )}
                     </div>
                   )}
 
                   {/* Itinerary Tab */}
                   {activeTab === 'itinerary' && tourData.itinerary.length > 0 && (
-                    <div>
-                      <h3 className="font-bold text-lg text-gray-900 mb-6 flex items-center gap-2">
+                    <section>
+                      <h2 className="font-bold text-lg text-gray-900 mb-6 flex items-center gap-2">
                         <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
                         Lịch trình chi tiết
-                      </h3>
+                      </h2>
                       <div className="space-y-6">
                         {(showAllItinerary ? tourData.itinerary : tourData.itinerary.slice(0, 4)).map((item, idx) => (
                           <div key={idx} className="flex gap-4">
@@ -513,12 +539,16 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                           {showAllItinerary ? 'Thu gọn' : `Xem thêm ${tourData.itinerary.length - 4} điểm đến →`}
                         </button>
                       )}
-                    </div>
+                    </section>
                   )}
 
                   {/* Includes Tab */}
                   {activeTab === 'includes' && (
-                    <div className="space-y-6">
+                    <section className="space-y-6">
+                      <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+                        <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
+                        Dịch vụ tour
+                      </h2>
                       <div className="bg-gradient-to-br from-green-50 to-green-100/30 rounded-2xl p-6 border-2 border-green-200/50">
                         <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
                           <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -556,12 +586,16 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                           ))}
                         </ul>
                       </div>
-                    </div>
+                    </section>
                   )}
 
                   {/* Policy Tab */}
                   {activeTab === 'policy' && (
-                    <div className="space-y-6">
+                    <section className="space-y-6">
+                      <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+                        <span className="w-1 h-6 bg-[#00CBA9] rounded-full"></span>
+                        Chính sách và lưu ý
+                      </h2>
                       {tourData.policies.children.length > 0 && (
                         <div className="bg-gradient-to-br from-blue-50 to-blue-100/30 rounded-2xl p-6 border-2 border-blue-200/50">
                           <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
@@ -625,7 +659,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                           </ul>
                         </div>
                       )}
-                    </div>
+                    </section>
                   )}
                 </div>
 
