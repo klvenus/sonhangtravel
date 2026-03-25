@@ -194,20 +194,15 @@ export default function TourCard({
           onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
           onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
         >
-          {/* Images */}
-          {allImages.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt={`${title} - ${index + 1}`}
-              fill
-              className={`object-cover transition-opacity duration-300 ${
-                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-              }`}
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              priority={index === 0}
-            />
-          ))}
+          {/* Active image only - keep layout, reduce image work per card */}
+          <Image
+            key={currentImageIndex}
+            src={allImages[currentImageIndex] || image}
+            alt={`${title} - ${currentImageIndex + 1}`}
+            fill
+            className="object-cover transition-opacity duration-300"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          />
           
           {/* Navigation arrows - only show if multiple images */}
           {allImages.length > 1 && (
