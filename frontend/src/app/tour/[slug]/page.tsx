@@ -437,6 +437,14 @@ export default async function TourDetailPage({ params }: PageProps) {
         name: 'Sơn Hằng Travel',
         telephone: phoneNumber,
         url: SITE_URL,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Khu 5',
+          addressLocality: 'Móng Cái',
+          addressRegion: 'Quảng Ninh',
+          postalCode: '010000',
+          addressCountry: 'VN',
+        },
       },
       tripOrigin: {
         '@type': 'Place',
@@ -457,6 +465,14 @@ export default async function TourDetailPage({ params }: PageProps) {
           name: 'Sơn Hằng Travel',
           url: SITE_URL,
           telephone: phoneNumber,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Khu 5',
+            addressLocality: 'Móng Cái',
+            addressRegion: 'Quảng Ninh',
+            postalCode: '010000',
+            addressCountry: 'VN',
+          },
         },
       },
       itinerary: schemaItinerary.length > 0 ? {
@@ -476,6 +492,14 @@ export default async function TourDetailPage({ params }: PageProps) {
         '@type': 'TravelAgency',
         name: 'Sơn Hằng Travel',
         url: SITE_URL,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Khu 5',
+          addressLocality: 'Móng Cái',
+          addressRegion: 'Quảng Ninh',
+          postalCode: '010000',
+          addressCountry: 'VN',
+        },
       },
       areaServed: {
         '@type': 'Country',

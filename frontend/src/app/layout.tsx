@@ -167,8 +167,10 @@ export default async function RootLayout({
     "email": email,
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "Khu 5",
       "addressLocality": "Móng Cái",
       "addressRegion": "Quảng Ninh",
+      "postalCode": "010000",
       "addressCountry": "VN"
     },
     "geo": {

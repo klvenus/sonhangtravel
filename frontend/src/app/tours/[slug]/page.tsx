@@ -185,11 +185,10 @@ export default async function CategoryToursPage({
       itemListElement: tours.map((tour, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        url: `${SITE_URL}/tour/${tour.slug}`,
         item: {
+          '@id': `${SITE_URL}/tour/${tour.slug}`,
           '@type': 'TouristTrip',
           name: shortenText(tour.title, 120),
-          url: `${SITE_URL}/tour/${tour.slug}`,
           image: getImageUrl(tour.thumbnail || tour.gallery?.[0], 'large') || DEFAULT_OG_IMAGE,
           offers: {
             '@type': 'Offer',

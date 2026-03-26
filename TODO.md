@@ -61,3 +61,8 @@
 - [x] Make the first tour card image stay longer before sliding
 - [x] Smooth the follow-up card image transitions
 - [x] Build frontend and verify
+
+## 2026-03-26 Task: Fix Semrush structured data invalid items
+- [ ] Fix ItemList/ListItem schema on tours hub/category pages to avoid invalid carousel item URL fields
+- [ ] Strengthen TravelAgency/LocalBusiness address schema so Semrush no longer flags address on tour pages
+- [ ] Build frontend and push

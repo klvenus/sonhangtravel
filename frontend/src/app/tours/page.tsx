@@ -95,11 +95,10 @@ function buildToursItemListSchema(tours: Array<ReturnType<typeof transformTour>>
     itemListElement: tours.map((tour, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      url: `${SITE_URL}/tour/${tour.slug}`,
       item: {
+        '@id': `${SITE_URL}/tour/${tour.slug}`,
         '@type': 'TouristTrip',
         name: tour.title,
-        url: `${SITE_URL}/tour/${tour.slug}`,
         image: tour.image.startsWith('/') ? undefined : tour.image,
         offers: {
           '@type': 'Offer',
