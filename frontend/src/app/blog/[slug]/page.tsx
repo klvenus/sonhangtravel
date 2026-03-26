@@ -774,23 +774,23 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
                         <div className="px-3.5 py-3.5 md:px-6 md:py-6">
                           <div className="overflow-hidden rounded-xl border border-orange-100 bg-white md:rounded-2xl">
-                            <div className="flex items-center justify-between border-b border-orange-100 bg-orange-50 px-3 py-2 text-[12px] font-semibold text-gray-600 md:hidden">
-                              <span>Lịch & giá</span>
-                              {slots ? <span>Còn {slots}</span> : basePrice ? <span>Từ {basePrice}</span> : null}
-                            </div>
-                            <div className="hidden grid-cols-[1.1fr_1fr] border-b border-orange-100 bg-orange-100/70 text-sm font-semibold text-gray-700 md:grid">
-                              <div className="px-4 py-3">Ngày khởi hành</div>
-                              <div className="px-4 py-3">Giá</div>
+                            <div className="grid grid-cols-[0.95fr_1fr_0.9fr] border-b border-orange-100 bg-orange-50 px-3 py-2 text-[11px] font-semibold text-gray-600 md:grid-cols-[1fr_1fr_0.9fr] md:bg-orange-100/70 md:px-4 md:py-3 md:text-sm md:text-gray-700">
+                              <span>Ngày</span>
+                              <span>Giá</span>
+                              <span className="text-right md:text-left">Chỗ còn</span>
                             </div>
 
                             <div className="divide-y divide-orange-100">
                               {departures.map((item: any, itemIndex: number) => (
-                                <div key={`${index}-${itemIndex}`} className="flex items-center justify-between gap-3 bg-white px-3 py-2.5 md:grid md:grid-cols-[1.1fr_1fr] md:items-center md:gap-0 md:px-4 md:py-4">
+                                <div key={`${index}-${itemIndex}`} className="grid grid-cols-[0.95fr_1fr_0.9fr] items-center gap-2 bg-white px-3 py-2.5 md:grid-cols-[1fr_1fr_0.9fr] md:gap-3 md:px-4 md:py-4">
                                   <div>
                                     <p className="text-[14px] font-semibold text-gray-900 md:text-[17px]">{item.date}</p>
                                   </div>
-                                  <div className="text-right md:text-left">
+                                  <div>
                                     <p className="inline-flex w-fit max-w-full items-center rounded-full bg-rose-50 px-2.5 py-1 text-[12px] font-bold text-rose-600 ring-1 ring-rose-100 md:bg-transparent md:px-0 md:py-0 md:text-base md:ring-0">{item.price}</p>
+                                  </div>
+                                  <div className="text-right md:text-left">
+                                    <p className="text-[12px] font-semibold text-gray-600 md:text-[15px]">{item.slots || slots || 'Liên hệ'}</p>
                                   </div>
                                 </div>
                               ))}
