@@ -757,14 +757,14 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                               <h3 className="mt-1 text-[16px] font-bold leading-snug md:mt-2 md:text-2xl">{title}</h3>
                               {subtitle && <p className="mt-1 text-[12px] leading-5 text-white/85 md:mt-2 md:text-base md:leading-6">{subtitle}</p>}
                             </div>
-                            <div className="flex flex-wrap gap-2 md:justify-end">
+                            <div className="hidden flex-wrap gap-2 md:flex md:justify-end">
                               {basePrice && (
-                                <div className="inline-flex w-fit max-w-full items-center rounded-lg bg-white px-2.5 py-1.5 text-[13px] font-bold text-rose-600 shadow md:rounded-2xl md:px-4 md:py-3 md:text-base">
+                                <div className="inline-flex w-fit max-w-full items-center rounded-2xl bg-white px-4 py-3 text-base font-bold text-rose-600 shadow">
                                   Giá cơ bản: {basePrice}
                                 </div>
                               )}
                               {slots && (
-                                <div className="inline-flex w-fit max-w-full items-center rounded-lg bg-white/16 px-2.5 py-1.5 text-[13px] font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm md:rounded-2xl md:px-4 md:py-3 md:text-base">
+                                <div className="inline-flex w-fit max-w-full items-center rounded-2xl bg-white/16 px-4 py-3 text-base font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm">
                                   Còn {slots}
                                 </div>
                               )}
@@ -774,6 +774,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
                         <div className="px-3.5 py-3.5 md:px-6 md:py-6">
                           <div className="overflow-hidden rounded-xl border border-orange-100 bg-white md:rounded-2xl">
+                            <div className="flex items-center justify-between border-b border-orange-100 bg-orange-50 px-3 py-2 text-[12px] font-semibold text-gray-600 md:hidden">
+                              <span>Lịch & giá</span>
+                              {slots ? <span>Còn {slots}</span> : basePrice ? <span>Từ {basePrice}</span> : null}
+                            </div>
                             <div className="hidden grid-cols-[1.1fr_1fr] border-b border-orange-100 bg-orange-100/70 text-sm font-semibold text-gray-700 md:grid">
                               <div className="px-4 py-3">Ngày khởi hành</div>
                               <div className="px-4 py-3">Giá</div>
