@@ -258,40 +258,52 @@ export default function TourCard({
           className="relative aspect-4/3 overflow-hidden rounded-xl"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={allImages.length > 1 ? handleTouchStart : undefined}
-          onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
-          onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
+          onTouchStart={!isMobileViewport && allImages.length > 1 ? handleTouchStart : undefined}
+          onTouchMove={!isMobileViewport && allImages.length > 1 ? handleTouchMove : undefined}
+          onTouchEnd={!isMobileViewport && allImages.length > 1 ? handleTouchEnd : undefined}
         >
-          {/* Slide ngang sạch, không opacity để tránh bóng mờ */}
-          {previousImageIndex !== null && previousImageIndex !== currentImageIndex && (
-            <div
-              className="absolute inset-0"
-              style={{ animation: 'tourCardSlideOutClean 400ms ease-out forwards' }}
-            >
-              <Image
-                src={allImages[previousImageIndex] || image}
-                alt={`${title} - ${previousImageIndex + 1}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              />
-            </div>
-          )}
-          <div
-            className="absolute inset-0"
-            style={isTransitioning && previousImageIndex !== null ? { animation: 'tourCardSlideInClean 400ms ease-out forwards' } : undefined}
-          >
+          {isMobileViewport ? (
             <Image
-              src={allImages[currentImageIndex] || image}
-              alt={`${title} - ${currentImageIndex + 1}`}
+              src={image}
+              alt={title}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             />
-          </div>
+          ) : (
+            <>
+              {/* Slide ngang sạch, không opacity để tránh bóng mờ */}
+              {previousImageIndex !== null && previousImageIndex !== currentImageIndex && (
+                <div
+                  className="absolute inset-0"
+                  style={{ animation: 'tourCardSlideOutClean 400ms ease-out forwards' }}
+                >
+                  <Image
+                    src={allImages[previousImageIndex] || image}
+                    alt={`${title} - ${previousImageIndex + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                  />
+                </div>
+              )}
+              <div
+                className="absolute inset-0"
+                style={isTransitioning && previousImageIndex !== null ? { animation: 'tourCardSlideInClean 400ms ease-out forwards' } : undefined}
+              >
+                <Image
+                  src={allImages[currentImageIndex] || image}
+                  alt={`${title} - ${currentImageIndex + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                />
+              </div>
+            </>
+          )}
           
           {/* Navigation arrows - only show if multiple images */}
-          {allImages.length > 1 && (
+          {!isMobileViewport && allImages.length > 1 && (
             <>
               <button
                 onClick={(e) => {
