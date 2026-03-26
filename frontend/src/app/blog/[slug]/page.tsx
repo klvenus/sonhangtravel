@@ -737,6 +737,62 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     )
                   }
 
+                  if ((block as any).type === 'schedule') {
+                    const scheduleBlock = block as any
+                    const departures = Array.isArray(scheduleBlock.departures) ? scheduleBlock.departures.filter(Boolean) : []
+                    const title = (scheduleBlock.title || '').trim()
+                    const subtitle = (scheduleBlock.subtitle || '').trim()
+                    const basePrice = (scheduleBlock.basePrice || '').trim()
+                    const note = (scheduleBlock.note || '').trim()
+
+                    if (!title || departures.length === 0) return null
+
+                    return (
+                      <section key={index} className="not-prose my-8 overflow-hidden rounded-[24px] border border-orange-200 bg-white shadow-[0_20px_60px_rgba(249,115,22,0.12)] md:my-10">
+                        <div className="border-b border-orange-100 bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 px-5 py-5 text-white md:px-6">
+                          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                            <div>
+                              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">Lịch khởi hành</p>
+                              <h3 className="mt-2 text-xl font-bold leading-tight md:text-2xl">{title}</h3>
+                              {subtitle && <p className="mt-2 text-sm leading-6 text-white/85 md:text-base">{subtitle}</p>}
+                            </div>
+                            {basePrice && (
+                              <div className="inline-flex w-fit items-center rounded-2xl bg-white px-4 py-3 text-base font-bold text-rose-600 shadow-lg">
+                                Giá cơ bản: {basePrice}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="px-5 py-5 md:px-6 md:py-6">
+                          <div className="overflow-hidden rounded-2xl border border-orange-100 bg-orange-50/40">
+                            <div className="hidden grid-cols-[1.1fr_1fr] border-b border-orange-100 bg-orange-100/70 text-sm font-semibold text-gray-700 md:grid">
+                              <div className="px-4 py-3">Ngày khởi hành</div>
+                              <div className="px-4 py-3">Giá</div>
+                            </div>
+
+                            <div className="divide-y divide-orange-100">
+                              {departures.map((item: any, itemIndex: number) => (
+                                <div key={`${index}-${itemIndex}`} className="grid gap-2 bg-white px-4 py-4 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-0">
+                                  <div>
+                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 md:hidden">Ngày khởi hành</p>
+                                    <p className="text-base font-semibold text-gray-900 md:text-[17px]">{item.date}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 md:hidden">Giá</p>
+                                    <p className="inline-flex w-fit items-center rounded-full bg-rose-50 px-3 py-1.5 text-sm font-bold text-rose-600 ring-1 ring-rose-100 md:bg-transparent md:px-0 md:py-0 md:text-base md:ring-0">{item.price}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {note && <p className="mt-4 text-[15px] leading-7 text-gray-600 md:text-base">{note}</p>}
+                        </div>
+                      </section>
+                    )
+                  }
+
                   const shouldHidePreCtaParagraph = block.type === 'paragraph'
                     && nextBlock?.type === 'heading'
                     && /^(cta|liên hệ & giữ chỗ)$/i.test((nextBlock.text || '').trim())
