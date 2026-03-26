@@ -262,24 +262,24 @@ export default function TourCard({
           onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
           onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
         >
-          {/* 2 lớp ảnh cố định để mobile không bị remount/flicker */}
+          {/* Slide ngang sạch, không opacity để tránh bóng mờ */}
+          {previousImageIndex !== null && previousImageIndex !== currentImageIndex && (
+            <div
+              className="absolute inset-0"
+              style={{ animation: 'tourCardSlideOutClean 400ms ease-out forwards' }}
+            >
+              <Image
+                src={allImages[previousImageIndex] || image}
+                alt={`${title} - ${previousImageIndex + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              />
+            </div>
+          )}
           <div
-            className={`absolute inset-0 transition-transform duration-400 ease-out ${
-              isTransitioning && previousImageIndex !== null ? '-translate-x-[8%] scale-[1.015] opacity-70' : 'translate-x-0 scale-100 opacity-100'
-            }`}
-          >
-            <Image
-              src={allImages[previousImageIndex ?? currentImageIndex] || image}
-              alt={`${title} - ${((previousImageIndex ?? currentImageIndex) || 0) + 1}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-            />
-          </div>
-          <div
-            className={`absolute inset-0 transition-all duration-400 ease-out ${
-              isTransitioning && previousImageIndex !== null ? 'translate-x-[8%] scale-[1.02] opacity-85' : 'translate-x-0 scale-100 opacity-100'
-            }`}
+            className="absolute inset-0"
+            style={isTransitioning && previousImageIndex !== null ? { animation: 'tourCardSlideInClean 400ms ease-out forwards' } : undefined}
           >
             <Image
               src={allImages[currentImageIndex] || image}
@@ -392,6 +392,17 @@ export default function TourCard({
           </div>
         </div>
       </div>
+      <style jsx>{`
+        @keyframes tourCardSlideOutClean {
+          from { transform: translateX(0); }
+          to { transform: translateX(-100%); }
+        }
+
+        @keyframes tourCardSlideInClean {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+      `}</style>
     </Link>
   )
 }
