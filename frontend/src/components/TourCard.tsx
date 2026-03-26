@@ -102,6 +102,23 @@ export default function TourCard({
   }, [])
 
   useEffect(() => {
+    if (typeof window === 'undefined' || allImages.length <= 1) return
+
+    const preloaders = allImages.slice(1).map((src) => {
+      const img = new window.Image()
+      img.decoding = 'async'
+      img.src = src
+      return img
+    })
+
+    return () => {
+      preloaders.forEach((img) => {
+        img.src = ''
+      })
+    }
+  }, [allImages])
+
+  useEffect(() => {
     if (isMobileViewport) {
       clearSlideTimers()
       return
