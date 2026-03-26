@@ -159,6 +159,7 @@ export default async function RootLayout({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
+    "@id": "https://sonhangtravel.com#organization",
     "name": siteName,
     "description": "Chuyên tour du lịch Trung Quốc từ Móng Cái: Đông Hưng, Nam Ninh, Quế Lâm, Trương Gia Giới",
     "url": "https://sonhangtravel.com",

@@ -28,6 +28,6 @@
 - Added safe speculation rules for key internal routes and bfcache-friendly header state resets so repeat navigations/back-forward flows feel faster without aggressive prerendering.
 - Normalized new admin image uploads to WebP in the upload API so future tour/blog/settings images are lighter by default.
 - Smoothed the homepage tour card slideshow so the first image stays longer and subsequent image changes feel less jumpy.
-- Tightened tours hub/category ItemList schema and TravelAgency address markup to resolve the latest Semrush structured-data invalid item warnings.
+- Tightened tours hub/category ItemList schema, added a shared organization `@id`, and replaced nested tour-page agency objects so Semrush is less likely to misread repeated LocalBusiness entries as missing `address`.
 - Adjusted blog gallery rendering so preview images no longer crop aggressively on mobile/desktop while keeping full-view lightbox intact.
 - Restyled blog departure schedule rendering into a cleaner launch-table layout with stronger date grouping and price emphasis for sales-style posts.

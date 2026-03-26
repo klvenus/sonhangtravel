@@ -433,18 +433,7 @@ export default async function TourDetailPage({ params }: PageProps) {
       image: galleryImages,
       touristType: 'Leisure',
       provider: {
-        '@type': 'TravelAgency',
-        name: 'Sơn Hằng Travel',
-        telephone: phoneNumber,
-        url: SITE_URL,
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: 'Khu 5',
-          addressLocality: 'Móng Cái',
-          addressRegion: 'Quảng Ninh',
-          postalCode: '010000',
-          addressCountry: 'VN',
-        },
+        '@id': `${SITE_URL}#organization`,
       },
       tripOrigin: {
         '@type': 'Place',
@@ -461,18 +450,7 @@ export default async function TourDetailPage({ params }: PageProps) {
         availability: 'https://schema.org/InStock',
         url: canonicalUrl,
         seller: {
-          '@type': 'TravelAgency',
-          name: 'Sơn Hằng Travel',
-          url: SITE_URL,
-          telephone: phoneNumber,
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: 'Khu 5',
-            addressLocality: 'Móng Cái',
-            addressRegion: 'Quảng Ninh',
-            postalCode: '010000',
-            addressCountry: 'VN',
-          },
+          '@id': `${SITE_URL}#organization`,
         },
       },
       itinerary: schemaItinerary.length > 0 ? {
@@ -489,17 +467,7 @@ export default async function TourDetailPage({ params }: PageProps) {
       name: seoTourName,
       description,
       provider: {
-        '@type': 'TravelAgency',
-        name: 'Sơn Hằng Travel',
-        url: SITE_URL,
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: 'Khu 5',
-          addressLocality: 'Móng Cái',
-          addressRegion: 'Quảng Ninh',
-          postalCode: '010000',
-          addressCountry: 'VN',
-        },
+        '@id': `${SITE_URL}#organization`,
       },
       areaServed: {
         '@type': 'Country',

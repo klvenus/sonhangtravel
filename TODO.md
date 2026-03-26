@@ -65,6 +65,7 @@
 ## 2026-03-26 Task: Fix Semrush structured data invalid items
 - [x] Fix ItemList/ListItem schema on tours hub/category pages to avoid invalid carousel item URL fields
 - [x] Strengthen TravelAgency/LocalBusiness address schema so Semrush no longer flags address on tour pages
+- [x] Replace nested tour-page agency objects with a shared organization reference to avoid repeated LocalBusiness address warnings
 - [x] Build frontend and push
 
 ## 2026-03-26 Task: Stop blog gallery image cropping
