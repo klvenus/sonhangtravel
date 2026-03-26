@@ -81,7 +81,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
     <>
       <div className="space-y-4">
         <div
-          className="relative overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-gray-200 aspect-[4/5] md:aspect-[16/10] p-2 md:p-3"
+          className="relative overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-gray-200 p-2 md:p-3 min-h-[520px] max-h-[80vh] md:min-h-[860px] md:max-h-[88vh]"
           onMouseEnter={() => setIsPreviewPaused(true)}
           onMouseLeave={() => setIsPreviewPaused(false)}
           onTouchStart={() => setIsPreviewPaused(true)}
