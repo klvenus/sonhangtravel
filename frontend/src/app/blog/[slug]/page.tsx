@@ -744,6 +744,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     const subtitle = (scheduleBlock.subtitle || '').trim()
                     const basePrice = (scheduleBlock.basePrice || '').trim()
                     const note = (scheduleBlock.note || '').trim()
+                    const slots = (scheduleBlock.slots || '').trim()
 
                     if (!title || departures.length === 0) return null
 
@@ -756,11 +757,18 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                               <h3 className="mt-1 text-[16px] font-bold leading-snug md:mt-2 md:text-2xl">{title}</h3>
                               {subtitle && <p className="mt-1 text-[12px] leading-5 text-white/85 md:mt-2 md:text-base md:leading-6">{subtitle}</p>}
                             </div>
-                            {basePrice && (
-                              <div className="inline-flex w-fit max-w-full items-center rounded-lg bg-white px-2.5 py-1.5 text-[13px] font-bold text-rose-600 shadow md:rounded-2xl md:px-4 md:py-3 md:text-base">
-                                Giá cơ bản: {basePrice}
-                              </div>
-                            )}
+                            <div className="flex flex-wrap gap-2 md:justify-end">
+                              {basePrice && (
+                                <div className="inline-flex w-fit max-w-full items-center rounded-lg bg-white px-2.5 py-1.5 text-[13px] font-bold text-rose-600 shadow md:rounded-2xl md:px-4 md:py-3 md:text-base">
+                                  Giá cơ bản: {basePrice}
+                                </div>
+                              )}
+                              {slots && (
+                                <div className="inline-flex w-fit max-w-full items-center rounded-lg bg-white/16 px-2.5 py-1.5 text-[13px] font-semibold text-white ring-1 ring-white/30 backdrop-blur-sm md:rounded-2xl md:px-4 md:py-3 md:text-base">
+                                  Còn {slots}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
 
