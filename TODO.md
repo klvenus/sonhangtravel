@@ -73,6 +73,6 @@
 - [x] Build frontend and push
 
 ## 2026-03-26 Task: Render departure dates in blog as schedule cards
-- [ ] Detect paragraphs containing grouped departure dates
-- [ ] Render those departures as a clean visual schedule block instead of a long sentence
+- [x] Detect paragraphs containing grouped departure dates
+- [ ] Render those departures as a clean visual schedule table/card with price support
 - [ ] Build frontend and push

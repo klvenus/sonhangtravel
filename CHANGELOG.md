@@ -30,4 +30,4 @@
 - Smoothed the homepage tour card slideshow so the first image stays longer and subsequent image changes feel less jumpy.
 - Tightened tours hub/category ItemList schema and TravelAgency address markup to resolve the latest Semrush structured-data invalid item warnings.
 - Adjusted blog gallery rendering so preview images no longer crop aggressively on mobile/desktop while keeping full-view lightbox intact.
-- Added blog schedule-card rendering for grouped departure-date paragraphs so customers can scan launch dates more easily.
+- Added blog departure schedule table rendering with clearer date grouping and price support so launch-date paragraphs read like a sales-friendly schedule block instead of plain text.

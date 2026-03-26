@@ -288,42 +288,94 @@ function extractYouTubeVideoId(text: string) {
   return match?.[1] || null
 }
 
-function extractScheduleDates(text: string) {
+function extractScheduleData(text: string) {
   const cleaned = text.replace(/\s+/g, ' ').trim()
   if (!/ngày khởi hành|mở lịch|lịch khởi hành|đợt bay|đợt đi/i.test(cleaned)) {
-    return []
+    return null
   }
 
-  const matches = Array.from(cleaned.matchAll(/\b\d{1,2}\/\d{2}\b/g)).map((match) => match[0])
-  return Array.from(new Set(matches))
+  const dateMatches = Array.from(cleaned.matchAll(/\b\d{1,2}\/\d{2}\b/g)).map((match) => match[0])
+  const dates = Array.from(new Set(dateMatches))
+  if (dates.length < 2) return null
+
+  const priceMatch = cleaned.match(/(?:từ|giá|chỉ từ)?\s*((?:\d{1,3}(?:[.,]\d{3})+|\d+)\s*(?:đ|vnđ|vnd|triệu))/i)
+  const introText = cleaned.split(':')[0]?.trim() || 'Lịch khởi hành đang mở'
+  const noteText = cleaned
+    .replace(introText, '')
+    .replace(/^[\s:,-]+/, '')
+    .replace(/\b\d{1,2}\/\d{2}\b/g, '')
+    .replace(/\b(và|,|;|cùng)\b/gi, ' ')
+    .replace(/[,:;]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  const groupedByMonth = dates.reduce<Record<string, string[]>>((acc, date) => {
+    const [day, month] = date.split('/')
+    if (!acc[month]) acc[month] = []
+    acc[month].push(day)
+    return acc
+  }, {})
+
+  return {
+    introText,
+    noteText,
+    priceText: priceMatch?.[1]?.trim() || null,
+    groupedByMonth,
+  }
 }
 
 function renderScheduleCard(text: string, key: number) {
-  const dates = extractScheduleDates(text)
-  if (dates.length < 2) return null
+  const schedule = extractScheduleData(text)
+  if (!schedule) return null
 
-  const introText = text.split(':')[0]?.trim() || 'Lịch khởi hành đang mở'
-  const outroText = text.includes(':') ? text.slice(text.indexOf(':') + 1).trim() : text
-  const noteText = outroText.replace(/\b\d{1,2}\/\d{2}\b/g, '').replace(/[,:;]+/g, ' ').replace(/\s+/g, ' ').trim()
+  const monthEntries = Object.entries(schedule.groupedByMonth)
 
   return (
-    <section key={key} className="not-prose my-8 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 shadow-sm md:my-10 md:p-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Lịch khởi hành</p>
-      <h3 className="mt-2 text-xl font-bold text-gray-900 md:text-2xl">{introText}</h3>
-      <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-        {dates.map((date) => {
-          const [day, month] = date.split('/')
-          return (
-            <div key={date} className="rounded-2xl border border-emerald-100 bg-white px-4 py-4 text-center shadow-sm">
-              <div className="text-3xl font-bold leading-none text-emerald-700">{day}</div>
-              <div className="mt-2 text-sm font-medium uppercase tracking-[0.16em] text-gray-500">Tháng {month}</div>
+    <section key={key} className="not-prose my-8 overflow-hidden rounded-[28px] border border-emerald-100 bg-white shadow-[0_18px_50px_rgba(16,185,129,0.12)] md:my-10">
+      <div className="border-b border-emerald-100 bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 px-5 py-5 text-white md:px-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">Lịch khởi hành</p>
+            <h3 className="mt-2 text-xl font-bold leading-tight md:text-2xl">{schedule.introText}</h3>
+          </div>
+          {schedule.priceText && (
+            <div className="inline-flex w-fit items-center rounded-full bg-white/16 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+              Giá tham khảo: {schedule.priceText}
             </div>
-          )
-        })}
+          )}
+        </div>
       </div>
-      {noteText && (
-        <p className="mt-4 text-[15px] leading-7 text-gray-600 md:text-base">{noteText}</p>
-      )}
+
+      <div className="px-5 py-5 md:px-6 md:py-6">
+        <div className="grid gap-4 md:grid-cols-2">
+          {monthEntries.map(([month, days]) => (
+            <div key={month} className="rounded-2xl border border-gray-100 bg-emerald-50/55 p-4">
+              <div className="flex items-center justify-between gap-3 border-b border-emerald-100 pb-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Tháng</p>
+                  <p className="text-2xl font-bold text-gray-900">{month}</p>
+                </div>
+                <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
+                  {days.length} đợt
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {days.map((day) => (
+                  <div key={`${month}-${day}`} className="rounded-2xl bg-white px-3 py-4 text-center shadow-sm ring-1 ring-emerald-100">
+                    <div className="text-3xl font-bold leading-none text-emerald-700">{day}</div>
+                    <div className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">Khởi hành</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {schedule.noteText && (
+          <p className="mt-5 text-[15px] leading-7 text-gray-600 md:text-base">{schedule.noteText}</p>
+        )}
+      </div>
     </section>
   )
 }
