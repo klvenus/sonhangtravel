@@ -426,7 +426,7 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
 
   return (
     <div key={key} className={cardClass}>
-      <p className="text-sm font-semibold text-slate-900">Xem chi tiết hoặc nhắn bên em giữ chỗ</p>
+      <p className="text-sm font-semibold text-slate-900">Nhận lịch trình và tư vấn qua Zalo</p>
       {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{renderLinkedText(parts[0].trim())}</p>}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {ctaLinks.map((link, index) => (
@@ -774,19 +774,19 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
                         <div className="px-3.5 py-3.5 md:px-6 md:py-6">
                           <div className="overflow-hidden rounded-xl border border-orange-100 bg-white md:rounded-2xl">
-                            <div className="grid grid-cols-[0.95fr_1fr_0.9fr] border-b border-orange-100 bg-orange-50 px-3 py-2 text-[11px] font-semibold text-gray-600 md:grid-cols-[1fr_1fr_0.9fr] md:bg-orange-100/70 md:px-4 md:py-3 md:text-sm md:text-gray-700">
+                            <div className="grid grid-cols-[0.8fr_1.2fr_0.9fr] border-b border-orange-100 bg-orange-50 px-3 py-2 text-[11px] font-semibold text-gray-600 md:grid-cols-[0.9fr_1.1fr_0.8fr] md:bg-orange-100/70 md:px-4 md:py-3 md:text-sm md:text-gray-700">
                               <span>Ngày</span>
-                              <span>Giá</span>
+                              <span className="text-center md:text-left">Giá</span>
                               <span className="text-right md:text-left">Chỗ còn</span>
                             </div>
 
                             <div className="divide-y divide-orange-100">
                               {departures.map((item: any, itemIndex: number) => (
-                                <div key={`${index}-${itemIndex}`} className="grid grid-cols-[0.95fr_1fr_0.9fr] items-center gap-2 bg-white px-3 py-2.5 md:grid-cols-[1fr_1fr_0.9fr] md:gap-3 md:px-4 md:py-4">
+                                <div key={`${index}-${itemIndex}`} className="grid grid-cols-[0.8fr_1.2fr_0.9fr] items-center gap-2 bg-white px-3 py-2.5 md:grid-cols-[0.9fr_1.1fr_0.8fr] md:gap-3 md:px-4 md:py-4">
                                   <div>
                                     <p className="text-[14px] font-semibold text-gray-900 md:text-[17px]">{item.date}</p>
                                   </div>
-                                  <div>
+                                  <div className="text-center md:text-left">
                                     <p className="inline-flex w-fit max-w-full items-center rounded-full bg-rose-50 px-2.5 py-1 text-[12px] font-bold text-rose-600 ring-1 ring-rose-100 md:bg-transparent md:px-0 md:py-0 md:text-base md:ring-0">{item.price}</p>
                                   </div>
                                   <div className="text-right md:text-left">
