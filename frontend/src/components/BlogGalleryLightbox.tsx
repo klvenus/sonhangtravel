@@ -1,18 +1,36 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 
 export default function BlogGalleryLightbox({ images, title }: { images: string[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [previewIndex, setPreviewIndex] = useState(0)
+  const [previousPreviewIndex, setPreviousPreviewIndex] = useState<number | null>(null)
+  const [isPreviewSliding, setIsPreviewSliding] = useState(false)
   const [isPreviewPaused, setIsPreviewPaused] = useState(false)
+  const previewSlideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const close = () => setActiveIndex(null)
   const next = () => setActiveIndex((prev) => (prev === null ? null : (prev + 1) % images.length))
   const prev = () => setActiveIndex((prev) => (prev === null ? null : (prev - 1 + images.length) % images.length))
-  const nextPreview = () => setPreviewIndex((prev) => (prev + 1) % images.length)
-  const prevPreview = () => setPreviewIndex((prev) => (prev - 1 + images.length) % images.length)
+
+  const goToPreview = (nextIndex: number) => {
+    if (nextIndex === previewIndex) return
+    setPreviousPreviewIndex(previewIndex)
+    setPreviewIndex(nextIndex)
+    setIsPreviewSliding(true)
+    if (previewSlideTimeoutRef.current) {
+      clearTimeout(previewSlideTimeoutRef.current)
+    }
+    previewSlideTimeoutRef.current = setTimeout(() => {
+      setPreviousPreviewIndex(null)
+      setIsPreviewSliding(false)
+    }, 420)
+  }
+
+  const nextPreview = () => goToPreview((previewIndex + 1) % images.length)
+  const prevPreview = () => goToPreview((previewIndex - 1 + images.length) % images.length)
 
   useEffect(() => {
     if (activeIndex === null) return
@@ -30,14 +48,34 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
   }, [activeIndex, images.length])
 
   useEffect(() => {
-    if (images.length <= 1 || isPreviewPaused || activeIndex !== null) return
+    if (typeof window === 'undefined' || images.length <= 1) return
 
-    const timer = setInterval(() => {
-      setPreviewIndex((prev) => (prev + 1) % images.length)
+    const preloaders = images.slice(1).map((src) => {
+      const img = new window.Image()
+      img.decoding = 'async'
+      img.src = src
+      return img
+    })
+
+    return () => {
+      preloaders.forEach((img) => {
+        img.src = ''
+      })
+      if (previewSlideTimeoutRef.current) {
+        clearTimeout(previewSlideTimeoutRef.current)
+      }
+    }
+  }, [images])
+
+  useEffect(() => {
+    if (images.length <= 1 || isPreviewPaused || activeIndex !== null || isPreviewSliding) return
+
+    const timer = setTimeout(() => {
+      goToPreview((previewIndex + 1) % images.length)
     }, previewIndex === 0 ? 5000 : 3200)
 
-    return () => clearInterval(timer)
-  }, [activeIndex, images.length, isPreviewPaused, previewIndex])
+    return () => clearTimeout(timer)
+  }, [activeIndex, images.length, isPreviewPaused, isPreviewSliding, previewIndex])
 
   return (
     <>
@@ -54,15 +92,33 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
             onClick={() => setActiveIndex(previewIndex)}
             className="absolute inset-0 h-full w-full"
           >
-            <Image
-              src={images[previewIndex]}
-              alt={`${title} - ảnh ${previewIndex + 1}`}
-              fill
-              className="object-contain"
-              sizes="100vw"
-              quality={100}
-              priority
-            />
+            {previousPreviewIndex !== null && previousPreviewIndex !== previewIndex && (
+              <div className="absolute inset-0" style={{ animation: 'blogPreviewSlideOut 420ms ease-out forwards' }}>
+                <Image
+                  src={images[previousPreviewIndex]}
+                  alt={`${title} - ảnh ${previousPreviewIndex + 1}`}
+                  fill
+                  className="object-contain"
+                  sizes="100vw"
+                  quality={100}
+                  priority
+                />
+              </div>
+            )}
+            <div
+              className="absolute inset-0"
+              style={isPreviewSliding && previousPreviewIndex !== null ? { animation: 'blogPreviewSlideIn 420ms ease-out forwards' } : undefined}
+            >
+              <Image
+                src={images[previewIndex]}
+                alt={`${title} - ảnh ${previewIndex + 1}`}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                quality={100}
+                priority
+              />
+            </div>
           </button>
 
           {images.length > 1 && (
@@ -96,7 +152,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
               <button
                 key={`${image}-${index}`}
                 type="button"
-                onClick={() => setPreviewIndex(index)}
+                onClick={() => goToPreview(index)}
                 className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl ring-2 transition-all ${previewIndex === index ? 'ring-emerald-500' : 'ring-transparent'}`}
               >
                 <Image
@@ -169,6 +225,18 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        @keyframes blogPreviewSlideOut {
+          from { transform: translateX(0); }
+          to { transform: translateX(-100%); }
+        }
+
+        @keyframes blogPreviewSlideIn {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+      `}</style>
     </>
   )
 }
