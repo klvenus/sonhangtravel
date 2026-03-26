@@ -656,7 +656,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             </div>
           </div>
         ) : post.thumbnail && (
-          post.gallery && post.gallery.length > 1 && !isSalePost ? (
+          post.gallery && post.gallery.length > 0 && !isSalePost ? (
             <div className="mb-10">
               <BlogGalleryLightbox images={post.gallery} title={post.title} />
             </div>
