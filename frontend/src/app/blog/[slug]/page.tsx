@@ -748,23 +748,23 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     if (!title || departures.length === 0) return null
 
                     return (
-                      <section key={index} className="not-prose my-8 overflow-hidden rounded-[24px] border border-orange-200 bg-white shadow-[0_20px_60px_rgba(249,115,22,0.12)] md:my-10">
-                        <div className="border-b border-orange-100 bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 px-5 py-5 text-white md:px-6">
-                          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <section key={index} className="not-prose my-6 overflow-hidden rounded-[20px] border border-orange-200 bg-white shadow-[0_14px_36px_rgba(249,115,22,0.10)] md:my-10 md:rounded-[24px] md:shadow-[0_20px_60px_rgba(249,115,22,0.12)]">
+                        <div className="border-b border-orange-100 bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 px-4 py-4 text-white md:px-6 md:py-5">
+                          <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-3">
                             <div>
-                              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">Lịch khởi hành</p>
-                              <h3 className="mt-2 text-xl font-bold leading-tight md:text-2xl">{title}</h3>
-                              {subtitle && <p className="mt-2 text-sm leading-6 text-white/85 md:text-base">{subtitle}</p>}
+                              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80 md:text-xs">Lịch khởi hành</p>
+                              <h3 className="mt-1.5 text-lg font-bold leading-tight md:mt-2 md:text-2xl">{title}</h3>
+                              {subtitle && <p className="mt-1.5 text-[13px] leading-5 text-white/85 md:mt-2 md:text-base md:leading-6">{subtitle}</p>}
                             </div>
                             {basePrice && (
-                              <div className="inline-flex w-fit items-center rounded-2xl bg-white px-4 py-3 text-base font-bold text-rose-600 shadow-lg">
+                              <div className="inline-flex w-fit max-w-full items-center rounded-xl bg-white px-3 py-2 text-sm font-bold text-rose-600 shadow-lg md:rounded-2xl md:px-4 md:py-3 md:text-base">
                                 Giá cơ bản: {basePrice}
                               </div>
                             )}
                           </div>
                         </div>
 
-                        <div className="px-5 py-5 md:px-6 md:py-6">
+                        <div className="px-4 py-4 md:px-6 md:py-6">
                           <div className="overflow-hidden rounded-2xl border border-orange-100 bg-orange-50/40">
                             <div className="hidden grid-cols-[1.1fr_1fr] border-b border-orange-100 bg-orange-100/70 text-sm font-semibold text-gray-700 md:grid">
                               <div className="px-4 py-3">Ngày khởi hành</div>
@@ -773,21 +773,21 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
                             <div className="divide-y divide-orange-100">
                               {departures.map((item: any, itemIndex: number) => (
-                                <div key={`${index}-${itemIndex}`} className="grid gap-2 bg-white px-4 py-4 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-0">
+                                <div key={`${index}-${itemIndex}`} className="grid gap-2 bg-white px-3 py-3 md:grid-cols-[1.1fr_1fr] md:items-center md:gap-0 md:px-4 md:py-4">
                                   <div>
-                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 md:hidden">Ngày khởi hành</p>
-                                    <p className="text-base font-semibold text-gray-900 md:text-[17px]">{item.date}</p>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400 md:hidden">Ngày khởi hành</p>
+                                    <p className="text-[15px] font-semibold text-gray-900 md:text-[17px]">{item.date}</p>
                                   </div>
                                   <div>
-                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 md:hidden">Giá</p>
-                                    <p className="inline-flex w-fit items-center rounded-full bg-rose-50 px-3 py-1.5 text-sm font-bold text-rose-600 ring-1 ring-rose-100 md:bg-transparent md:px-0 md:py-0 md:text-base md:ring-0">{item.price}</p>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gray-400 md:hidden">Giá</p>
+                                    <p className="inline-flex w-fit max-w-full items-center rounded-full bg-rose-50 px-2.5 py-1 text-[13px] font-bold text-rose-600 ring-1 ring-rose-100 md:bg-transparent md:px-0 md:py-0 md:text-base md:ring-0">{item.price}</p>
                                   </div>
                                 </div>
                               ))}
                             </div>
                           </div>
 
-                          {note && <p className="mt-4 text-[15px] leading-7 text-gray-600 md:text-base">{note}</p>}
+                          {note && <p className="mt-3.5 text-[14px] leading-6 text-gray-600 md:mt-4 md:text-base md:leading-7">{note}</p>}
                         </div>
                       </section>
                     )
