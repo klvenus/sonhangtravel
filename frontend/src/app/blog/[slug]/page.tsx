@@ -744,6 +744,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     const basePrice = (scheduleBlock.basePrice || '').trim()
                     const note = (scheduleBlock.note || '').trim()
                     const slots = (scheduleBlock.slots || '').trim()
+                    const tourUrl = (scheduleBlock.tourUrl || '').trim()
+                    const tourLabel = (scheduleBlock.tourLabel || '').trim()
 
                     if (!title || departures.length === 0) return null
 
@@ -797,6 +799,17 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                           </div>
 
                           {note && <p className="mt-3 text-[13px] leading-5 text-gray-600 md:mt-4 md:text-base md:leading-7">{note}</p>}
+                          {tourUrl && (
+                            <div className="mt-3 md:mt-4">
+                              <Link
+                                href={tourUrl}
+                                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-[13px] font-semibold text-emerald-700 transition-colors hover:border-emerald-300 hover:bg-emerald-100 md:px-4 md:py-2.5 md:text-sm"
+                              >
+                                <span>{tourLabel || 'Xem tour đang bán'}</span>
+                                <span>→</span>
+                              </Link>
+                            </div>
+                          )}
                         </div>
                       </section>
                     )
