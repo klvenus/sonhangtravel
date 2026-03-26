@@ -288,7 +288,52 @@ function extractYouTubeVideoId(text: string) {
   return match?.[1] || null
 }
 
+function extractScheduleDates(text: string) {
+  const cleaned = text.replace(/\s+/g, ' ').trim()
+  if (!/ngày khởi hành|mở lịch|lịch khởi hành|đợt bay|đợt đi/i.test(cleaned)) {
+    return []
+  }
+
+  const matches = Array.from(cleaned.matchAll(/\b\d{1,2}\/\d{2}\b/g)).map((match) => match[0])
+  return Array.from(new Set(matches))
+}
+
+function renderScheduleCard(text: string, key: number) {
+  const dates = extractScheduleDates(text)
+  if (dates.length < 2) return null
+
+  const introText = text.split(':')[0]?.trim() || 'Lịch khởi hành đang mở'
+  const outroText = text.includes(':') ? text.slice(text.indexOf(':') + 1).trim() : text
+  const noteText = outroText.replace(/\b\d{1,2}\/\d{2}\b/g, '').replace(/[,:;]+/g, ' ').replace(/\s+/g, ' ').trim()
+
+  return (
+    <section key={key} className="not-prose my-8 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 shadow-sm md:my-10 md:p-6">
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Lịch khởi hành</p>
+      <h3 className="mt-2 text-xl font-bold text-gray-900 md:text-2xl">{introText}</h3>
+      <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+        {dates.map((date) => {
+          const [day, month] = date.split('/')
+          return (
+            <div key={date} className="rounded-2xl border border-emerald-100 bg-white px-4 py-4 text-center shadow-sm">
+              <div className="text-3xl font-bold leading-none text-emerald-700">{day}</div>
+              <div className="mt-2 text-sm font-medium uppercase tracking-[0.16em] text-gray-500">Tháng {month}</div>
+            </div>
+          )
+        })}
+      </div>
+      {noteText && (
+        <p className="mt-4 text-[15px] leading-7 text-gray-600 md:text-base">{noteText}</p>
+      )}
+    </section>
+  )
+}
+
 function renderParagraph(text: string, key: number, isSalePost: boolean, forceCtaBlock = false, inheritedLinks: string[] = []) {
+  const scheduleCard = renderScheduleCard(text, key)
+  if (scheduleCard) {
+    return scheduleCard
+  }
+
   const markdownLinks = extractMarkdownLinks(text)
   const rawCtaMatch = text.match(/^(?:👉\s*)?(.+?):\s*(https?:\/\/\S+)$/)
   const match = rawCtaMatch

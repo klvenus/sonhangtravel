@@ -68,6 +68,11 @@
 - [x] Build frontend and push
 
 ## 2026-03-26 Task: Stop blog gallery image cropping
-- [ ] Show blog gallery preview images without cropping on mobile/desktop
-- [ ] Keep lightbox/full-view behavior intact
+- [x] Show blog gallery preview images without cropping on mobile/desktop
+- [x] Keep lightbox/full-view behavior intact
+- [x] Build frontend and push
+
+## 2026-03-26 Task: Render departure dates in blog as schedule cards
+- [ ] Detect paragraphs containing grouped departure dates
+- [ ] Render those departures as a clean visual schedule block instead of a long sentence
 - [ ] Build frontend and push
