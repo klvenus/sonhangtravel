@@ -63,6 +63,11 @@
 - [x] Build frontend and verify
 
 ## 2026-03-26 Task: Fix Semrush structured data invalid items
-- [ ] Fix ItemList/ListItem schema on tours hub/category pages to avoid invalid carousel item URL fields
-- [ ] Strengthen TravelAgency/LocalBusiness address schema so Semrush no longer flags address on tour pages
+- [x] Fix ItemList/ListItem schema on tours hub/category pages to avoid invalid carousel item URL fields
+- [x] Strengthen TravelAgency/LocalBusiness address schema so Semrush no longer flags address on tour pages
+- [x] Build frontend and push
+
+## 2026-03-26 Task: Stop blog gallery image cropping
+- [ ] Show blog gallery preview images without cropping on mobile/desktop
+- [ ] Keep lightbox/full-view behavior intact
 - [ ] Build frontend and push

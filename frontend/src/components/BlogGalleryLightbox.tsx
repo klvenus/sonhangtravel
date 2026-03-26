@@ -31,7 +31,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
   return (
     <>
       <div className="space-y-4">
-        <div className="relative overflow-hidden rounded-[28px] bg-gray-100 shadow-sm ring-1 ring-gray-200 aspect-[4/5] md:aspect-[16/10]">
+        <div className="relative overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-gray-200 aspect-[4/5] md:aspect-[16/10] p-2 md:p-3">
           <button
             type="button"
             onClick={() => setActiveIndex(previewIndex)}
@@ -41,7 +41,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
               src={images[previewIndex]}
               alt={`${title} - ảnh ${previewIndex + 1}`}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="100vw"
               quality={100}
               priority
@@ -87,7 +87,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
                   src={image}
                   alt={`${title} - thumbnail ${index + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-contain bg-white"
                   sizes="80px"
                   quality={100}
                 />

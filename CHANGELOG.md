@@ -29,3 +29,4 @@
 - Normalized new admin image uploads to WebP in the upload API so future tour/blog/settings images are lighter by default.
 - Smoothed the homepage tour card slideshow so the first image stays longer and subsequent image changes feel less jumpy.
 - Tightened tours hub/category ItemList schema and TravelAgency address markup to resolve the latest Semrush structured-data invalid item warnings.
+- Adjusted blog gallery rendering so preview images no longer crop aggressively on mobile/desktop while keeping full-view lightbox intact.
