@@ -421,12 +421,11 @@ function renderParagraph(text: string, key: number, isSalePost: boolean, forceCt
     : 'not-prose my-8 space-y-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-5 md:my-10 md:p-6'
 
   const buttonClass = isSalePost
-    ? 'group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-5 py-3 text-center font-semibold text-white no-underline shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:opacity-95'
-    : 'group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#00CBA9] px-5 py-3 text-center font-semibold text-white no-underline shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00b798]'
+    ? 'group inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-4 py-2.5 text-center font-semibold text-white no-underline shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:opacity-95'
+    : 'group inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#00CBA9] px-4 py-2.5 text-center font-semibold text-white no-underline shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00b798]'
 
   return (
     <div key={key} className={cardClass}>
-      <p className="text-sm font-semibold text-slate-900">Nhận lịch trình và tư vấn qua Zalo</p>
       {parts[0] && <p className="text-[17px] leading-8 text-gray-700 md:text-[18px]">{renderLinkedText(parts[0].trim())}</p>}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {ctaLinks.map((link, index) => (
@@ -468,12 +467,12 @@ function RecommendationSection({
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
-            {hasTours ? 'Nếu thích đúng vibe này, nên xem tour nào?' : 'Chưa có tour khớp 100%, nhắn Zalo bên em nhé'}
+            {hasTours ? 'Tour liên quan đang mở' : 'Nhận lịch trình và tư vấn qua Zalo'}
           </h2>
           <p className="mt-2 text-gray-600">
             {hasTours
-              ? 'Bên em để ngay các tour đang bán thật, liên quan trực tiếp tới bài viết này để khách xem tiếp cho nhanh.'
-              : 'Bài này chưa khớp trọn với tour đang mở bán. Nhắn Zalo OA để bên em gợi ý đúng tuyến gần nhất, lịch phù hợp và báo giá nhanh.'}
+              ? 'Bên em để ngay các tour đang bán thật, liên quan trực tiếp tới nội dung bài viết này.'
+              : 'Nhắn Zalo OA để bên em gợi ý tuyến gần nhất, lịch phù hợp và báo giá nhanh.'}
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -481,14 +480,14 @@ function RecommendationSection({
             href={ZALO_OA_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-[#00CBA9] px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#00b798]"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#00CBA9] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#00b798]"
           >
             <Image src="/icons/zalo.png" alt="Zalo" width={18} height={18} className="h-[18px] w-[18px]" />
             <span>Nhắn Zalo OA</span>
           </a>
           <Link
             href="/tours"
-            className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 transition-colors hover:border-[#059669] hover:text-[#059669]"
+            className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-800 transition-colors hover:border-[#059669] hover:text-[#059669]"
           >
             Xem tất cả tour
           </Link>
