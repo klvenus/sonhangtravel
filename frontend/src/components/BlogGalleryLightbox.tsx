@@ -6,6 +6,7 @@ import Image from 'next/image'
 export default function BlogGalleryLightbox({ images, title }: { images: string[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [previewIndex, setPreviewIndex] = useState(0)
+  const [isPreviewPaused, setIsPreviewPaused] = useState(false)
 
   const close = () => setActiveIndex(null)
   const next = () => setActiveIndex((prev) => (prev === null ? null : (prev + 1) % images.length))
@@ -28,10 +29,26 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
     }
   }, [activeIndex, images.length])
 
+  useEffect(() => {
+    if (images.length <= 1 || isPreviewPaused || activeIndex !== null) return
+
+    const timer = setInterval(() => {
+      setPreviewIndex((prev) => (prev + 1) % images.length)
+    }, previewIndex === 0 ? 5000 : 3200)
+
+    return () => clearInterval(timer)
+  }, [activeIndex, images.length, isPreviewPaused, previewIndex])
+
   return (
     <>
       <div className="space-y-4">
-        <div className="relative overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-gray-200 aspect-[4/5] md:aspect-[16/10] p-2 md:p-3">
+        <div
+          className="relative overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-gray-200 aspect-[4/5] md:aspect-[16/10] p-2 md:p-3"
+          onMouseEnter={() => setIsPreviewPaused(true)}
+          onMouseLeave={() => setIsPreviewPaused(false)}
+          onTouchStart={() => setIsPreviewPaused(true)}
+          onTouchEnd={() => setIsPreviewPaused(false)}
+        >
           <button
             type="button"
             onClick={() => setActiveIndex(previewIndex)}
@@ -49,29 +66,28 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
           </button>
 
           {images.length > 1 && (
-            <>
+            <div className="absolute right-4 bottom-4 z-10 flex items-center gap-2 rounded-full bg-black/38 px-2 py-2 text-white backdrop-blur-sm">
               <button
                 type="button"
                 onClick={prevPreview}
-                className="absolute left-3 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full bg-black/35 text-white text-2xl backdrop-blur-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 text-2xl leading-none"
+                aria-label="Ảnh trước"
               >
                 ‹
               </button>
+              <div className="min-w-[64px] text-center text-sm font-medium text-white/95">
+                {previewIndex + 1}/{images.length}
+              </div>
               <button
                 type="button"
                 onClick={nextPreview}
-                className="absolute right-3 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full bg-black/35 text-white text-2xl backdrop-blur-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 text-2xl leading-none"
+                aria-label="Ảnh sau"
               >
                 ›
               </button>
-            </>
-          )}
-
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent p-4 md:p-6">
-            <div className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
-              Ảnh {previewIndex + 1} / {images.length}
             </div>
-          </div>
+          )}
         </div>
 
         {images.length > 1 && (
