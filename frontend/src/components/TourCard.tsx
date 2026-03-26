@@ -48,6 +48,7 @@ export default function TourCard({
   const [previousImageIndex, setPreviousImageIndex] = useState<number | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
+  const [isMobileViewport, setIsMobileViewport] = useState(false)
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
   const slideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -91,9 +92,24 @@ export default function TourCard({
   }, [allImages.length, clearSlideTimers, goToImage, isPaused])
 
   useEffect(() => {
+    const updateViewport = () => {
+      setIsMobileViewport(window.innerWidth < 768)
+    }
+
+    updateViewport()
+    window.addEventListener('resize', updateViewport)
+    return () => window.removeEventListener('resize', updateViewport)
+  }, [])
+
+  useEffect(() => {
+    if (isMobileViewport) {
+      clearSlideTimers()
+      return
+    }
+
     scheduleNextSlide(currentImageIndex)
     return () => clearSlideTimers()
-  }, [currentImageIndex, isPaused, scheduleNextSlide, clearSlideTimers])
+  }, [currentImageIndex, isMobileViewport, isPaused, scheduleNextSlide, clearSlideTimers])
   
   // Handle swipe gestures
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
