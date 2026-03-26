@@ -46,7 +46,7 @@ export default function TourCard({
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [previousImageIndex, setPreviousImageIndex] = useState<number | null>(null)
-  const [isSliding, setIsSliding] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const touchStartX = useRef(0)
   const touchEndX = useRef(0)
@@ -65,16 +65,17 @@ export default function TourCard({
   }, [])
 
   const goToImage = useCallback((nextIndex: number) => {
+    if (nextIndex === currentImageIndex) return
     setPreviousImageIndex(currentImageIndex)
     setCurrentImageIndex(nextIndex)
-    setIsSliding(true)
+    setIsTransitioning(true)
     if (fadeTimeoutRef.current) {
       clearTimeout(fadeTimeoutRef.current)
     }
     fadeTimeoutRef.current = setTimeout(() => {
       setPreviousImageIndex(null)
-      setIsSliding(false)
-    }, 520)
+      setIsTransitioning(false)
+    }, 420)
   }, [currentImageIndex])
 
   const scheduleNextSlide = useCallback((index: number) => {
@@ -228,27 +229,33 @@ export default function TourCard({
           onTouchMove={allImages.length > 1 ? handleTouchMove : undefined}
           onTouchEnd={allImages.length > 1 ? handleTouchEnd : undefined}
         >
-          {/* Slide ngang nhẹ + zoom rất ít để đỡ cảm giác fade cũ */}
-          {previousImageIndex !== null && previousImageIndex !== currentImageIndex && (
+          {/* 2 lớp ảnh cố định để mobile không bị remount/flicker */}
+          <div
+            className={`absolute inset-0 transition-transform duration-400 ease-out ${
+              isTransitioning && previousImageIndex !== null ? '-translate-x-[8%] scale-[1.015] opacity-70' : 'translate-x-0 scale-100 opacity-100'
+            }`}
+          >
             <Image
-              key={`previous-${previousImageIndex}`}
-              src={allImages[previousImageIndex] || image}
-              alt={`${title} - ${previousImageIndex + 1}`}
+              src={allImages[previousImageIndex ?? currentImageIndex] || image}
+              alt={`${title} - ${((previousImageIndex ?? currentImageIndex) || 0) + 1}`}
               fill
               className="object-cover"
-              style={{ animation: 'tourCardSlideOut 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards' }}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             />
-          )}
-          <Image
-            key={`current-${currentImageIndex}`}
-            src={allImages[currentImageIndex] || image}
-            alt={`${title} - ${currentImageIndex + 1}`}
-            fill
-            className="object-cover"
-            style={isSliding ? { animation: 'tourCardSlideIn 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards' } : undefined}
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          />
+          </div>
+          <div
+            className={`absolute inset-0 transition-all duration-400 ease-out ${
+              isTransitioning && previousImageIndex !== null ? 'translate-x-[8%] scale-[1.02] opacity-85' : 'translate-x-0 scale-100 opacity-100'
+            }`}
+          >
+            <Image
+              src={allImages[currentImageIndex] || image}
+              alt={`${title} - ${currentImageIndex + 1}`}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            />
+          </div>
           
           {/* Navigation arrows - only show if multiple images */}
           {allImages.length > 1 && (
@@ -352,29 +359,6 @@ export default function TourCard({
           </div>
         </div>
       </div>
-      <style jsx>{`
-        @keyframes tourCardSlideOut {
-          from {
-            opacity: 1;
-            transform: translateX(0) scale(1);
-          }
-          to {
-            opacity: 0.72;
-            transform: translateX(-8%) scale(1.015);
-          }
-        }
-
-        @keyframes tourCardSlideIn {
-          from {
-            opacity: 0.88;
-            transform: translateX(8%) scale(1.03);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0) scale(1);
-          }
-        }
-      `}</style>
     </Link>
   )
 }
