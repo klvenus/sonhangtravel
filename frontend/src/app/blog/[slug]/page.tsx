@@ -331,49 +331,54 @@ function renderScheduleCard(text: string, key: number) {
   const monthEntries = Object.entries(schedule.groupedByMonth)
 
   return (
-    <section key={key} className="not-prose my-8 overflow-hidden rounded-[28px] border border-emerald-100 bg-white shadow-[0_18px_50px_rgba(16,185,129,0.12)] md:my-10">
-      <div className="border-b border-emerald-100 bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 px-5 py-5 text-white md:px-6">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <section key={key} className="not-prose my-8 overflow-hidden rounded-[24px] border border-orange-200 bg-white shadow-[0_20px_60px_rgba(249,115,22,0.12)] md:my-10">
+      <div className="bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 px-5 py-5 text-white md:px-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">Lịch khởi hành</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/80">Lịch mở bán</p>
             <h3 className="mt-2 text-xl font-bold leading-tight md:text-2xl">{schedule.introText}</h3>
           </div>
           {schedule.priceText && (
-            <div className="inline-flex w-fit items-center rounded-full bg-white/16 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
-              Giá tham khảo: {schedule.priceText}
+            <div className="inline-flex w-fit items-center rounded-2xl bg-white px-4 py-3 text-base font-bold text-rose-600 shadow-lg">
+              {schedule.priceText}
             </div>
           )}
         </div>
       </div>
 
       <div className="px-5 py-5 md:px-6 md:py-6">
-        <div className="grid gap-4 md:grid-cols-2">
-          {monthEntries.map(([month, days]) => (
-            <div key={month} className="rounded-2xl border border-gray-100 bg-emerald-50/55 p-4">
-              <div className="flex items-center justify-between gap-3 border-b border-emerald-100 pb-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Tháng</p>
-                  <p className="text-2xl font-bold text-gray-900">{month}</p>
-                </div>
-                <div className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
-                  {days.length} đợt
-                </div>
-              </div>
+        <div className="overflow-hidden rounded-2xl border border-orange-100 bg-orange-50/40">
+          <div className="grid grid-cols-[120px_1fr] border-b border-orange-100 bg-orange-100/70 text-sm font-semibold text-gray-700">
+            <div className="px-4 py-3">Tháng</div>
+            <div className="px-4 py-3">Ngày khởi hành</div>
+          </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {days.map((day) => (
-                  <div key={`${month}-${day}`} className="rounded-2xl bg-white px-3 py-4 text-center shadow-sm ring-1 ring-emerald-100">
-                    <div className="text-3xl font-bold leading-none text-emerald-700">{day}</div>
-                    <div className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">Khởi hành</div>
-                  </div>
-                ))}
+          {monthEntries.map(([month, days], index) => (
+            <div
+              key={month}
+              className={`grid grid-cols-[120px_1fr] items-stretch ${index !== monthEntries.length - 1 ? 'border-b border-orange-100' : ''}`}
+            >
+              <div className="flex items-center border-r border-orange-100 bg-white px-4 py-4 text-lg font-bold text-gray-900">
+                Tháng {month}
+              </div>
+              <div className="bg-white px-4 py-4">
+                <div className="flex flex-wrap gap-2.5">
+                  {days.map((day) => (
+                    <div
+                      key={`${month}-${day}`}
+                      className="inline-flex min-w-[72px] items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600"
+                    >
+                      {day}/{month}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
         </div>
 
         {schedule.noteText && (
-          <p className="mt-5 text-[15px] leading-7 text-gray-600 md:text-base">{schedule.noteText}</p>
+          <p className="mt-4 text-[15px] leading-7 text-gray-600 md:text-base">{schedule.noteText}</p>
         )}
       </div>
     </section>

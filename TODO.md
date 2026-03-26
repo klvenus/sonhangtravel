@@ -74,5 +74,5 @@
 
 ## 2026-03-26 Task: Render departure dates in blog as schedule cards
 - [x] Detect paragraphs containing grouped departure dates
-- [ ] Render those departures as a clean visual schedule table/card with price support
+- [ ] Restyle departure schedule block into a cleaner sale-style table with price emphasis
 - [ ] Build frontend and push
