@@ -75,5 +75,10 @@
 
 ## 2026-03-26 Task: Render departure dates in blog as schedule cards
 - [x] Detect paragraphs containing grouped departure dates
-- [ ] Restyle departure schedule block into a cleaner sale-style table with price emphasis
+- [x] Restyle departure schedule block into a cleaner sale-style table with price emphasis
+- [x] Build frontend and push
+
+## 2026-03-26 Task: Remove broken speculationrules injection
+- [ ] Remove speculationrules injection causing browser ignore + hydration mismatch
+- [ ] Keep bfcache-safe UI reset without the broken script path
 - [ ] Build frontend and push

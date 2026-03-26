@@ -4,7 +4,6 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
-import SpeculationRules from "@/components/SpeculationRules";
 import BfcacheReset from "@/components/BfcacheReset";
 import { getSiteSettings, getImageUrl, getTours, getCategories } from "@/lib/data";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -231,7 +230,6 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SpeculationRules />
         <BfcacheReset />
         <Header
           logoUrl={logoUrl}
