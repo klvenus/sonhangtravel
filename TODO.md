@@ -91,3 +91,8 @@
 - [x] Pull recent published blog links into shared footer
 - [x] Keep key tour/category links exposed in footer for crawl paths
 - [x] Build frontend and push
+
+## 2026-03-27 Task: Fix departure calendar over-showing selectable dates
+- [x] Restrict daily calendar fallback to the true daily Đông Hưng routes only
+- [x] Generate only matching weekly dates for tours with weekly departure text like Thứ 6/Thứ 7 hàng tuần
+- [x] Build frontend and push

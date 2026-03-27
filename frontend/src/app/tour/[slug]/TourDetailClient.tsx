@@ -60,21 +60,35 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [showGalleryModal, setShowGalleryModal] = useState(false)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const [guestCount, setGuestCount] = useState(2)
-  const isDailyShortBorderTour = (() => {
-    const slug = tourData.slug || ''
-    const title = tourData.title || ''
-    const duration = tourData.duration || ''
-    const isDongHungShort = /dong-hung/.test(slug) && /(1 ngày|2 ngày 1 đêm|3 ngày 2 đêm)/i.test(duration)
-    const isHaKhauShort = /ha-khau/.test(slug) && /(1 ngày|2 ngày 1 đêm)/i.test(duration)
-    const isNamedShort = ['dong-hung-1-ngay', 'dong-hung-2-ngay-1-dem', 'dong-hung-3-ngay-2-dem', 'ha-khau-1-ngay'].includes(slug)
-    return isNamedShort || isDongHungShort || isHaKhauShort || /(Đông Hưng|Hà Khẩu)/i.test(title) && /(1 ngày|2 ngày 1 đêm|3 ngày 2 đêm)/i.test(duration)
-  })()
   const toLocalDateKey = (date: Date) => {
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
   }
+
+  const parseWeeklyDepartureDays = (input: string) => {
+    const text = (input || '').toLowerCase()
+    const mappings: Array<{ regex: RegExp; day: number }> = [
+      { regex: /thứ\s*2|thu\s*2/, day: 1 },
+      { regex: /thứ\s*3|thu\s*3/, day: 2 },
+      { regex: /thứ\s*4|thu\s*4/, day: 3 },
+      { regex: /thứ\s*5|thu\s*5/, day: 4 },
+      { regex: /thứ\s*6|thu\s*6/, day: 5 },
+      { regex: /thứ\s*7|thu\s*7/, day: 6 },
+      { regex: /chủ\s*nhật|chu\s*nhat|cn\b/, day: 0 },
+    ]
+
+    if (!/hàng tuần|hang tuan|tuần nào cũng đi|tuan nao cung di/.test(text)) return [] as number[]
+
+    return mappings
+      .filter((item) => item.regex.test(text))
+      .map((item) => item.day)
+  }
+
+  const isDailyShortBorderTour = ['dong-hung-1-ngay', 'dong-hung-2-ngay-1-dem'].includes(tourData.slug || '')
+  const weeklyDepartureDays = parseWeeklyDepartureDays(`${tourData.departure || ''} ${(tourData.policies.notes || []).join(' ')}`)
+  const usesCalendarDeparturePicker = isDailyShortBorderTour || weeklyDepartureDays.length > 0
 
   const generatedDailyDates = (() => {
     if (!isDailyShortBorderTour) return [] as Array<{ date: string; price?: number; availableSlots: number; status: string }>
@@ -95,7 +109,30 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
     return items
   })()
-  const departureDates = ((tourData.departureDates && tourData.departureDates.length > 0) ? tourData.departureDates : generatedDailyDates).filter((item) => item?.date)
+
+  const generatedWeeklyDates = (() => {
+    if (isDailyShortBorderTour || weeklyDepartureDays.length === 0) return [] as Array<{ date: string; price?: number; availableSlots: number; status: string }>
+
+    const items: Array<{ date: string; price?: number; availableSlots: number; status: string }> = []
+    const today = new Date()
+    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const end = new Date(today.getFullYear(), today.getMonth() + 2, 0)
+
+    for (let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
+      if (!weeklyDepartureDays.includes(cursor.getDay())) continue
+      items.push({
+        date: toLocalDateKey(cursor),
+        price: tourData.price,
+        availableSlots: 12,
+        status: 'available',
+      })
+    }
+
+    return items
+  })()
+
+  const fallbackDepartureDates = isDailyShortBorderTour ? generatedDailyDates : generatedWeeklyDates
+  const departureDates = ((tourData.departureDates && tourData.departureDates.length > 0) ? tourData.departureDates : fallbackDepartureDates).filter((item) => item?.date)
   const isHoliday3041 = /30\/4|1\/5|30-4|1-5/i.test(`${tourData.title} ${tourData.shortDescription} ${(tourData.policies.notes || []).join(' ')}`)
   const basePrice = departureDates.length > 0
     ? Math.min(...departureDates.map((item) => item.price || tourData.price), tourData.price)
@@ -147,7 +184,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [selectedDepartureMonth, setSelectedDepartureMonth] = useState(initialDepartureMonth)
   const visibleDepartureDates = selectedDepartureMonth ? (departureMonthGroups[selectedDepartureMonth] || []) : departureDates
   const monthCalendarDays = (() => {
-    if (!isDailyShortBorderTour || !selectedDepartureMonth) return [] as Array<{ key: string; date?: string; day?: number; inMonth: boolean }>
+    if (!usesCalendarDeparturePicker || !selectedDepartureMonth) return [] as Array<{ key: string; date?: string; day?: number; inMonth: boolean }>
     const [year, month] = selectedDepartureMonth.split('-').map(Number)
     if (!year || !month) return [] as Array<{ key: string; date?: string; day?: number; inMonth: boolean }>
 
@@ -807,7 +844,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
                           {!isHoliday3041 && (
                             <>
-                              {isDailyShortBorderTour ? (
+                              {usesCalendarDeparturePicker ? (
                                 <div className="space-y-3">
                                   <div className="space-y-2">
                                     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-400">Chọn tháng</p>
@@ -833,7 +870,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                             }`}
                                           >
                                             <div className="text-sm font-bold text-gray-900">{formatDepartureMonthLabel(monthKey)}</div>
-                                            <div className="mt-1 text-[11px] text-gray-500">Khởi hành hằng ngày</div>
+                                            <div className="mt-1 text-[11px] text-gray-500">{isDailyShortBorderTour ? 'Khởi hành hằng ngày' : `Khởi hành ${tourData.departure || 'theo lịch cố định'}`}</div>
                                           </button>
                                         )
                                       })}
@@ -859,16 +896,18 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
 
                                           const isActive = selectedDepartureDate === cell.date
                                           const isPast = cell.date < toLocalDateKey(new Date())
+                                          const isAvailableDate = visibleDepartureDates.some((item) => item.date === cell.date)
+                                          const isDisabled = isPast || !isAvailableDate
                                           return (
                                             <button
                                               key={cell.key}
                                               type="button"
-                                              disabled={isPast}
+                                              disabled={isDisabled}
                                               onClick={() => setSelectedDepartureDate(cell.date!)}
                                               className={`aspect-square bg-white text-sm font-semibold transition-all ${
                                                 isActive
                                                   ? 'bg-[#00CBA9] text-white'
-                                                  : isPast
+                                                  : isDisabled
                                                     ? 'text-gray-300'
                                                     : 'text-gray-700 hover:bg-[#00CBA9]/8'
                                               }`}
