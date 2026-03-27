@@ -86,3 +86,8 @@
 ## 2026-03-27 Task: Add GA4 tag to frontend
 - [x] Wire GA4 measurement ID G-DDSZFXVZM3 into root layout
 - [x] Build frontend and push
+
+## 2026-03-27 Task: Increase crawl exposure for not-indexed URLs
+- [x] Pull recent published blog links into shared footer
+- [x] Keep key tour/category links exposed in footer for crawl paths
+- [x] Build frontend and push

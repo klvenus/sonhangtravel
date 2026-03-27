@@ -32,3 +32,4 @@
 - Adjusted blog gallery rendering so preview images no longer crop aggressively on mobile/desktop while keeping full-view lightbox intact.
 - Restyled blog departure schedule rendering into a cleaner launch-table layout with stronger date grouping and price emphasis for sales-style posts.
 - Added GA4 `gtag.js` tracking to the frontend root layout with measurement ID `G-DDSZFXVZM3` so Google Analytics can start receiving pageview traffic.
+- Increased crawl exposure by surfacing recent published blog links in the shared footer alongside tour/category links, giving Google more internal crawl paths toward newly published URLs.

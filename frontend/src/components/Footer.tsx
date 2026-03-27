@@ -13,11 +13,17 @@ interface FooterProps {
     title: string
     slug: string
   }>
+  recentBlogLinks?: Array<{
+    id: string
+    title: string
+    slug: string
+  }>
 }
 
-export default function Footer({ logoUrl, categories = [], topTours = [] }: FooterProps) {
+export default function Footer({ logoUrl, categories = [], topTours = [], recentBlogLinks = [] }: FooterProps) {
   const featuredCategories = categories.slice(0, 5)
   const featuredTours = topTours.slice(0, 6)
+  const featuredBlogs = recentBlogLinks.slice(0, 8)
 
   return (
     <footer className="bg-[#059669] text-white pb-20 md:pb-0">
@@ -94,6 +100,23 @@ export default function Footer({ logoUrl, categories = [], topTours = [] }: Foot
                     className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/25"
                   >
                     Tour {category.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {featuredBlogs.length > 0 && (
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Bài mới trên blog</p>
+              <div className="mt-3 space-y-2">
+                {featuredBlogs.map((post) => (
+                  <Link
+                    key={post.id}
+                    href={`/blog/${post.slug}`}
+                    className="block text-xs leading-5 text-white/85 hover:text-white"
+                  >
+                    {post.title}
                   </Link>
                 ))}
               </div>
@@ -220,6 +243,21 @@ export default function Footer({ logoUrl, categories = [], topTours = [] }: Foot
                       <li key={tour.id}>
                         <Link href={`/tour/${tour.slug}`} className="hover:text-white/70 transition-colors">
                           {tour.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {featuredBlogs.length > 0 && (
+                <>
+                  <h4 className="text-white font-semibold mb-4">Bài Mới Trên Blog</h4>
+                  <ul className="space-y-2 text-sm text-white/90 mb-6">
+                    {featuredBlogs.map((post) => (
+                      <li key={post.id}>
+                        <Link href={`/blog/${post.slug}`} className="hover:text-white/70 transition-colors">
+                          {post.title}
                         </Link>
                       </li>
                     ))}
