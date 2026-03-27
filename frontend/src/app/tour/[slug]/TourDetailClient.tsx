@@ -904,15 +904,17 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                                               type="button"
                                               disabled={isDisabled}
                                               onClick={() => setSelectedDepartureDate(cell.date!)}
-                                              className={`aspect-square bg-white text-sm font-semibold transition-all ${
+                                              className={`relative aspect-square border-0 text-sm font-bold transition-all ${
                                                 isActive
-                                                  ? 'bg-[#00CBA9] text-white'
+                                                  ? 'z-10 bg-[#00CBA9] text-white shadow-[inset_0_0_0_2px_#059669,0_10px_24px_rgba(0,203,169,0.28)]'
                                                   : isDisabled
-                                                    ? 'text-gray-300'
-                                                    : 'text-gray-700 hover:bg-[#00CBA9]/8'
+                                                    ? 'bg-white text-gray-300'
+                                                    : 'bg-white text-gray-700 hover:bg-[#00CBA9]/8 hover:text-[#047857]'
                                               }`}
                                             >
-                                              {cell.day}
+                                              <span className={`inline-flex h-full w-full items-center justify-center ${isActive ? 'scale-105' : ''}`}>
+                                                {cell.day}
+                                              </span>
                                             </button>
                                           )
                                         })}

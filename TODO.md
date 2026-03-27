@@ -96,3 +96,7 @@
 - [x] Restrict daily calendar fallback to the true daily Đông Hưng routes only
 - [x] Generate only matching weekly dates for tours with weekly departure text like Thứ 6/Thứ 7 hàng tuần
 - [x] Build frontend and push
+
+## 2026-03-27 Task: Make selected departure date visible in calendar
+- [x] Strengthen selected-day styling so the chosen date stays visible with a clear green state
+- [x] Build frontend and push
