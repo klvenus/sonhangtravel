@@ -82,3 +82,7 @@
 - [ ] Remove speculationrules injection causing browser ignore + hydration mismatch
 - [ ] Keep bfcache-safe UI reset without the broken script path
 - [ ] Build frontend and push
+
+## 2026-03-27 Task: Add GA4 tag to frontend
+- [x] Wire GA4 measurement ID G-DDSZFXVZM3 into root layout
+- [x] Build frontend and push
