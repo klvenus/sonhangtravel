@@ -7,7 +7,6 @@ import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import BfcacheReset from "@/components/BfcacheReset";
 import { getSiteSettings, getImageUrl, getTours, getCategories } from "@/lib/data";
-import { getAllBlogPosts } from "@/lib/blog";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -123,12 +122,11 @@ export default async function RootLayout({
 }>) {
   const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg';
   // Fetch site settings for Header and Footer
-  const [siteSettings, searchToursData, topToursData, categoriesData, blogPostsData] = await Promise.all([
+  const [siteSettings, searchToursData, topToursData, categoriesData] = await Promise.all([
     getSiteSettings(),
     getTours({ pageSize: 50, sort: 'bookingCount:desc' }),
     getTours({ pageSize: 8, sort: 'bookingCount:desc' }),
     getCategories(),
-    getAllBlogPosts(),
   ]);
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
   const faviconUrl = siteSettings?.favicon ? getImageUrl(siteSettings.favicon) : logoUrl;
@@ -156,11 +154,6 @@ export default async function RootLayout({
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
-  }));
-  const recentBlogLinks = (blogPostsData || []).slice(0, 8).map((post) => ({
-    id: String(post.id),
-    title: post.title,
-    slug: post.slug,
   }));
 
   // JSON-LD Structured Data for SEO
@@ -265,7 +258,7 @@ export default async function RootLayout({
         <div className="pb-16 md:pb-0">
           {children}
         </div>
-        <Footer logoUrl={logoUrl} categories={categories} topTours={topTours} recentBlogLinks={recentBlogLinks} />
+        <Footer logoUrl={logoUrl} categories={categories} topTours={topTours} />
         <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <SpeedInsights />
         <Analytics />
