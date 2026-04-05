@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import BfcacheReset from "@/components/BfcacheReset";
-import { getSiteSettings, getImageUrl, getCategories, getSearchTourIndex } from "@/lib/data";
+import { getSiteSettings, getImageUrl, getCategories, getTopTourLinks } from "@/lib/data";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -122,9 +122,9 @@ export default async function RootLayout({
 }>) {
   const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg';
   // Fetch site settings for Header and Footer
-  const [siteSettings, searchToursData, categoriesData] = await Promise.all([
+  const [siteSettings, topToursData, categoriesData] = await Promise.all([
     getSiteSettings(),
-    getSearchTourIndex(24),
+    getTopTourLinks(6),
     getCategories(),
   ]);
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
@@ -140,15 +140,7 @@ export default async function RootLayout({
       name: category.name || 'Danh mục',
       slug: category.slug,
     }));
-  const searchTours = (searchToursData || []).map((tour) => ({
-    id: String(tour.id),
-    title: tour.title,
-    slug: tour.slug,
-    location: tour.destination,
-    duration: tour.duration,
-    price: tour.price,
-  }));
-  const topTours = searchTours.slice(0, 6).map((tour) => ({
+  const topTours = (topToursData || []).map((tour) => ({
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
@@ -210,6 +202,8 @@ export default async function RootLayout({
   return (
     <html lang="vi">
       <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         {faviconUrl && (
           <>
             <link rel="icon" href={faviconUrl} />
@@ -250,7 +244,6 @@ export default async function RootLayout({
           siteName={siteName}
           phoneNumber={phoneNumber}
           zaloNumber={zaloNumber}
-          searchTours={searchTours}
           categories={categories}
         />
         <div className="pb-16 md:pb-0">

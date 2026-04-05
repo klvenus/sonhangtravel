@@ -60,6 +60,8 @@ export default function Header({
   const router = useRouter()
   const pathname = usePathname()
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchIndex, setSearchIndex] = useState<SearchTour[]>(searchTours)
+  const [isSearchLoading, setIsSearchLoading] = useState(false)
 
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -71,8 +73,9 @@ export default function Header({
   const SiteNameTag = isHomePage ? 'h1' : 'p'
   const normalizedQuery = searchQuery.trim()
   const queryTokens = tokenizeSearch(searchQuery)
+  const shouldLoadSearchIndex = isSearchOpen || normalizedQuery.length > 0
   const liveResults = normalizedQuery
-    ? searchTours
+    ? searchIndex
         .map((tour) => {
           const searchable = normalizeVietnamese([tour.title, tour.location, tour.duration].join(' '))
           const score = queryTokens.reduce((total, token) => total + (searchable.includes(token) ? 1 : 0), 0)
@@ -117,6 +120,41 @@ export default function Header({
       window.removeEventListener('sonhang:reset-transient-ui', resetTransientUi)
     }
   }, [])
+
+  useEffect(() => {
+    if (searchTours.length > 0) {
+      setSearchIndex(searchTours)
+    }
+  }, [searchTours])
+
+  useEffect(() => {
+    if (!shouldLoadSearchIndex || searchIndex.length > 0 || isSearchLoading) return
+
+    let cancelled = false
+    setIsSearchLoading(true)
+
+    fetch('/api/search-tours', { cache: 'force-cache' })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('search-index-fetch-failed'))))
+      .then((data: SearchTour[]) => {
+        if (!cancelled) {
+          setSearchIndex(Array.isArray(data) ? data : [])
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setSearchIndex([])
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsSearchLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isSearchLoading, searchIndex.length, shouldLoadSearchIndex])
 
   return (
     <>
@@ -186,7 +224,11 @@ export default function Header({
 
                 {normalizedQuery && (
                   <div className="border-t border-gray-100 bg-white">
-                    {liveResults.length > 0 ? (
+                    {isSearchLoading && searchIndex.length === 0 ? (
+                      <div className="px-4 py-4 text-sm text-gray-500">
+                        Đang tải gợi ý tour...
+                      </div>
+                    ) : liveResults.length > 0 ? (
                       <div className="divide-y divide-gray-100">
                         {liveResults.map((tour) => (
                           <Link key={tour.id} href={`/tour/${tour.slug}`} onClick={() => { setIsSearchOpen(false); setSearchQuery('') }} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
@@ -282,7 +324,11 @@ export default function Header({
 
                 {normalizedQuery && (
                   <div className="absolute z-40 mt-2 w-full rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden">
-                    {liveResults.length > 0 ? (
+                    {isSearchLoading && searchIndex.length === 0 ? (
+                      <div className="px-4 py-4 text-sm text-gray-500">
+                        Đang tải gợi ý tour...
+                      </div>
+                    ) : liveResults.length > 0 ? (
                       <div className="divide-y divide-gray-100">
                         {liveResults.map((tour) => (
                           <Link key={tour.id} href={`/tour/${tour.slug}`} onClick={() => setSearchQuery('')} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">

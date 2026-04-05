@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache'
 import { desc, eq } from 'drizzle-orm'
 import { db } from './db'
 import { blogPosts } from './schema'
@@ -44,23 +45,43 @@ function mapRow(row: typeof blogPosts.$inferSelect): BlogPost {
 }
 
 export async function getAllBlogPosts() {
-  const rows = await db
-    .select()
-    .from(blogPosts)
-    .where(eq(blogPosts.published, true))
-    .orderBy(desc(blogPosts.publishedAt))
+  return unstable_cache(
+    async () => {
+      const rows = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.published, true))
+        .orderBy(desc(blogPosts.publishedAt))
 
-  return rows.map(mapRow)
+      return rows.map(mapRow)
+    },
+    ['blog-posts'],
+    {
+      tags: ['blog'],
+      revalidate: 3600,
+    }
+  )()
 }
 
 export async function getBlogPostBySlug(slug: string) {
-  const rows = await db
-    .select()
-    .from(blogPosts)
-    .where(eq(blogPosts.slug, slug))
-    .limit(1)
+  const normalizedSlug = slug.trim()
 
-  const row = rows[0]
-  if (!row || !row.published) return undefined
-  return mapRow(row)
+  return unstable_cache(
+    async () => {
+      const rows = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.slug, normalizedSlug))
+        .limit(1)
+
+      const row = rows[0]
+      if (!row || !row.published) return undefined
+      return mapRow(row)
+    },
+    ['blog-post-by-slug', normalizedSlug],
+    {
+      tags: ['blog', `blog:${normalizedSlug}`],
+      revalidate: 3600,
+    }
+  )()
 }

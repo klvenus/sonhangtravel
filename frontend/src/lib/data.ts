@@ -1,4 +1,5 @@
 // Shared data layer for direct Neon DB queries
+import { unstable_cache } from 'next/cache';
 import { db } from './db';
 import { categories, tours, siteSettings } from './schema';
 import { eq, desc, asc, ilike, or, and, sql } from 'drizzle-orm';
@@ -56,6 +57,12 @@ export interface SearchTourIndexData {
   price: number;
 }
 
+export interface TopTourLinkData {
+  id: number;
+  title: string;
+  slug: string;
+}
+
 export interface BannerSlide {
   image: string;
   imageMobile?: string;
@@ -83,108 +90,18 @@ export interface SiteSettingsData {
 
 // ============ TOUR QUERIES ============
 
-export async function getTours(params?: {
-  featured?: boolean;
-  category?: string;
-  page?: number;
-  pageSize?: number;
-  sort?: string;
-  search?: string;
-}): Promise<{ data: TourData[]; total: number; page: number; pageSize: number }> {
-  const page = params?.page || 1;
-  const pageSize = params?.pageSize || 10;
-  const offset = (page - 1) * pageSize;
+const DATA_REVALIDATE_SECONDS = 3600;
+const DATA_TAGS = {
+  tours: 'tours',
+  categories: 'categories',
+  siteSettings: 'site-settings',
+} as const;
 
-  // Build conditions
-  const conditions = [eq(tours.published, true)];
-  
-  if (params?.featured) {
-    conditions.push(eq(tours.featured, true));
-  }
-
-  if (params?.search) {
-    conditions.push(
-      or(
-        ilike(tours.title, `%${params.search}%`),
-        ilike(tours.shortDescription, `%${params.search}%`),
-        ilike(tours.destination, `%${params.search}%`)
-      )!
-    );
-  }
-
-  // Category filter - join with categories
-  let categoryCondition: ReturnType<typeof eq> | undefined;
-  if (params?.category) {
-    const cat = await db.select().from(categories).where(eq(categories.slug, params.category)).limit(1);
-    if (cat[0]) {
-      categoryCondition = eq(tours.categoryId, cat[0].id);
-      conditions.push(categoryCondition);
-    }
-  }
-
-  const where = conditions.length > 1 ? and(...conditions) : conditions[0];
-
-  // Sort
-  let orderBy = desc(tours.bookingCount);
-  if (params?.sort) {
-    const [field, dir] = params.sort.split(':');
-    const sortDir = dir === 'asc' ? asc : desc;
-    if (field === 'price') orderBy = sortDir(tours.price);
-    else if (field === 'createdAt') orderBy = sortDir(tours.createdAt);
-    else if (field === 'bookingCount') orderBy = sortDir(tours.bookingCount);
-    else if (field === 'rating') orderBy = sortDir(tours.rating);
-  }
-
-  const [data, countResult] = await Promise.all([
-    db.select({
-      tour: tours,
-      categoryName: categories.name,
-      categorySlug: categories.slug,
-    })
-    .from(tours)
-    .leftJoin(categories, eq(tours.categoryId, categories.id))
-    .where(where)
-    .orderBy(orderBy)
-    .limit(pageSize)
-    .offset(offset),
-    
-    db.select({ count: sql<number>`count(*)` })
-    .from(tours)
-    .where(where),
-  ]);
-
-  return {
-    data: data.map(row => ({
-      ...row.tour,
-      gallery: (row.tour.gallery || []) as string[],
-      itinerary: (row.tour.itinerary || []) as TourData['itinerary'],
-      includes: (row.tour.includes || []) as string[],
-      excludes: (row.tour.excludes || []) as string[],
-      notes: (row.tour.notes || []) as string[],
-      departureDates: (row.tour.departureDates || []) as TourData['departureDates'],
-      categoryName: row.categoryName,
-      categorySlug: row.categorySlug,
-    })),
-    total: Number(countResult[0]?.count || 0),
-    page,
-    pageSize,
-  };
-}
-
-export async function getTourBySlug(slug: string): Promise<TourData | null> {
-  const data = await db.select({
-    tour: tours,
-    categoryName: categories.name,
-    categorySlug: categories.slug,
-  })
-  .from(tours)
-  .leftJoin(categories, eq(tours.categoryId, categories.id))
-  .where(eq(tours.slug, slug))
-  .limit(1);
-
-  if (!data[0]) return null;
-
-  const row = data[0];
+function mapTourRow(row: {
+  tour: typeof tours.$inferSelect;
+  categoryName: string | null;
+  categorySlug: string | null;
+}): TourData {
   return {
     ...row.tour,
     gallery: (row.tour.gallery || []) as string[],
@@ -198,75 +115,265 @@ export async function getTourBySlug(slug: string): Promise<TourData | null> {
   };
 }
 
+function normalizeToursParams(params?: {
+  featured?: boolean;
+  category?: string;
+  page?: number;
+  pageSize?: number;
+  sort?: string;
+  search?: string;
+}) {
+  return {
+    featured: Boolean(params?.featured),
+    category: params?.category?.trim() || '',
+    page: params?.page || 1,
+    pageSize: params?.pageSize || 10,
+    sort: params?.sort || '',
+    search: params?.search?.trim() || '',
+  };
+}
+
+export async function getTours(params?: {
+  featured?: boolean;
+  category?: string;
+  page?: number;
+  pageSize?: number;
+  sort?: string;
+  search?: string;
+}): Promise<{ data: TourData[]; total: number; page: number; pageSize: number }> {
+  const normalizedParams = normalizeToursParams(params);
+
+  return unstable_cache(
+    async () => {
+      const offset = (normalizedParams.page - 1) * normalizedParams.pageSize;
+      const conditions = [eq(tours.published, true)];
+
+      if (normalizedParams.featured) {
+        conditions.push(eq(tours.featured, true));
+      }
+
+      if (normalizedParams.search) {
+        conditions.push(
+          or(
+            ilike(tours.title, `%${normalizedParams.search}%`),
+            ilike(tours.shortDescription, `%${normalizedParams.search}%`),
+            ilike(tours.destination, `%${normalizedParams.search}%`)
+          )!
+        );
+      }
+
+      if (normalizedParams.category) {
+        const cat = await db
+          .select({ id: categories.id })
+          .from(categories)
+          .where(eq(categories.slug, normalizedParams.category))
+          .limit(1);
+
+        if (cat[0]) {
+          conditions.push(eq(tours.categoryId, cat[0].id));
+        }
+      }
+
+      const where = conditions.length > 1 ? and(...conditions) : conditions[0];
+
+      let orderBy = desc(tours.bookingCount);
+      if (normalizedParams.sort) {
+        const [field, dir] = normalizedParams.sort.split(':');
+        const sortDir = dir === 'asc' ? asc : desc;
+        if (field === 'price') orderBy = sortDir(tours.price);
+        else if (field === 'createdAt') orderBy = sortDir(tours.createdAt);
+        else if (field === 'bookingCount') orderBy = sortDir(tours.bookingCount);
+        else if (field === 'rating') orderBy = sortDir(tours.rating);
+      }
+
+      const [data, countResult] = await Promise.all([
+        db.select({
+          tour: tours,
+          categoryName: categories.name,
+          categorySlug: categories.slug,
+        })
+          .from(tours)
+          .leftJoin(categories, eq(tours.categoryId, categories.id))
+          .where(where)
+          .orderBy(orderBy)
+          .limit(normalizedParams.pageSize)
+          .offset(offset),
+
+        db.select({ count: sql<number>`count(*)` })
+          .from(tours)
+          .where(where),
+      ]);
+
+      return {
+        data: data.map(mapTourRow),
+        total: Number(countResult[0]?.count || 0),
+        page: normalizedParams.page,
+        pageSize: normalizedParams.pageSize,
+      };
+    },
+    ['tours-list', JSON.stringify(normalizedParams)],
+    {
+      tags: normalizedParams.category
+        ? [DATA_TAGS.tours, `category:${normalizedParams.category}`]
+        : [DATA_TAGS.tours],
+      revalidate: DATA_REVALIDATE_SECONDS,
+    }
+  )();
+}
+
+export async function getTourBySlug(slug: string): Promise<TourData | null> {
+  const normalizedSlug = slug.trim();
+
+  return unstable_cache(
+    async () => {
+      const data = await db.select({
+        tour: tours,
+        categoryName: categories.name,
+        categorySlug: categories.slug,
+      })
+        .from(tours)
+        .leftJoin(categories, eq(tours.categoryId, categories.id))
+        .where(eq(tours.slug, normalizedSlug))
+        .limit(1);
+
+      if (!data[0]) return null;
+      return mapTourRow(data[0]);
+    },
+    ['tour-by-slug', normalizedSlug],
+    {
+      tags: [DATA_TAGS.tours, `tour:${normalizedSlug}`],
+      revalidate: DATA_REVALIDATE_SECONDS,
+    }
+  )();
+}
+
 // ============ CATEGORY QUERIES ============
 
 export async function getCategories(): Promise<CategoryData[]> {
-  const data = await db
-    .select({
-      id: categories.id,
-      name: categories.name,
-      slug: categories.slug,
-      description: categories.description,
-      icon: categories.icon,
-      image: categories.image,
-      order: categories.order,
-      tourCount: sql<number>`count(${tours.id})`,
-    })
-    .from(categories)
-    .leftJoin(
-      tours,
-      and(eq(tours.categoryId, categories.id), eq(tours.published, true))
-    )
-    .groupBy(
-      categories.id,
-      categories.name,
-      categories.slug,
-      categories.description,
-      categories.icon,
-      categories.image,
-      categories.order
-    )
-    .orderBy(asc(categories.order), asc(categories.id));
+  return unstable_cache(
+    async () => {
+      const data = await db
+        .select({
+          id: categories.id,
+          name: categories.name,
+          slug: categories.slug,
+          description: categories.description,
+          icon: categories.icon,
+          image: categories.image,
+          order: categories.order,
+          tourCount: sql<number>`count(${tours.id})`,
+        })
+        .from(categories)
+        .leftJoin(
+          tours,
+          and(eq(tours.categoryId, categories.id), eq(tours.published, true))
+        )
+        .groupBy(
+          categories.id,
+          categories.name,
+          categories.slug,
+          categories.description,
+          categories.icon,
+          categories.image,
+          categories.order
+        )
+        .orderBy(asc(categories.order), asc(categories.id));
 
-  return data.map((row) => ({
-    ...row,
-    tourCount: Number(row.tourCount || 0),
-  }));
+      return data.map((row) => ({
+        ...row,
+        tourCount: Number(row.tourCount || 0),
+      }));
+    },
+    ['categories'],
+    {
+      tags: [DATA_TAGS.categories],
+      revalidate: DATA_REVALIDATE_SECONDS,
+    }
+  )();
 }
 
 export async function getCategoryBySlug(slug: string): Promise<CategoryData | null> {
-  const data = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
-  return data[0] || null;
+  const normalizedSlug = slug.trim();
+
+  return unstable_cache(
+    async () => {
+      const data = await db
+        .select()
+        .from(categories)
+        .where(eq(categories.slug, normalizedSlug))
+        .limit(1);
+      return data[0] || null;
+    },
+    ['category-by-slug', normalizedSlug],
+    {
+      tags: [DATA_TAGS.categories, `category:${normalizedSlug}`],
+      revalidate: DATA_REVALIDATE_SECONDS,
+    }
+  )();
 }
 
 export async function getSearchTourIndex(limit = 24): Promise<SearchTourIndexData[]> {
-  const data = await db
-    .select({
-      id: tours.id,
-      title: tours.title,
-      slug: tours.slug,
-      destination: tours.destination,
-      duration: tours.duration,
-      price: tours.price,
-    })
-    .from(tours)
-    .where(eq(tours.published, true))
-    .orderBy(desc(tours.bookingCount), desc(tours.updatedAt), asc(tours.id))
-    .limit(limit);
+  return unstable_cache(
+    async () => db
+      .select({
+        id: tours.id,
+        title: tours.title,
+        slug: tours.slug,
+        destination: tours.destination,
+        duration: tours.duration,
+        price: tours.price,
+      })
+      .from(tours)
+      .where(eq(tours.published, true))
+      .orderBy(desc(tours.bookingCount), desc(tours.updatedAt), asc(tours.id))
+      .limit(limit),
+    ['search-tour-index', String(limit)],
+    {
+      tags: [DATA_TAGS.tours],
+      revalidate: DATA_REVALIDATE_SECONDS,
+    }
+  )();
+}
 
-  return data;
+export async function getTopTourLinks(limit = 6): Promise<TopTourLinkData[]> {
+  return unstable_cache(
+    async () => db
+      .select({
+        id: tours.id,
+        title: tours.title,
+        slug: tours.slug,
+      })
+      .from(tours)
+      .where(eq(tours.published, true))
+      .orderBy(desc(tours.bookingCount), desc(tours.updatedAt), asc(tours.id))
+      .limit(limit),
+    ['top-tour-links', String(limit)],
+    {
+      tags: [DATA_TAGS.tours],
+      revalidate: DATA_REVALIDATE_SECONDS,
+    }
+  )();
 }
 
 // ============ SITE SETTINGS ============
 
 export async function getSiteSettings(): Promise<SiteSettingsData | null> {
-  const data = await db.select().from(siteSettings).limit(1);
-  if (!data[0]) return null;
-  
-  return {
-    ...data[0],
-    bannerSlides: (data[0].bannerSlides || []) as BannerSlide[],
-  };
+  return unstable_cache(
+    async () => {
+      const data = await db.select().from(siteSettings).limit(1);
+      if (!data[0]) return null;
+      
+      return {
+        ...data[0],
+        bannerSlides: (data[0].bannerSlides || []) as BannerSlide[],
+      };
+    },
+    ['site-settings'],
+    {
+      tags: [DATA_TAGS.siteSettings],
+      revalidate: DATA_REVALIDATE_SECONDS,
+    }
+  )();
 }
 
 // ============ HELPER FUNCTIONS ============
