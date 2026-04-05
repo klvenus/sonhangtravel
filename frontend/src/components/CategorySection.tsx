@@ -54,6 +54,7 @@ export default function CategorySection({ initialCategories }: Props) {
                   alt={category.name}
                   fill
                   className="object-cover"
+                  unoptimized
                 />
               </div>
               <span className="text-sm font-medium text-gray-700 whitespace-nowrap">{category.name}</span>
@@ -82,6 +83,7 @@ export default function CategorySection({ initialCategories }: Props) {
                   alt={category.name}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                 

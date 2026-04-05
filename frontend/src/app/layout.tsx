@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import BfcacheReset from "@/components/BfcacheReset";
-import { getSiteSettings, getImageUrl, getTours, getCategories } from "@/lib/data";
+import { getSiteSettings, getImageUrl, getCategories, getSearchTourIndex } from "@/lib/data";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -122,10 +122,9 @@ export default async function RootLayout({
 }>) {
   const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg';
   // Fetch site settings for Header and Footer
-  const [siteSettings, searchToursData, topToursData, categoriesData] = await Promise.all([
+  const [siteSettings, searchToursData, categoriesData] = await Promise.all([
     getSiteSettings(),
-    getTours({ pageSize: 50, sort: 'bookingCount:desc' }),
-    getTours({ pageSize: 8, sort: 'bookingCount:desc' }),
+    getSearchTourIndex(24),
     getCategories(),
   ]);
   const logoUrl = siteSettings?.logo ? getImageUrl(siteSettings.logo) : undefined;
@@ -141,16 +140,15 @@ export default async function RootLayout({
       name: category.name || 'Danh mục',
       slug: category.slug,
     }));
-  const searchTours = (searchToursData.data || []).map((tour) => ({
+  const searchTours = (searchToursData || []).map((tour) => ({
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,
-    image: getImageUrl(tour.thumbnail || tour.gallery?.[0]) || DEFAULT_OG_IMAGE,
     location: tour.destination,
     duration: tour.duration,
     price: tour.price,
   }));
-  const topTours = (topToursData.data || []).map((tour) => ({
+  const topTours = searchTours.slice(0, 6).map((tour) => ({
     id: String(tour.id),
     title: tour.title,
     slug: tour.slug,

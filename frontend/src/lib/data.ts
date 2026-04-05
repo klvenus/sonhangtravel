@@ -47,6 +47,15 @@ export interface TourData {
   updatedAt: Date | null;
 }
 
+export interface SearchTourIndexData {
+  id: number;
+  title: string;
+  slug: string;
+  destination: string;
+  duration: string;
+  price: number;
+}
+
 export interface BannerSlide {
   image: string;
   imageMobile?: string;
@@ -192,27 +201,60 @@ export async function getTourBySlug(slug: string): Promise<TourData | null> {
 // ============ CATEGORY QUERIES ============
 
 export async function getCategories(): Promise<CategoryData[]> {
-  const data = await db.select().from(categories).orderBy(asc(categories.order));
-  
-  // Get tour counts
-  const result: CategoryData[] = [];
-  for (const cat of data) {
-    const countResult = await db.select({ count: sql<number>`count(*)` })
-      .from(tours)
-      .where(and(eq(tours.categoryId, cat.id), eq(tours.published, true)));
-    
-    result.push({
-      ...cat,
-      tourCount: Number(countResult[0]?.count || 0),
-    });
-  }
+  const data = await db
+    .select({
+      id: categories.id,
+      name: categories.name,
+      slug: categories.slug,
+      description: categories.description,
+      icon: categories.icon,
+      image: categories.image,
+      order: categories.order,
+      tourCount: sql<number>`count(${tours.id})`,
+    })
+    .from(categories)
+    .leftJoin(
+      tours,
+      and(eq(tours.categoryId, categories.id), eq(tours.published, true))
+    )
+    .groupBy(
+      categories.id,
+      categories.name,
+      categories.slug,
+      categories.description,
+      categories.icon,
+      categories.image,
+      categories.order
+    )
+    .orderBy(asc(categories.order), asc(categories.id));
 
-  return result;
+  return data.map((row) => ({
+    ...row,
+    tourCount: Number(row.tourCount || 0),
+  }));
 }
 
 export async function getCategoryBySlug(slug: string): Promise<CategoryData | null> {
   const data = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
   return data[0] || null;
+}
+
+export async function getSearchTourIndex(limit = 24): Promise<SearchTourIndexData[]> {
+  const data = await db
+    .select({
+      id: tours.id,
+      title: tours.title,
+      slug: tours.slug,
+      destination: tours.destination,
+      duration: tours.duration,
+      price: tours.price,
+    })
+    .from(tours)
+    .where(eq(tours.published, true))
+    .orderBy(desc(tours.bookingCount), desc(tours.updatedAt), asc(tours.id))
+    .limit(limit);
+
+  return data;
 }
 
 // ============ SITE SETTINGS ============

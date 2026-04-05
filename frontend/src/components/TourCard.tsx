@@ -176,6 +176,7 @@ export default function TourCard({
               fill
               className="object-cover"
               sizes="128px"
+              unoptimized
             />
             {/* Hot/New badges */}
             {(isHot || discountPercent > 0) && (
@@ -269,6 +270,7 @@ export default function TourCard({
               fill
               className="object-cover"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              unoptimized
             />
           ) : (
             <>
@@ -284,6 +286,7 @@ export default function TourCard({
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                    unoptimized
                   />
                 </div>
               )}
@@ -297,6 +300,7 @@ export default function TourCard({
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                  unoptimized
                 />
               </div>
             </>

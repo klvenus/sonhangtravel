@@ -35,7 +35,6 @@ interface SearchTour {
   id: string
   title: string
   slug: string
-  image: string
   location: string
   duration: string
   price: number
@@ -129,7 +128,7 @@ export default function Header({
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               {logoUrl ? (
-                <Image src={logoUrl} alt={siteName} width={54} height={54} className="w-13.5 h-13.5 object-contain" />
+                <Image src={logoUrl} alt={siteName} width={54} height={54} className="w-13.5 h-13.5 object-contain" unoptimized />
               ) : (
                 <div className="w-13.5 h-13.5 bg-linear-to-br from-[#00CBA9] to-[#00A88A] flex items-center justify-center text-white font-bold shadow-md">
                   SH
@@ -191,8 +190,8 @@ export default function Header({
                       <div className="divide-y divide-gray-100">
                         {liveResults.map((tour) => (
                           <Link key={tour.id} href={`/tour/${tour.slug}`} onClick={() => { setIsSearchOpen(false); setSearchQuery('') }} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
-                            <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                              <Image src={tour.image} alt={tour.title} fill className="object-cover" sizes="80px" />
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-xs font-semibold text-emerald-700">
+                              Tour
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="line-clamp-1 text-sm font-semibold text-gray-900">{tour.title}</p>
@@ -249,7 +248,7 @@ export default function Header({
               {/* Logo */}
               <Link href="/" className="flex items-center gap-3 shrink-0">
                 {logoUrl ? (
-                  <Image src={logoUrl} alt={siteName} width={57} height={57} className="w-14 h-14 object-contain" />
+                  <Image src={logoUrl} alt={siteName} width={57} height={57} className="w-14 h-14 object-contain" unoptimized />
                 ) : (
                   <div className="w-14 h-14 bg-linear-to-br from-[#00CBA9] to-[#00A88A] flex items-center justify-center text-white font-bold text-lg shadow-md">
                     SH
@@ -287,8 +286,8 @@ export default function Header({
                       <div className="divide-y divide-gray-100">
                         {liveResults.map((tour) => (
                           <Link key={tour.id} href={`/tour/${tour.slug}`} onClick={() => setSearchQuery('')} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
-                            <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                              <Image src={tour.image} alt={tour.title} fill className="object-cover" sizes="80px" />
+                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-xs font-semibold text-emerald-700">
+                              Tour
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="line-clamp-1 text-sm font-semibold text-gray-900">{tour.title}</p>
@@ -381,7 +380,7 @@ export default function Header({
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   {logoUrl ? (
-                    <Image src={logoUrl} alt={siteName} width={40} height={40} className="w-10 h-10 rounded-xl object-contain bg-white p-1" />
+                    <Image src={logoUrl} alt={siteName} width={40} height={40} className="w-10 h-10 rounded-xl object-contain bg-white p-1" unoptimized />
                   ) : (
                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#00CBA9] font-bold shadow">
                       SH

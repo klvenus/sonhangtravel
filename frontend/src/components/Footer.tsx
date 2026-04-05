@@ -27,7 +27,7 @@ export default function Footer({ logoUrl, categories = [], topTours = [] }: Foot
           {/* Company Name + Logo */}
           <div className="flex items-center gap-3">
             {logoUrl ? (
-              <Image src={logoUrl} alt="Son Hang Travel" width={48} height={48} className="w-12 h-12 object-contain rounded-xl bg-white/20 p-1" />
+              <Image src={logoUrl} alt="Son Hang Travel" width={48} height={48} className="w-12 h-12 object-contain rounded-xl bg-white/20 p-1" unoptimized />
             ) : (
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white font-bold shrink-0">
                 SH
@@ -114,7 +114,7 @@ export default function Footer({ logoUrl, categories = [], topTours = [] }: Foot
             <div className="lg:col-span-5">
               <div className="flex items-center gap-3 mb-5">
                 {logoUrl ? (
-                  <Image src={logoUrl} alt="Son Hang Travel" width={56} height={56} className="w-14 h-14 object-contain rounded-xl bg-white/20 p-1" />
+                  <Image src={logoUrl} alt="Son Hang Travel" width={56} height={56} className="w-14 h-14 object-contain rounded-xl bg-white/20 p-1" unoptimized />
                 ) : (
                   <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0">
                     SH
