@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getAllBlogPosts, type BlogPost } from '@/lib/blog'
+import { getImageUrl } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE =
@@ -82,7 +83,7 @@ function buildBlogItemListSchema(posts: BlogPost[]) {
           headline: post.title,
           description: post.excerpt || post.description,
           datePublished: post.publishedAt,
-          image: post.thumbnail || DEFAULT_OG_IMAGE,
+          image: getImageUrl(post.thumbnail, 'large') || DEFAULT_OG_IMAGE,
           url: `${SITE_URL}/blog/${post.slug}`,
         },
       })),
@@ -100,7 +101,7 @@ function FeaturedPostCard({ post }: { post: BlogPost }) {
         >
           {post.thumbnail ? (
             <Image
-              src={post.thumbnail}
+              src={getImageUrl(post.thumbnail, 'large')}
               alt={post.title}
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"
@@ -155,7 +156,7 @@ function BlogGridCard({ post }: { post: BlogPost }) {
       >
         {post.thumbnail ? (
           <Image
-            src={post.thumbnail}
+            src={getImageUrl(post.thumbnail, 'medium')}
             alt={post.title}
             fill
             className="object-cover transition-transform duration-500 hover:scale-105"

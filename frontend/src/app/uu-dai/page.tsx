@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getAllBlogPosts } from '@/lib/blog'
+import { getImageUrl } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
@@ -81,7 +82,7 @@ export default async function SalePostsPage() {
                 {post.thumbnail && (
                   <Link href={`/blog/${post.slug}`} className="block relative aspect-[4/3] overflow-hidden bg-gray-100">
                     <Image
-                      src={post.thumbnail}
+                      src={getImageUrl(post.thumbnail, 'medium')}
                       alt={post.title}
                       fill
                       className="object-cover transition-transform duration-500 hover:scale-105"

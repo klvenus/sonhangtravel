@@ -111,6 +111,7 @@ const legacyRedirects: NonNullable<NextConfig['redirects']> = async () => [
 const nextConfig: NextConfig = {
   redirects: legacyRedirects,
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

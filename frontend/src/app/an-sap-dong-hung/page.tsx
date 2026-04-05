@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getAllBlogPosts, type BlogPost } from '@/lib/blog'
+import { getImageUrl } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_COVER =
@@ -66,7 +67,7 @@ function pickMeta(post: BlogPost) {
 }
 
 function MenuCard({ post }: { post: BlogPost }) {
-  const image = post.thumbnail || post.gallery?.[0] || DEFAULT_COVER
+  const image = getImageUrl(post.thumbnail || post.gallery?.[0], 'medium') || DEFAULT_COVER
   const { mood, note } = pickMeta(post)
 
   return (

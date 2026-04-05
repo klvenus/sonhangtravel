@@ -211,6 +211,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
   }
 
+  const articleImage = getImageUrl(post.thumbnail, 'large') || getImageUrl(post.gallery?.[0], 'large') || DEFAULT_OG_IMAGE
+
   return {
     title: `${post.title} | Blog Sơn Hằng Travel`,
     description: post.description,
@@ -227,7 +229,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       modifiedTime: post.updatedAt || post.publishedAt,
       images: [
         {
-          url: post.thumbnail || DEFAULT_OG_IMAGE,
+          url: articleImage,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -238,7 +240,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       card: 'summary_large_image',
       title: `${post.title} | Sơn Hằng Travel`,
       description: post.description,
-      images: [post.thumbnail || DEFAULT_OG_IMAGE],
+      images: [articleImage],
     },
   }
 }
@@ -557,7 +559,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   const dd = String(publishedDate.getDate()).padStart(2, '0')
   const saleUntilIso = `${yyyy}-${mm}-${dd}T23:59:59+07:00`
   const canonicalUrl = `${SITE_URL}/blog/${post.slug}`
-  const articleImage = post.thumbnail || DEFAULT_OG_IMAGE
+  const galleryImages = (post.gallery || []).map((image) => getImageUrl(image, 'large')).filter(Boolean)
+  const articleImage = getImageUrl(post.thumbnail, 'large') || galleryImages[0] || DEFAULT_OG_IMAGE
   const saleTourHref = `${SITE_URL}/tours`
   const saleZaloHref = ZALO_OA_URL
   const youtubeVideoId = post.content
@@ -655,15 +658,15 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               />
             </div>
           </div>
-        ) : post.thumbnail && (
-          post.gallery && post.gallery.length > 0 && !isSalePost ? (
+        ) : (post.thumbnail || galleryImages.length > 0) && (
+          galleryImages.length > 0 && !isSalePost ? (
             <div className="mb-10">
-              <BlogGalleryLightbox images={post.gallery} title={post.title} />
+              <BlogGalleryLightbox images={galleryImages} title={post.title} />
             </div>
           ) : (
             <div className={`relative overflow-hidden mb-10 bg-gray-100 shadow-sm ${isSalePost ? 'aspect-[4/5] md:aspect-[16/8] rounded-2xl ring-1 ring-orange-200' : 'aspect-[4/5] md:aspect-[16/10] rounded-3xl'}`}>
               <Image
-                src={post.thumbnail}
+                src={articleImage}
                 alt={post.title}
                 fill
                 className={`object-cover ${isSalePost ? 'scale-[1.02] transition-transform duration-700' : ''}`}
@@ -866,13 +869,13 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
         {isSalePost && <SaleActions untilIso={saleUntilIso} tourHref={saleTourHref} zaloHref={saleZaloHref} />}
 
-        {!isSalePost && post.gallery && post.gallery.length === 1 && (
+        {!isSalePost && galleryImages.length === 1 && (
           <section className="mt-14 border-t border-gray-200 pt-10">
             <div className="mb-5">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Album ảnh chuyến đi</h2>
               <p className="text-gray-600 mt-2">Xem thêm một vài khoảnh khắc để cảm nhận rõ hơn vibe của hành trình.</p>
             </div>
-            <BlogGalleryLightbox images={post.gallery} title={post.title} />
+            <BlogGalleryLightbox images={galleryImages} title={post.title} />
           </section>
         )}
       </article>

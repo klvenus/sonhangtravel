@@ -271,8 +271,51 @@ export async function getSiteSettings(): Promise<SiteSettingsData | null> {
 
 // ============ HELPER FUNCTIONS ============
 
-// Compatible getImageUrl - works with both Cloudinary URLs and direct URLs
-export function getImageUrl(url?: string | null, _size?: string): string {
+const CLOUDINARY_SIZE_TRANSFORMS: Record<string, string> = {
+  thumb: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_160,h_160',
+  small: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_320,h_240',
+  medium: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_640,h_480',
+  large: 'f_auto,q_auto:good,dpr_auto,c_limit,w_1280',
+  hero: 'f_auto,q_auto:good,dpr_auto,c_limit,w_1920',
+};
+
+function applyCloudinaryTransform(url: string, transform: string): string {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== 'res.cloudinary.com') return url;
+
+    const uploadMarker = '/image/upload/';
+    const markerIndex = parsed.pathname.indexOf(uploadMarker);
+    if (markerIndex === -1) return url;
+
+    const prefix = parsed.pathname.slice(0, markerIndex + uploadMarker.length);
+    const suffix = parsed.pathname.slice(markerIndex + uploadMarker.length);
+    const [firstSegment] = suffix.split('/');
+
+    if (!firstSegment) return url;
+
+    const transformedPath = /^v\d+$/i.test(firstSegment)
+      ? `${prefix}${transform}/${suffix}`
+      : url;
+
+    if (transformedPath === url) return url;
+
+    parsed.pathname = transformedPath;
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+// Compatible getImageUrl - shifts resizing work to Cloudinary when possible.
+export function getImageUrl(url?: string | null, size?: string): string {
   if (!url) return '';
-  return url;
+
+  const normalizedSize = size?.trim().toLowerCase();
+  if (!normalizedSize) return url;
+
+  const transform = CLOUDINARY_SIZE_TRANSFORMS[normalizedSize];
+  if (!transform) return url;
+
+  return applyCloudinaryTransform(url, transform);
 }
