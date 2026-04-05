@@ -2,7 +2,7 @@
 export async function revalidateProduction(extraPaths: string[] = []) {
   const siteUrl = process.env.VERCEL_SITE_URL || 'https://sonhangtravel.com';
   const secret = process.env.REVALIDATE_SECRET;
-  const paths = ['/', '/tours', ...extraPaths];
+  const paths = Array.from(new Set(['/', '/tours', ...extraPaths]));
 
   if (!secret) {
     console.warn('[revalidate] Skipped: missing REVALIDATE_SECRET');
@@ -10,12 +10,16 @@ export async function revalidateProduction(extraPaths: string[] = []) {
   }
 
   // Fire and forget — don't block the response
-  Promise.allSettled(
-    paths.map(path =>
-      fetch(`${siteUrl}/api/revalidate?secret=${secret}&path=${encodeURIComponent(path)}`)
-        .catch(() => {/* ignore */})
-    )
-  ).then(results => {
-    console.log(`[revalidate] Triggered ${results.length} paths:`, paths.join(', '));
-  });
+  fetch(`${siteUrl}/api/revalidate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-revalidate-token': secret,
+    },
+    body: JSON.stringify({ paths }),
+  })
+    .catch(() => {/* ignore */})
+    .then(() => {
+      console.log(`[revalidate] Triggered ${paths.length} paths:`, paths.join(', '));
+    });
 }

@@ -8,7 +8,7 @@ const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_COVER =
   'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 
-export const revalidate = 60
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Ăn sập Đông Hưng | Sơn Hằng Travel',

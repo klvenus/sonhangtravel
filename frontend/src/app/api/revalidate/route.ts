@@ -11,6 +11,65 @@ function getRevalidateSecret() {
   return secret
 }
 
+function normalizePaths(paths: unknown): string[] {
+  if (!Array.isArray(paths)) return []
+
+  return Array.from(
+    new Set(
+      paths
+        .filter((path): path is string => typeof path === 'string')
+        .map((path) => path.trim())
+        .filter((path) => path.startsWith('/'))
+    )
+  )
+}
+
+function revalidateMany(paths: string[]) {
+  for (const path of paths) {
+    if (path === '/') {
+      revalidatePath('/', 'layout')
+      revalidatePath('/', 'page')
+      continue
+    }
+
+    revalidatePath(path, 'page')
+  }
+}
+
+function derivePathsFromBody(body: any): string[] {
+  if (body?.paths) {
+    return normalizePaths(body.paths)
+  }
+
+  const paths = new Set<string>(['/', '/tours'])
+
+  if (body?.model === 'tour' && body?.entry?.slug) {
+    paths.add(`/tour/${body.entry.slug}`)
+  }
+
+  if (body?.model === 'category' && body?.entry?.slug) {
+    paths.add(`/tours/${body.entry.slug}`)
+  }
+
+  if (body?.model === 'blog' || body?.model === 'blog_post') {
+    paths.add('/blog')
+    paths.add('/uu-dai')
+    paths.add('/an-sap-dong-hung')
+    if (body?.entry?.slug) {
+      paths.add(`/blog/${body.entry.slug}`)
+    }
+  }
+
+  if (body?.model === 'site_settings' || body?.model === 'settings') {
+    paths.add('/blog')
+    paths.add('/uu-dai')
+    paths.add('/an-sap-dong-hung')
+    paths.add('/so-do-tour')
+  }
+
+  return Array.from(paths)
+}
+
 export async function POST(request: NextRequest) {
   try {
     const revalidateSecret = getRevalidateSecret()
@@ -27,26 +86,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}))
     
     console.log('Revalidate webhook received:', body)
-
-    // Revalidate all pages
-    revalidatePath('/', 'layout')
-    revalidatePath('/tours', 'page')
-    
-    // If specific tour/category/blog was updated, revalidate that path too
-    if (body.model === 'tour' && body.entry?.slug) {
-      revalidatePath(`/tour/${body.entry.slug}`, 'page')
-    }
-    if (body.model === 'category' && body.entry?.slug) {
-      revalidatePath(`/tours/${body.entry.slug}`, 'page')
-    }
-    if ((body.model === 'blog' || body.model === 'blog_post') && body.entry?.slug) {
-      revalidatePath('/blog', 'page')
-      revalidatePath(`/blog/${body.entry.slug}`, 'page')
-    }
+    const paths = derivePathsFromBody(body)
+    revalidateMany(paths)
 
     return NextResponse.json({ 
       revalidated: true, 
       now: Date.now(),
+      paths,
       message: 'Cache cleared successfully'
     })
   } catch (error) {
@@ -68,24 +114,8 @@ export async function GET(request: NextRequest) {
   }
 
   const path = request.nextUrl.searchParams.get('path')
-
-  // Revalidate everything aggressively
-  const paths = ['/', '/tours', '/tour', '/blog']
-  if (path && !paths.includes(path)) {
-    paths.push(path)
-  }
-
-  for (const p of paths) {
-    try {
-      revalidatePath(p, 'layout')
-      revalidatePath(p, 'page')
-    } catch (e) {
-      console.error(`Failed to revalidate ${p}:`, e)
-    }
-  }
-
-  // Also revalidate root layout (catches everything)
-  revalidatePath('/', 'layout')
+  const paths = path ? normalizePaths([path]) : ['/', '/tours', '/blog']
+  revalidateMany(paths)
 
   return NextResponse.json({ 
     revalidated: true, 
