@@ -78,8 +78,8 @@ function transformTour(tour: TourData) {
 function transformBannerSlide(slide: BannerSlide, index: number) {
   return {
     id: index + 1,
-    image: getImageUrl(slide.image, 'large') || DEFAULT_OG_IMAGE,
-    imageMobile: slide.imageMobile ? getImageUrl(slide.imageMobile, 'large') : undefined,
+    image: getImageUrl(slide.image, 'hero') || DEFAULT_OG_IMAGE,
+    imageMobile: slide.imageMobile ? getImageUrl(slide.imageMobile, 'hero') : undefined,
     title: slide.title,
     subtitle: slide.subtitle,
     linkUrl: slide.linkUrl,

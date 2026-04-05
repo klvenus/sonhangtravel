@@ -273,10 +273,10 @@ export async function getSiteSettings(): Promise<SiteSettingsData | null> {
 
 const CLOUDINARY_SIZE_TRANSFORMS: Record<string, string> = {
   thumb: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_160,h_160',
-  small: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_320,h_240',
-  medium: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_640,h_480',
-  large: 'f_auto,q_auto:good,dpr_auto,c_limit,w_1280',
-  hero: 'f_auto,q_auto:good,dpr_auto,c_limit,w_1920',
+  small: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_480,h_360',
+  medium: 'f_auto,q_auto:good,dpr_auto,c_fill,g_auto,w_960,h_720',
+  large: 'f_auto,q_auto:best,dpr_auto,c_limit,w_1800',
+  hero: 'f_auto,q_auto:best,dpr_auto,c_limit,w_2400',
 };
 
 function applyCloudinaryTransform(url: string, transform: string): string {
