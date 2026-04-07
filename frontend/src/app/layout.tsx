@@ -24,6 +24,7 @@ const geistMono = Geist_Mono({
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 const GA_MEASUREMENT_ID = 'G-DDSZFXVZM3'
+const GOOGLE_ADS_ID = 'AW-16954338776'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -236,6 +237,7 @@ export default async function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
             });
+            gtag('config', '${GOOGLE_ADS_ID}');
           `}
         </Script>
         <BfcacheReset />
