@@ -81,7 +81,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
     <>
       <div className="space-y-4">
         <div
-          className="relative overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-gray-200 p-2 md:p-3 min-h-[520px] max-h-[80vh] md:min-h-[860px] md:max-h-[88vh]"
+          className="relative overflow-hidden rounded-[28px] bg-white ring-1 ring-gray-200 p-2 md:p-3 min-h-[520px] max-h-[80vh] md:min-h-[860px] md:max-h-[88vh] md:shadow-sm"
           onMouseEnter={() => setIsPreviewPaused(true)}
           onMouseLeave={() => setIsPreviewPaused(false)}
           onTouchStart={() => setIsPreviewPaused(true)}
@@ -122,7 +122,7 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
           </button>
 
           {images.length > 1 && (
-            <div className="absolute right-4 bottom-4 z-10 flex items-center gap-2 rounded-full bg-black/38 px-2 py-2 text-white backdrop-blur-sm">
+            <div className="absolute right-4 bottom-4 z-10 hidden items-center gap-2 rounded-full bg-black/38 px-2 py-2 text-white backdrop-blur-sm md:flex">
               <button
                 type="button"
                 onClick={prevPreview}
@@ -145,6 +145,30 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
             </div>
           )}
         </div>
+
+        {images.length > 1 && (
+          <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-4 py-3 md:hidden">
+            <button
+              type="button"
+              onClick={prevPreview}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-2xl leading-none text-gray-700"
+              aria-label="Ảnh trước"
+            >
+              ‹
+            </button>
+            <div className="text-sm font-semibold text-gray-700">
+              {previewIndex + 1}/{images.length}
+            </div>
+            <button
+              type="button"
+              onClick={nextPreview}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-2xl leading-none text-gray-700"
+              aria-label="Ảnh sau"
+            >
+              ›
+            </button>
+          </div>
+        )}
 
         {images.length > 1 && (
           <div className="flex gap-3 overflow-x-auto pb-1">
