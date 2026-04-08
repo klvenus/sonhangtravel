@@ -100,3 +100,7 @@
 ## 2026-03-27 Task: Make selected departure date visible in calendar
 - [x] Strengthen selected-day styling so the chosen date stays visible with a clear green state
 - [x] Build frontend and push
+
+## 2026-04-08 Task: Hide tours with only one image from listings
+- [x] Require at least 2 unique tour images on home/tours/category listings
+- [x] Build frontend and push

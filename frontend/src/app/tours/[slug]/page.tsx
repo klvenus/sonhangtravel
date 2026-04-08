@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import TourCard from '@/components/TourCard'
-import { getTours, getCategoryBySlug, getCategories, getImageUrl } from '@/lib/data'
+import { getTours, getCategoryBySlug, getCategories, getImageUrl, TourData } from '@/lib/data'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
@@ -115,6 +115,12 @@ export async function generateMetadata({
   }
 }
 
+function hasEnoughTourImages(tour: TourData) {
+  const imagePool = [tour.thumbnail, ...(tour.gallery || [])].filter(Boolean)
+  const uniqueImages = new Set(imagePool.map((img) => JSON.stringify(img)))
+  return uniqueImages.size >= 2
+}
+
 export default async function CategoryToursPage({ 
   params 
 }: { 
@@ -143,7 +149,7 @@ export default async function CategoryToursPage({
       notFound()
     }
 
-    const tours = toursRes.data || []
+    const tours = (toursRes.data || []).filter((tour) => tour.price > 0 && hasEnoughTourImages(tour))
     const siblingCategories = (categoriesData || [])
       .filter((item) => item.slug !== slug && (item.tourCount || 0) > 0)
       .slice(0, 5)

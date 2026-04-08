@@ -128,6 +128,12 @@ function buildToursCollectionSchema() {
   }
 }
 
+function hasEnoughTourImages(tour: TourData) {
+  const imagePool = [tour.thumbnail, ...(tour.gallery || [])].filter(Boolean)
+  const uniqueImages = new Set(imagePool.map((img) => JSON.stringify(img)))
+  return uniqueImages.size >= 2
+}
+
 // Transform tour for client component
 function transformTour(tour: TourData) {
   const image = getImageUrl(tour.thumbnail || tour.gallery?.[0], 'large')
@@ -183,7 +189,9 @@ export default async function ToursPage({
     ])
 
     if (toursRes.data) {
-      tours = toursRes.data.map(transformTour)
+      tours = toursRes.data
+        .filter((tour) => tour.price > 0 && hasEnoughTourImages(tour))
+        .map(transformTour)
     }
     if (categoriesData) {
       categories = categoriesData.map(transformCategory)

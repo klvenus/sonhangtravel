@@ -35,3 +35,4 @@
 - Increased crawl exposure by surfacing recent published blog links in the shared footer alongside tour/category links, giving Google more internal crawl paths toward newly published URLs.
 - Fixed the departure calendar fallback so only true daily Đông Hưng routes show all days, while weekly tours now only expose their real weekly departure days in the picker.
 - Strengthened the selected departure-day state in the tour calendar so the chosen date stays visible with a clear green highlight and stronger contrast.
+- Hid tours with fewer than 2 unique images from the home page, tours hub, and category listing pages so incomplete image sets no longer appear publicly in tour grids.
