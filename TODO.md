@@ -104,3 +104,7 @@
 ## 2026-04-08 Task: Hide tours with only one image from listings
 - [x] Require at least 2 unique tour images on home/tours/category listings
 - [x] Build frontend and push
+
+## 2026-04-08 Task: Revert one-image tour hiding
+- [x] Restore all tours on public listings per user request
+- [x] Build frontend and push

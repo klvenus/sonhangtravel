@@ -128,21 +128,17 @@ export default async function Home() {
       categories = categoriesData.map(transformCategory)
     }
     
-    const hasEnoughTourImages = (tour: TourData) => {
-      const imagePool = [tour.thumbnail, ...(tour.gallery || [])].filter(Boolean)
-      const uniqueImages = new Set(imagePool.map((img) => JSON.stringify(img)))
-      return uniqueImages.size >= 2
-    }
+    const hasRealTourImage = (tour: TourData) => Boolean(tour.thumbnail || (tour.gallery && tour.gallery.length > 0))
 
     if (featuredToursData.data && featuredToursData.data.length > 0) {
       tours = featuredToursData.data
-        .filter((tour) => tour.price > 0 && hasEnoughTourImages(tour))
+        .filter((tour) => tour.price > 0 && hasRealTourImage(tour))
         .map(transformTour)
     }
     
     if (allToursData.data && allToursData.data.length > 0) {
       allTours = allToursData.data
-        .filter((tour) => tour.price > 0 && hasEnoughTourImages(tour))
+        .filter((tour) => tour.price > 0 && hasRealTourImage(tour))
         .map(transformTour)
     }
 
