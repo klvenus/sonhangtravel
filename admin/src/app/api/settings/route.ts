@@ -28,7 +28,7 @@ export async function PUT(request: NextRequest) {
       [result] = await db.insert(siteSettings).values(updateData).returning();
     }
 
-    revalidateProduction(['/ve-chung-toi']);
+    await revalidateProduction(['/ve-chung-toi', '/so-do-tour', '/blog', '/uu-dai', '/an-sap-dong-hung']);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });

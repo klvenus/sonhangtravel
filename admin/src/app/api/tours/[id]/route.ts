@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { tours } from '@/lib/schema';
+import { tours, categories } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { revalidateProduction } from '@/lib/revalidate';
+
+async function getCategoryPath(categoryId?: number | null) {
+  if (!categoryId) return null;
+  const [category] = await db
+    .select({ slug: categories.slug })
+    .from(categories)
+    .where(eq(categories.id, categoryId))
+    .limit(1);
+  return category?.slug ? `/tours/${category.slug}` : null;
+}
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -33,8 +43,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const [updated] = await db.update(tours).set(updateData).where(eq(tours.id, Number(id))).returning();
     if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    // Auto-revalidate production
-    revalidateProduction([`/tour/${updated.slug}`]);
+    const categoryPath = await getCategoryPath(updated.categoryId);
+    await revalidateProduction([
+      `/tour/${updated.slug}`,
+      '/so-do-tour',
+      ...(categoryPath ? [categoryPath] : []),
+    ]);
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });
@@ -46,8 +60,12 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   try {
     const [deleted] = await db.delete(tours).where(eq(tours.id, Number(id))).returning();
     if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    // Auto-revalidate production
-    revalidateProduction([`/tour/${deleted.slug}`]);
+    const categoryPath = await getCategoryPath(deleted.categoryId);
+    await revalidateProduction([
+      `/tour/${deleted.slug}`,
+      '/so-do-tour',
+      ...(categoryPath ? [categoryPath] : []),
+    ]);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     }).returning();
 
-    revalidateProduction(['/blog', `/blog/${newPost.slug}`]);
+    await revalidateProduction(['/blog', `/blog/${newPost.slug}`, '/uu-dai', '/an-sap-dong-hung']);
     return NextResponse.json(newPost, { status: 201 });
   } catch (error) {
     console.error('POST /api/blog error:', error);

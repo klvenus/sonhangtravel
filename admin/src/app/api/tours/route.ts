@@ -4,6 +4,16 @@ import { tours, categories } from '@/lib/schema';
 import { eq, desc } from 'drizzle-orm';
 import { revalidateProduction } from '@/lib/revalidate';
 
+async function getCategoryPath(categoryId?: number | null) {
+  if (!categoryId) return null;
+  const [category] = await db
+    .select({ slug: categories.slug })
+    .from(categories)
+    .where(eq(categories.id, categoryId))
+    .limit(1);
+  return category?.slug ? `/tours/${category.slug}` : null;
+}
+
 export async function GET() {
   try {
     const data = await db
@@ -64,8 +74,12 @@ export async function POST(request: NextRequest) {
       bookingCount: body.bookingCount || 0,
       departureDates: body.departureDates || [],
     }).returning();
-    // Auto-revalidate production
-    revalidateProduction([`/tour/${newTour.slug}`]);
+    const categoryPath = await getCategoryPath(newTour.categoryId);
+    await revalidateProduction([
+      `/tour/${newTour.slug}`,
+      '/so-do-tour',
+      ...(categoryPath ? [categoryPath] : []),
+    ]);
     return NextResponse.json(newTour, { status: 201 });
   } catch (error) {
     console.error('POST /api/tours error:', error);
