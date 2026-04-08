@@ -37,7 +37,6 @@ export async function POST(request: NextRequest) {
 
     if (shouldWebp) {
       signParams.push('format=webp');
-      signParams.push('quality=auto:good');
     }
 
     signParams.push(`timestamp=${timestamp}`);
@@ -52,7 +51,6 @@ export async function POST(request: NextRequest) {
 
     if (shouldWebp) {
       uploadData.append('format', 'webp');
-      uploadData.append('quality', 'auto:good');
     }
 
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: uploadData });
