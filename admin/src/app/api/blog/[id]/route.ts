@@ -29,7 +29,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const [updated] = await db.update(blogPosts).set(updateData).where(eq(blogPosts.id, Number(id))).returning();
     if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    await revalidateProduction(['/blog', `/blog/${updated.slug}`, '/uu-dai', '/an-sap-dong-hung']);
+    await revalidateProduction(['/blog', `/blog/${updated.slug}`, '/uu-dai', '/an-sap-dong-hung'], { basePaths: [] });
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });
@@ -42,7 +42,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     const [deleted] = await db.delete(blogPosts).where(eq(blogPosts.id, Number(id))).returning();
     if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    await revalidateProduction(['/blog', `/blog/${deleted.slug}`, '/uu-dai', '/an-sap-dong-hung']);
+    await revalidateProduction(['/blog', `/blog/${deleted.slug}`, '/uu-dai', '/an-sap-dong-hung'], { basePaths: [] });
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });

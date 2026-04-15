@@ -9,6 +9,7 @@ import { Metadata } from 'next'
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
 const HOME_CATEGORY_PRIORITY = ['dong hung', 'nam ninh', 'con minh', 'ha khau']
+const TOUR_CARD_GALLERY_LIMIT = 4
 
 // ISR - Revalidate every hour
 export const revalidate = 3600
@@ -92,8 +93,16 @@ function sortHomeFeaturedTours(tourList: TourData[]) {
 }
 
 function transformTour(tour: TourData) {
-  const galleryImages = (tour.gallery || []).map(img => getImageUrl(img, 'medium')).filter(Boolean)
   const primaryImage = getImageUrl(tour.thumbnail || tour.gallery?.[0], 'medium') || DEFAULT_OG_IMAGE
+  const galleryImages: string[] = []
+
+  for (const image of tour.gallery || []) {
+    const imageUrl = getImageUrl(image, 'medium')
+    if (imageUrl && imageUrl !== primaryImage && !galleryImages.includes(imageUrl)) {
+      galleryImages.push(imageUrl)
+    }
+    if (galleryImages.length >= TOUR_CARD_GALLERY_LIMIT) break
+  }
 
   return {
     id: String(tour.id),
@@ -156,10 +165,9 @@ export default async function Home() {
   let bannerSlides: ReturnType<typeof transformBannerSlide>[] = []
 
   try {
-    const [categoriesData, featuredToursData, allToursData, siteSettings] = await Promise.all([
+    const [categoriesData, allToursData, siteSettings] = await Promise.all([
       getCategories(),
-      getTours({ pageSize: 200, sort: 'bookingCount:desc', featured: true }),
-      getTours({ pageSize: 50, sort: 'bookingCount:desc' }),
+      getTours({ pageSize: 200, sort: 'bookingCount:desc' }),
       getSiteSettings()
     ])
     
@@ -169,17 +177,14 @@ export default async function Home() {
     
     const hasRealTourImage = (tour: TourData) => Boolean(tour.thumbnail || (tour.gallery && tour.gallery.length > 0))
 
-    if (featuredToursData.data && featuredToursData.data.length > 0) {
-      tours = sortHomeFeaturedTours(
-        featuredToursData.data.filter((tour) => tour.price > 0 && hasRealTourImage(tour))
-      )
-        .map(transformTour)
-    }
-    
     if (allToursData.data && allToursData.data.length > 0) {
-      allTours = allToursData.data
-        .filter((tour) => tour.price > 0 && hasRealTourImage(tour))
-        .map(transformTour)
+      const eligibleTours = allToursData.data.filter((tour) => tour.price > 0 && hasRealTourImage(tour))
+      allTours = eligibleTours.map(transformTour)
+
+      const toursBySlug = new Map(allTours.map((tour) => [tour.slug, tour]))
+      tours = sortHomeFeaturedTours(eligibleTours.filter((tour) => tour.featured))
+        .map((tour) => toursBySlug.get(tour.slug))
+        .filter((tour): tour is ReturnType<typeof transformTour> => Boolean(tour))
     }
 
     // Extract banner slides from site settings
@@ -212,7 +217,7 @@ export default async function Home() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(featuredToursSchema) }}
         />
       )}
-      <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} searchTours={allTours} />
+      <HeroSection bannerSlides={bannerSlides.length > 0 ? bannerSlides : undefined} />
       <CategorySection initialCategories={categories} />
       <FeaturedTours initialTours={tours} />
       {toursByCategory.map(group => (

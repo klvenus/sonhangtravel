@@ -14,6 +14,27 @@ async function getCategoryPath(categoryId?: number | null) {
   return category?.slug ? `/tours/${category.slug}` : null;
 }
 
+const TOUR_LISTING_FIELDS = [
+  'title',
+  'slug',
+  'duration',
+  'destination',
+  'thumbnail',
+  'gallery',
+  'featured',
+  'published',
+  'price',
+  'originalPrice',
+  'categoryId',
+  'rating',
+  'reviewCount',
+  'bookingCount',
+] as const;
+
+function valuesEqual(a: unknown, b: unknown) {
+  return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+}
+
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
@@ -29,6 +50,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const { id } = await params;
   try {
     const body = await request.json();
+    const [existing] = await db.select().from(tours).where(eq(tours.id, Number(id))).limit(1);
+    if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
     const updateData: Record<string, unknown> = { updatedAt: new Date() };
     const fields = ['title','slug','shortDescription','content','duration','departure','destination',
       'transportation','groupSize','thumbnail','gallery','itinerary','includes','excludes',
@@ -43,12 +67,32 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const [updated] = await db.update(tours).set(updateData).where(eq(tours.id, Number(id))).returning();
     if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    const categoryPath = await getCategoryPath(updated.categoryId);
+
+    const listingChanged = TOUR_LISTING_FIELDS.some((field) => {
+      if (body[field] === undefined) return false;
+      return !valuesEqual(existing[field], updated[field]);
+    });
+
+    const paths = [`/tour/${updated.slug}`];
+    if (existing.slug !== updated.slug) {
+      paths.push(`/tour/${existing.slug}`);
+    }
+
+    if (listingChanged) {
+      const [oldCategoryPath, categoryPath] = await Promise.all([
+        getCategoryPath(existing.categoryId),
+        getCategoryPath(updated.categoryId),
+      ]);
+      paths.push('/so-do-tour');
+      if (oldCategoryPath) paths.push(oldCategoryPath);
+      if (categoryPath) paths.push(categoryPath);
+    }
+
     await revalidateProduction([
-      `/tour/${updated.slug}`,
-      '/so-do-tour',
-      ...(categoryPath ? [categoryPath] : []),
-    ]);
+      ...paths,
+    ], {
+      basePaths: listingChanged ? ['/', '/tours'] : [],
+    });
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: String(error) }, { status: 500 });

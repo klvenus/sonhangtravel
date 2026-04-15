@@ -25,22 +25,11 @@ interface BannerSlide {
   linkText?: string
 }
 
-interface SearchTour {
-  id: string
-  title: string
-  slug: string
-  image: string
-  location: string
-  duration: string
-  price: number
-}
-
 interface HeroSectionProps {
   bannerSlides?: BannerSlide[]
-  searchTours?: SearchTour[]
 }
 
-export default function HeroSection({ bannerSlides, searchTours: _searchTours = [] }: HeroSectionProps) {
+export default function HeroSection({ bannerSlides }: HeroSectionProps) {
   const slides = bannerSlides && bannerSlides.length > 0 ? bannerSlides : defaultSlides
   const [current, setCurrent] = useState(0)
 
