@@ -8,6 +8,7 @@ import { Metadata } from 'next'
 
 const SITE_URL = 'https://sonhangtravel.com'
 const DEFAULT_OG_IMAGE = 'https://res.cloudinary.com/dzxntgoko/image/upload/v1772812681/sonhangtravel/pe1levewzcjvobldsvzr.jpg'
+const HOME_CATEGORY_PRIORITY = ['dong hung', 'nam ninh', 'con minh', 'ha khau']
 
 // ISR - Revalidate every hour
 export const revalidate = 3600
@@ -50,6 +51,33 @@ function transformCategory(cat: CategoryData) {
     tourCount: cat.tourCount || 0,
     icon: cat.icon || '🏯',
   }
+}
+
+function normalizeCategoryKey(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .replace(/[-_]+/g, ' ')
+    .toLowerCase()
+}
+
+function getHomeCategoryPriority(category: Pick<CategoryData, 'name' | 'slug'>) {
+  const key = normalizeCategoryKey(`${category.slug} ${category.name}`)
+  const priority = HOME_CATEGORY_PRIORITY.findIndex((item) => key.includes(item))
+  return priority === -1 ? HOME_CATEGORY_PRIORITY.length : priority
+}
+
+function sortHomeCategories(categoryList: CategoryData[]) {
+  return categoryList
+    .map((category, index) => ({
+      category,
+      index,
+      priority: getHomeCategoryPriority(category),
+    }))
+    .sort((a, b) => a.priority - b.priority || a.index - b.index)
+    .map((item) => item.category)
 }
 
 function transformTour(tour: TourData) {
@@ -125,7 +153,7 @@ export default async function Home() {
     ])
     
     if (categoriesData && categoriesData.length > 0) {
-      categories = categoriesData.map(transformCategory)
+      categories = sortHomeCategories(categoriesData).map(transformCategory)
     }
     
     const hasRealTourImage = (tour: TourData) => Boolean(tour.thumbnail || (tour.gallery && tour.gallery.length > 0))
