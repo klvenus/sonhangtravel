@@ -211,7 +211,7 @@ export async function getTours(params?: {
         pageSize: normalizedParams.pageSize,
       };
     },
-    ['tours-list', JSON.stringify(normalizedParams)],
+    ['tours-list-v2', JSON.stringify(normalizedParams)],
     {
       tags: normalizedParams.category
         ? [DATA_TAGS.tours, `category:${normalizedParams.category}`]
