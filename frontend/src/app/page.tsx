@@ -63,8 +63,8 @@ function normalizeCategoryKey(value: string) {
     .toLowerCase()
 }
 
-function getHomeCategoryPriority(category: Pick<CategoryData, 'name' | 'slug'>) {
-  const key = normalizeCategoryKey(`${category.slug} ${category.name}`)
+function getHomeCategoryPriority(category: { name?: string | null; slug?: string | null }) {
+  const key = normalizeCategoryKey(`${category.slug || ''} ${category.name || ''}`)
   const priority = HOME_CATEGORY_PRIORITY.findIndex((item) => key.includes(item))
   return priority === -1 ? HOME_CATEGORY_PRIORITY.length : priority
 }
@@ -78,6 +78,17 @@ function sortHomeCategories(categoryList: CategoryData[]) {
     }))
     .sort((a, b) => a.priority - b.priority || a.index - b.index)
     .map((item) => item.category)
+}
+
+function sortHomeFeaturedTours(tourList: TourData[]) {
+  return tourList
+    .map((tour, index) => ({
+      tour,
+      index,
+      priority: getHomeCategoryPriority({ name: tour.categoryName, slug: tour.categorySlug }),
+    }))
+    .sort((a, b) => a.priority - b.priority || a.index - b.index)
+    .map((item) => item.tour)
 }
 
 function transformTour(tour: TourData) {
@@ -147,7 +158,7 @@ export default async function Home() {
   try {
     const [categoriesData, featuredToursData, allToursData, siteSettings] = await Promise.all([
       getCategories(),
-      getTours({ pageSize: 6, sort: 'bookingCount:desc', featured: true }),
+      getTours({ pageSize: 200, sort: 'bookingCount:desc', featured: true }),
       getTours({ pageSize: 50, sort: 'bookingCount:desc' }),
       getSiteSettings()
     ])
@@ -159,8 +170,9 @@ export default async function Home() {
     const hasRealTourImage = (tour: TourData) => Boolean(tour.thumbnail || (tour.gallery && tour.gallery.length > 0))
 
     if (featuredToursData.data && featuredToursData.data.length > 0) {
-      tours = featuredToursData.data
-        .filter((tour) => tour.price > 0 && hasRealTourImage(tour))
+      tours = sortHomeFeaturedTours(
+        featuredToursData.data.filter((tour) => tour.price > 0 && hasRealTourImage(tour))
+      )
         .map(transformTour)
     }
     

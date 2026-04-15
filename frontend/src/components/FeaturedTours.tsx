@@ -51,7 +51,7 @@ export default function FeaturedTours({ initialTours }: Props) {
 
         {/* Horizontal Scroll Cards */}
         <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide pb-2">
-          {displayTours.slice(0, 6).map((tour) => (
+          {displayTours.map((tour) => (
             <div key={tour.id} className="shrink-0 w-40">
               <TourCard {...tour} />
             </div>
