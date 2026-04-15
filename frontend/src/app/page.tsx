@@ -165,8 +165,9 @@ export default async function Home() {
   let bannerSlides: ReturnType<typeof transformBannerSlide>[] = []
 
   try {
-    const [categoriesData, allToursData, siteSettings] = await Promise.all([
+    const [categoriesData, featuredToursData, allToursData, siteSettings] = await Promise.all([
       getCategories(),
+      getTours({ pageSize: 200, sort: 'bookingCount:desc', featured: true }),
       getTours({ pageSize: 200, sort: 'bookingCount:desc' }),
       getSiteSettings()
     ])
@@ -185,6 +186,14 @@ export default async function Home() {
       tours = sortHomeFeaturedTours(eligibleTours.filter((tour) => tour.featured))
         .map((tour) => toursBySlug.get(tour.slug))
         .filter((tour): tour is ReturnType<typeof transformTour> => Boolean(tour))
+    }
+
+    if (featuredToursData.data && featuredToursData.data.length > 0) {
+      const toursBySlug = new Map(allTours.map((tour) => [tour.slug, tour]))
+      tours = sortHomeFeaturedTours(
+        featuredToursData.data.filter((tour) => tour.price > 0 && hasRealTourImage(tour))
+      )
+        .map((tour) => toursBySlug.get(tour.slug) || transformTour(tour))
     }
 
     // Extract banner slides from site settings
