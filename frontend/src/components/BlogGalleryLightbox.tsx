@@ -1,22 +1,41 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
+/* eslint-disable @next/next/no-img-element */
 
-export default function BlogGalleryLightbox({ images, title }: { images: string[]; title: string }) {
+import { useEffect, useRef, useState } from 'react'
+import { warmDirectImages, warmGalleryWindow } from '@/lib/client-image-warmup'
+
+export default function BlogGalleryLightbox({ images, thumbImages, title }: { images: string[]; thumbImages?: string[]; title: string }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [previewIndex, setPreviewIndex] = useState(0)
   const [previousPreviewIndex, setPreviousPreviewIndex] = useState<number | null>(null)
   const [isPreviewSliding, setIsPreviewSliding] = useState(false)
   const [isPreviewPaused, setIsPreviewPaused] = useState(false)
   const previewSlideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const thumbs = thumbImages?.length === images.length ? thumbImages : images
 
   const close = () => setActiveIndex(null)
-  const next = () => setActiveIndex((prev) => (prev === null ? null : (prev + 1) % images.length))
-  const prev = () => setActiveIndex((prev) => (prev === null ? null : (prev - 1 + images.length) % images.length))
+  const open = (index: number) => {
+    warmGalleryWindow(images, index, 'high')
+    setActiveIndex(index)
+  }
+
+  const next = () => setActiveIndex((prev) => {
+    if (prev === null) return null
+    const nextIndex = (prev + 1) % images.length
+    warmGalleryWindow(images, nextIndex, 'high')
+    return nextIndex
+  })
+  const prev = () => setActiveIndex((prev) => {
+    if (prev === null) return null
+    const nextIndex = (prev - 1 + images.length) % images.length
+    warmGalleryWindow(images, nextIndex, 'high')
+    return nextIndex
+  })
 
   const goToPreview = (nextIndex: number) => {
     if (nextIndex === previewIndex) return
+    warmGalleryWindow(images, nextIndex, 'high')
     setPreviousPreviewIndex(previewIndex)
     setPreviewIndex(nextIndex)
     setIsPreviewSliding(true)
@@ -50,17 +69,13 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
   useEffect(() => {
     if (typeof window === 'undefined' || images.length <= 1) return
 
-    const preloaders = images.slice(1).map((src) => {
-      const img = new window.Image()
-      img.decoding = 'async'
-      img.src = src
-      return img
-    })
+    warmGalleryWindow(images, previewIndex, 'low')
+    const timer = window.setTimeout(() => {
+      warmDirectImages([images[1], images[2]], 'low')
+    }, 500)
 
     return () => {
-      preloaders.forEach((img) => {
-        img.src = ''
-      })
+      window.clearTimeout(timer)
       if (previewSlideTimeoutRef.current) {
         clearTimeout(previewSlideTimeoutRef.current)
       }
@@ -89,19 +104,18 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
         >
           <button
             type="button"
-            onClick={() => setActiveIndex(previewIndex)}
+            onClick={() => open(previewIndex)}
             className="absolute inset-0 h-full w-full"
           >
             {previousPreviewIndex !== null && previousPreviewIndex !== previewIndex && (
               <div className="absolute inset-0" style={{ animation: 'blogPreviewSlideOut 420ms ease-out forwards' }}>
-                <Image
+                <img
                   src={images[previousPreviewIndex]}
                   alt={`${title} - ảnh ${previousPreviewIndex + 1}`}
-                  fill
-                  className="object-contain"
-                  sizes="100vw"
-                  quality={100}
-                  priority
+                  className="h-full w-full object-contain"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                 />
               </div>
             )}
@@ -109,14 +123,13 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
               className="absolute inset-0"
               style={isPreviewSliding && previousPreviewIndex !== null ? { animation: 'blogPreviewSlideIn 420ms ease-out forwards' } : undefined}
             >
-              <Image
+              <img
                 src={images[previewIndex]}
                 alt={`${title} - ảnh ${previewIndex + 1}`}
-                fill
-                className="object-contain"
-                sizes="100vw"
-                quality={100}
-                priority
+                className="h-full w-full object-contain"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
               />
             </div>
           </button>
@@ -179,13 +192,12 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
                 onClick={() => goToPreview(index)}
                 className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl ring-2 transition-all ${previewIndex === index ? 'ring-emerald-500' : 'ring-transparent'}`}
               >
-                <Image
-                  src={image}
+                <img
+                  src={thumbs[index] || image}
                   alt={`${title} - thumbnail ${index + 1}`}
-                  fill
-                  className="object-contain bg-white"
-                  sizes="80px"
-                  quality={100}
+                  className="h-full w-full bg-white object-contain"
+                  loading={index < 4 ? 'eager' : 'lazy'}
+                  decoding="async"
                 />
               </button>
             ))}
@@ -231,15 +243,14 @@ export default function BlogGalleryLightbox({ images, title }: { images: string[
             )}
 
             <div className="relative z-10 w-full max-w-6xl h-[72vh] md:h-[82vh]" onClick={(e) => e.stopPropagation()}>
-              <Image
+              <img
                 key={`${images[activeIndex]}-${activeIndex}`}
                 src={images[activeIndex]}
                 alt={`${title} - ảnh ${activeIndex + 1}`}
-                fill
-                className="object-contain"
-                sizes="100vw"
-                quality={100}
-                priority
+                className="h-full w-full object-contain"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
               />
             </div>
 

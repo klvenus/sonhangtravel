@@ -1,8 +1,11 @@
 'use client'
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { warmGalleryWindow } from '@/lib/client-image-warmup'
 
 interface TourDetailProps {
   tourData: {
@@ -27,6 +30,8 @@ interface TourDetailProps {
     reviewCount: number
     bookedCount: number
     images: string[]
+    imageThumbs?: string[]
+    imagePreviews?: string[]
     highlights: string[]
     tourFileUrl?: string // URL to download tour PDF
     itinerary: Array<{
@@ -60,6 +65,8 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   const [showGalleryModal, setShowGalleryModal] = useState(false)
   const [showAllItinerary, setShowAllItinerary] = useState(false)
   const [guestCount, setGuestCount] = useState(2)
+  const thumbImages = tourData.imageThumbs?.length === tourData.images.length ? tourData.imageThumbs : tourData.images
+  const previewImages = tourData.imagePreviews?.length === tourData.images.length ? tourData.imagePreviews : tourData.images
   const toLocalDateKey = (date: Date) => {
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -255,12 +262,30 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
   ]
 
   const openGalleryAt = (index: number) => {
+    warmGalleryWindow(tourData.images, index, 'high')
     setCurrentImage(index)
     setShowGalleryModal(true)
   }
 
-  const showPrevImage = () => setCurrentImage((prev) => (prev === 0 ? tourData.images.length - 1 : prev - 1))
-  const showNextImage = () => setCurrentImage((prev) => (prev === tourData.images.length - 1 ? 0 : prev + 1))
+  const selectGalleryImage = (index: number) => {
+    warmGalleryWindow(tourData.images, index, 'high')
+    setCurrentImage(index)
+  }
+
+  const showPrevImage = () => setCurrentImage((prev) => {
+    const nextIndex = prev === 0 ? tourData.images.length - 1 : prev - 1
+    warmGalleryWindow(tourData.images, nextIndex, 'high')
+    return nextIndex
+  })
+  const showNextImage = () => setCurrentImage((prev) => {
+    const nextIndex = prev === tourData.images.length - 1 ? 0 : prev + 1
+    warmGalleryWindow(tourData.images, nextIndex, 'high')
+    return nextIndex
+  })
+
+  useEffect(() => {
+    warmGalleryWindow(tourData.images, currentImage, showGalleryModal ? 'high' : 'low')
+  }, [currentImage, showGalleryModal, tourData.images])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -299,18 +324,16 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               fill
               className="object-cover"
               priority
+              unoptimized
             />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent"></div>
-
             {/* Image counter & discount */}
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
               {discountPercent > 0 && (
-                <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                <span className="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
                   GIẢM {discountPercent}%
                 </span>
               )}
-              <div className="ml-auto bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+              <div className="ml-auto rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-gray-800 ring-1 ring-black/5 backdrop-blur-sm">
                 {currentImage + 1}/{tourData.images.length}
               </div>
             </div>
@@ -321,12 +344,12 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
             {tourData.images.map((img, idx) => (
               <button
                 key={idx}
-                onClick={() => setCurrentImage(idx)}
+                onClick={() => selectGalleryImage(idx)}
                 className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                   currentImage === idx ? 'border-[#00CBA9] scale-105' : 'border-gray-200'
                 }`}
               >
-                <Image src={img} alt="" width={64} height={64} className="object-cover w-full h-full" />
+                <Image src={thumbImages[idx] || img} alt="" width={64} height={64} className="object-cover w-full h-full" unoptimized />
               </button>
             ))}
           </div>
@@ -342,6 +365,7 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                 fill
                 className="object-cover"
                 priority
+                unoptimized
               />
             </div>
           ) : (
@@ -353,11 +377,12 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   priority
+                  unoptimized
                 />
               </button>
               {tourData.images.slice(1, 5).map((img: string, idx: number) => (
                 <button type="button" onClick={() => openGalleryAt(idx + 1)} key={idx} className="relative rounded-2xl overflow-hidden group">
-                  <Image src={img} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={previewImages[idx + 1] || img} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
                 </button>
               ))}
               {tourData.images.length > 5 && (
@@ -1064,7 +1089,15 @@ export default function TourDetailClient({ tourData, phoneNumber = '0123456789',
               Đóng
             </button>
             <div className="relative h-[70vh] overflow-hidden rounded-2xl">
-              <Image src={tourData.images[currentImage]} alt={tourData.title} fill className="object-contain" sizes="100vw" />
+              <img
+                key={`${tourData.images[currentImage]}-${currentImage}`}
+                src={tourData.images[currentImage]}
+                alt={tourData.title}
+                className="h-full w-full object-contain"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
             </div>
             <div className="mt-4 flex items-center justify-between gap-3 text-white">
               <button type="button" onClick={showPrevImage} className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">

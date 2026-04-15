@@ -302,16 +302,20 @@ const fallbackPolicies = {
 
 // Transform DB tour row to page data
 function transformTour(tour: TourData) {
-  const images: string[] = []
+  const rawImages: string[] = []
   if (tour.thumbnail) {
-    images.push(getImageUrl(tour.thumbnail, 'large'))
+    rawImages.push(tour.thumbnail)
   }
   if (tour.gallery && tour.gallery.length > 0) {
-    tour.gallery.forEach(img => images.push(getImageUrl(img, 'large')))
+    tour.gallery.forEach(img => rawImages.push(img))
   }
-  if (images.length === 0) {
-    images.push(DEFAULT_OG_IMAGE)
+  if (rawImages.length === 0) {
+    rawImages.push(DEFAULT_OG_IMAGE)
   }
+
+  const images = rawImages.map(img => getImageUrl(img, 'large') || img).filter(Boolean)
+  const imageThumbs = rawImages.map(img => getImageUrl(img, 'thumb') || img).filter(Boolean)
+  const imagePreviews = rawImages.map(img => getImageUrl(img, 'medium') || img).filter(Boolean)
 
   return {
     id: String(tour.id),
@@ -330,6 +334,8 @@ function transformTour(tour: TourData) {
     reviewCount: tour.reviewCount || 0,
     bookedCount: tour.bookingCount || 0,
     images,
+    imageThumbs,
+    imagePreviews,
     highlights: buildTourHighlights(tour),
     tourFileUrl: tour.policy && /^https?:\/\//i.test(tour.policy) ? tour.policy : undefined,
     itinerary: tour.itinerary?.map(item => ({

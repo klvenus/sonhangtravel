@@ -560,6 +560,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
   const saleUntilIso = `${yyyy}-${mm}-${dd}T23:59:59+07:00`
   const canonicalUrl = `${SITE_URL}/blog/${post.slug}`
   const galleryImages = (post.gallery || []).map((image) => getImageUrl(image, 'large')).filter(Boolean)
+  const galleryThumbImages = (post.gallery || []).map((image) => getImageUrl(image, 'thumb')).filter(Boolean)
   const articleImage = getImageUrl(post.thumbnail, 'large') || galleryImages[0] || DEFAULT_OG_IMAGE
   const saleTourHref = `${SITE_URL}/tours`
   const saleZaloHref = ZALO_OA_URL
@@ -661,7 +662,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         ) : (post.thumbnail || galleryImages.length > 0) && (
           galleryImages.length > 0 && !isSalePost ? (
             <div className="mb-10">
-              <BlogGalleryLightbox images={galleryImages} title={post.title} />
+              <BlogGalleryLightbox images={galleryImages} thumbImages={galleryThumbImages} title={post.title} />
             </div>
           ) : (
             <div className={`relative overflow-hidden mb-10 bg-gray-100 shadow-sm ${isSalePost ? 'aspect-[4/5] md:aspect-[16/8] rounded-2xl ring-1 ring-orange-200' : 'aspect-[4/5] md:aspect-[16/10] rounded-3xl'}`}>
@@ -875,7 +876,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Album ảnh chuyến đi</h2>
               <p className="text-gray-600 mt-2">Xem thêm một vài khoảnh khắc để cảm nhận rõ hơn vibe của hành trình.</p>
             </div>
-            <BlogGalleryLightbox images={galleryImages} title={post.title} />
+            <BlogGalleryLightbox images={galleryImages} thumbImages={galleryThumbImages} title={post.title} />
           </section>
         )}
       </article>
