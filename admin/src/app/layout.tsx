@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NavLink href="/" icon="📊" label="Dashboard" />
               <NavLink href="/tours" icon="🗺️" label="Tours" />
               <NavLink href="/tours/new" icon="➕" label="Thêm tour" />
-              <NavLink href="/blog" icon="📝" label="Blog" />
+              <NavLink href="/blog" icon="📝" label="Tin tức" />
               <NavLink href="/blog/new" icon="✍️" label="Thêm bài viết" />
               <NavLink href="/categories" icon="📁" label="Danh mục" />
               <NavLink href="/settings" icon="⚙️" label="Cài đặt" />

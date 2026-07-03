@@ -66,7 +66,7 @@ export default async function TourMapPage() {
   const supportLinks = [
     { href: '/tours', label: 'Tất cả tour Trung Quốc' },
     { href: '/uu-dai', label: 'Ưu đãi tour đang chạy' },
-    { href: '/blog', label: 'Blog du lịch Trung Quốc' },
+    { href: '/tintuc', label: 'Tin tức du lịch Trung Quốc' },
     { href: '/ve-chung-toi', label: 'Về Sơn Hằng Travel' },
     { href: '/lien-he', label: 'Liên hệ đặt tour' },
   ]

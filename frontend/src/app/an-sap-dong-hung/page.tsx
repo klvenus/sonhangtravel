@@ -161,10 +161,10 @@ export default async function AnSapDongHungPage() {
               <h2 className="mt-2 text-2xl font-bold text-[#5d3a4b] sm:text-3xl">Những chỗ nên ghé thử</h2>
             </div>
             <Link
-              href="/blog"
+              href="/tintuc"
               className="inline-flex w-fit items-center gap-2 rounded-full border border-rose-100 bg-rose-50 px-4 py-2.5 text-sm font-semibold text-[#b86289]"
             >
-              Xem toàn bộ blog <span aria-hidden>→</span>
+              Xem toàn bộ tin tức <span aria-hidden>→</span>
             </Link>
           </div>
 

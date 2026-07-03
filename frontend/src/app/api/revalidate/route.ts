@@ -82,7 +82,7 @@ function deriveTagsFromPaths(paths: string[]): string[] {
       tags.add(`category:${path.split('/').pop()}`)
     }
 
-    if (path === '/blog' || path === '/uu-dai' || path === '/an-sap-dong-hung') {
+    if (path === '/blog' || path === '/tintuc' || path === '/uu-dai' || path === '/an-sap-dong-hung') {
       tags.add('blog')
     }
 
@@ -152,6 +152,7 @@ function derivePathsFromBody(body: any): string[] {
 
   if (body?.model === 'blog' || body?.model === 'blog_post') {
     paths.add('/blog')
+    paths.add('/tintuc')
     paths.add('/uu-dai')
     paths.add('/an-sap-dong-hung')
     if (body?.entry?.slug) {
@@ -161,6 +162,7 @@ function derivePathsFromBody(body: any): string[] {
 
   if (body?.model === 'site_settings' || body?.model === 'settings') {
     paths.add('/blog')
+    paths.add('/tintuc')
     paths.add('/uu-dai')
     paths.add('/an-sap-dong-hung')
     paths.add('/so-do-tour')
@@ -216,7 +218,7 @@ export async function GET(request: NextRequest) {
   }
 
   const path = request.nextUrl.searchParams.get('path')
-  const paths = path ? normalizePaths([path]) : ['/', '/tours', '/blog']
+  const paths = path ? normalizePaths([path]) : ['/', '/tours', '/blog', '/tintuc']
   const tags = deriveTagsFromPaths(paths)
   revalidateMany(paths)
   revalidateTags(tags)

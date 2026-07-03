@@ -401,8 +401,8 @@ export default function Header({
                 <Link href="/uu-dai" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
                   Ưu đãi
                 </Link>
-                <Link href="/blog" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
-                  Blog
+                <Link href="/tintuc" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
+                  Tin tức
                 </Link>
                 <Link href="/ve-chung-toi" className="text-gray-700 hover:text-[#00CBA9] font-medium transition-colors">
                   Về chúng tôi
@@ -531,11 +531,11 @@ export default function Header({
                   </svg>
                 </Link>
                 <Link
-                  href="/blog"
+                  href="/tintuc"
                   onClick={() => setShowMobileMenu(false)}
                   className="flex items-center justify-between px-5 py-3.5 text-gray-800 hover:bg-gray-50 font-medium"
                 >
-                  Blog du lịch
+                  Tin tức du lịch
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>

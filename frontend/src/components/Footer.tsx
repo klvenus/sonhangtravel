@@ -92,7 +92,7 @@ export default function Footer({
   topTours = [],
 }: FooterProps) {
   const featuredCategories = categories.slice(0, 6)
-  const featuredTours = topTours.slice(0, 5)
+  const featuredTours = topTours.slice(0, 4)
   const normalizedPhone = normalizeDigits(phoneNumber)
   const normalizedZalo = normalizeDigits(zaloNumber) || normalizedPhone
   const zaloHref = normalizedZalo ? `https://zalo.me/${normalizedZalo}` : undefined
@@ -100,16 +100,23 @@ export default function Footer({
   const hotlineDisplay = phoneNumber || '0338 239 888'
   const supportLabel = email || 'Lienhe@sonhangtravel.com'
   const siteUrl = 'https://sonhangtravel.com'
+  const navigationLinks = [
+    { href: '/tours', label: 'Tất cả tour' },
+    { href: '/so-do-tour', label: 'Sơ đồ tour' },
+    { href: '/tintuc', label: 'Tin tức' },
+    { href: '/ve-chung-toi', label: 'Về chúng tôi' },
+    { href: '/lien-he', label: 'Liên hệ' },
+  ]
 
   return (
-    <footer id="site-footer" className="border-t border-emerald-900/60 bg-[radial-gradient(circle_at_top_left,_rgba(110,231,183,0.16),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(52,211,153,0.14),_transparent_28%),linear-gradient(180deg,_#064e3b,_#065f46_45%,_#064e3b)] text-white pb-20 md:pb-0">
-      <div className="border-b border-white/10">
+    <footer id="site-footer" className="border-t border-emerald-900/60 bg-[radial-gradient(circle_at_top_left,_rgba(110,231,183,0.16),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(52,211,153,0.14),_transparent_28%),linear-gradient(180deg,_#064e3b,_#065f46_45%,_#064e3b)] text-white">
+      <div className="hidden border-b border-white/10 md:block">
         <div className="container-custom py-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Hỗ trợ đặt tour nhanh</p>
-              <h3 className="mt-2 text-xl font-bold tracking-tight text-white md:text-2xl">Tư vấn lịch khởi hành, báo giá và chốt tour ngay trong ngày</h3>
-              <p className="mt-2 text-sm leading-6 text-emerald-50/78">
+              <h3 className="mt-2 text-lg font-bold tracking-tight text-white md:text-2xl">Tư vấn lịch khởi hành, báo giá và chốt tour ngay trong ngày</h3>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/78">
                 Đội ngũ {siteName} hỗ trợ xuyên suốt từ chọn tuyến, chuẩn bị giấy tờ đến giữ chỗ nhanh cho khách đi Đông Hưng, Nam Ninh, Hà Khẩu và các tuyến dài ngày.
               </p>
             </div>
@@ -139,7 +146,121 @@ export default function Footer({
       </div>
 
       <div className="container-custom py-10 md:py-12">
-        <div className="grid gap-8 lg:grid-cols-[1.35fr_0.9fr_1fr_1.05fr]">
+        <div className="md:hidden">
+          <div className="rounded-[30px] border border-white/10 bg-white/5 p-5 shadow-[0_18px_45px_rgba(2,44,34,0.2)] backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={siteName}
+                  width={52}
+                  height={52}
+                  className="h-[52px] w-[52px] rounded-2xl bg-white/12 p-1.5 object-contain ring-1 ring-white/10"
+                  unoptimized
+                />
+              ) : (
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-white/12 text-base font-bold text-white ring-1 ring-white/10">
+                  SH
+                </div>
+              )}
+
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-100/70">Thương hiệu</p>
+                <h3 className="mt-1 text-[15px] font-bold leading-6 text-white">CÔNG TY TNHH SƠN HẰNG TRAVEL</h3>
+                <p className="text-xs text-emerald-50/65">SON HANG TRAVEL COMPANY LIMITED</p>
+              </div>
+            </div>
+
+            <p className="mt-4 text-sm leading-7 text-emerald-50/82">
+              Chuyên tour Trung Quốc khởi hành từ Móng Cái, hỗ trợ giữ chỗ nhanh, lịch rõ ràng và tư vấn trực tiếp khi khách cần chốt tour.
+            </p>
+
+            <div className="mt-4 space-y-2 text-sm text-emerald-50/82">
+              <div className="flex items-start gap-2.5">
+                <MapPinIcon />
+                <span>{address}</span>
+              </div>
+              <a href={`mailto:${supportLabel}`} className="flex items-start gap-2.5 transition hover:text-white">
+                <MailIcon />
+                <span>{supportLabel}</span>
+              </a>
+              <a href={siteUrl} className="flex items-start gap-2.5 transition hover:text-white">
+                <GlobeIcon />
+                <span>sonhangtravel.com</span>
+              </a>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <a
+                href={`tel:${normalizedPhone}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-50"
+              >
+                <PhoneIcon />
+                Gọi {hotlineDisplay}
+              </a>
+              {zaloHref && (
+                <a
+                  href={zaloHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/16"
+                >
+                  <ZaloIcon />
+                  Nhắn Zalo
+                </a>
+              )}
+            </div>
+
+            <div className="mt-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Điều hướng nhanh</p>
+              <div className="mt-3 grid grid-cols-2 gap-2.5">
+                {navigationLinks.map((link, index) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm font-medium text-emerald-50/88 transition hover:bg-white/10 hover:text-white ${
+                      navigationLinks.length % 2 !== 0 && index === navigationLinks.length - 1 ? 'col-span-2' : ''
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-4">
+              <div className="flex flex-wrap gap-2">
+                <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-medium text-emerald-50/85">MST: 5702215220</span>
+                <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-medium text-emerald-50/85">Hỗ trợ 24/7</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={facebookHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/10 text-white transition hover:bg-white/16"
+                  title="Facebook"
+                >
+                  <FacebookIcon />
+                </a>
+                {zaloHref && (
+                  <a
+                    href={zaloHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/10 text-white transition hover:bg-white/16"
+                    title="Zalo"
+                  >
+                    <ZaloIcon />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden gap-8 md:grid lg:grid-cols-[1.35fr_0.9fr_1fr_1.05fr]">
           <div>
             <div className="flex items-center gap-3">
               {logoUrl ? (
@@ -159,7 +280,7 @@ export default function Footer({
 
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-100/70">Thương hiệu</p>
-                <h3 className="mt-1 text-lg font-bold tracking-tight text-white">CÔNG TY TNHH SƠN HẰNG TRAVEL</h3>
+                <h3 className="mt-1 text-base font-bold leading-snug tracking-tight text-white sm:text-lg">CÔNG TY TNHH SƠN HẰNG TRAVEL</h3>
                 <p className="mt-1 text-xs text-emerald-50/65">SON HANG TRAVEL COMPANY LIMITED</p>
               </div>
             </div>
@@ -198,49 +319,33 @@ export default function Footer({
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Điều hướng</p>
             <ul className="mt-4 space-y-3 text-sm text-emerald-50/82">
-              <li>
-                <Link href="/tours" className="inline-flex items-center gap-2 transition hover:text-white">
-                  <ArrowIcon />
-                  Tất cả tour
-                </Link>
-              </li>
-              <li>
-                <Link href="/so-do-tour" className="inline-flex items-center gap-2 transition hover:text-white">
-                  <ArrowIcon />
-                  Sơ đồ tour Trung Quốc
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="inline-flex items-center gap-2 transition hover:text-white">
-                  <ArrowIcon />
-                  Blog du lịch
-                </Link>
-              </li>
-              <li>
-                <Link href="/ve-chung-toi" className="inline-flex items-center gap-2 transition hover:text-white">
-                  <ArrowIcon />
-                  Về chúng tôi
-                </Link>
-              </li>
-              <li>
-                <Link href="/lien-he" className="inline-flex items-center gap-2 transition hover:text-white">
-                  <ArrowIcon />
-                  Liên hệ
-                </Link>
-              </li>
+              {navigationLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="inline-flex items-center gap-2 transition hover:text-white">
+                    <ArrowIcon />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Điểm đến nổi bật</p>
-            <div className="mt-4 flex flex-wrap gap-2.5">
+            <p className="mt-3 text-sm leading-6 text-emerald-50/70">
+              Nhóm tuyến đang được khách hỏi nhiều và cũng là landing page chính của site.
+            </p>
+            <div className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
               {featuredCategories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/tours/${category.slug}`}
-                  className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-sm font-medium text-emerald-50/88 transition hover:border-white/20 hover:bg-white/14 hover:text-white"
+                  className="group flex items-center justify-between border-b border-white/10 pb-2 text-sm font-medium text-emerald-50/88 transition hover:border-white/20 hover:text-white"
                 >
-                  Tour {category.name}
+                  <span>Tour {category.name}</span>
+                  <span aria-hidden className="text-emerald-100/45 transition group-hover:translate-x-0.5 group-hover:text-emerald-50">
+                    →
+                  </span>
                 </Link>
               ))}
             </div>
@@ -315,7 +420,7 @@ export default function Footer({
       </div>
 
       <div className="border-t border-white/10">
-        <div className="container-custom flex flex-col gap-2 py-4 text-xs text-emerald-50/58 md:flex-row md:items-center md:justify-between">
+        <div className="container-custom flex flex-col gap-2 py-4 pb-24 text-xs text-emerald-50/58 md:flex-row md:items-center md:justify-between md:pb-4">
           <p>&copy; 2026 CÔNG TY TNHH SƠN HẰNG TRAVEL. Tất cả quyền được bảo lưu.</p>
           <div className="flex flex-wrap items-center gap-3">
             <span>MST: 5702215220</span>

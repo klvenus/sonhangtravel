@@ -41,7 +41,10 @@ export default function BlogPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-800">Blog ({posts.length})</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Tin tức ({posts.length})</h2>
+          <p className="mt-1 text-sm text-gray-500">Trang danh sách public đang dùng: <span className="font-medium text-emerald-700">/tintuc</span></p>
+        </div>
         <Link href="/blog/new" className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700">
           ➕ Thêm bài viết
         </Link>

@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.95,
     },
     {
-      url: `${SITE_URL}/blog`,
+      url: `${SITE_URL}/tintuc`,
       lastModified: DEFAULT_LAST_MODIFIED,
       changeFrequency: 'weekly',
       priority: 0.6,

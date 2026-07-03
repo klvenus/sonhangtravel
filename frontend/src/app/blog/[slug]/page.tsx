@@ -214,7 +214,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const articleImage = getImageUrl(post.thumbnail, 'large') || getImageUrl(post.gallery?.[0], 'large') || DEFAULT_OG_IMAGE
 
   return {
-    title: `${post.title} | Blog Sơn Hằng Travel`,
+    title: `${post.title} | Tin tức Sơn Hằng Travel`,
     description: post.description,
     keywords: post.keywords,
     alternates: {
@@ -594,7 +594,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Trang chủ', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
+      { '@type': 'ListItem', position: 2, name: 'Tin tức', item: `${SITE_URL}/tintuc` },
       { '@type': 'ListItem', position: 3, name: post.title, item: canonicalUrl },
     ],
   }

@@ -23,8 +23,8 @@ export default async function DashboardPage() {
         <Stat icon="✅" label="Tour công khai" value={Number(publishedCount.count)} color="green" />
         <Stat icon="⭐" label="Tour nổi bật" value={Number(featuredCount.count)} color="yellow" />
         <Stat icon="📁" label="Danh mục" value={Number(catCount.count)} color="purple" />
-        <Stat icon="📝" label="Bài blog" value={Number(blogCount.count)} color="emerald" />
-        <Stat icon="🌐" label="Blog công khai" value={Number(blogPublishedCount.count)} color="teal" />
+        <Stat icon="📝" label="Bài viết" value={Number(blogCount.count)} color="emerald" />
+        <Stat icon="🌐" label="Tin tức công khai" value={Number(blogPublishedCount.count)} color="teal" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -34,7 +34,7 @@ export default async function DashboardPage() {
         </Link>
         <Link href="/blog/new" className="bg-emerald-600 text-white rounded-xl p-4 flex items-center gap-3 hover:bg-emerald-700 transition-colors">
           <span className="text-2xl">✍️</span>
-          <div><p className="font-semibold">Thêm bài blog</p><p className="text-sm text-emerald-100">Viết bài SEO</p></div>
+          <div><p className="font-semibold">Thêm bài tin tức</p><p className="text-sm text-emerald-100">Public list: /tintuc</p></div>
         </Link>
         <Link href="/categories" className="bg-purple-600 text-white rounded-xl p-4 flex items-center gap-3 hover:bg-purple-700 transition-colors">
           <span className="text-2xl">📁</span>

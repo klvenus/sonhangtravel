@@ -3,7 +3,9 @@ import CategorySection from '@/components/CategorySection'
 import FeaturedTours from '@/components/FeaturedTours'
 import CategoryToursSection from '@/components/CategoryToursSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
+import HomeNewsSection from '@/components/HomeNewsSection'
 import { getCategories, getTours, getImageUrl, getSiteSettings, CategoryData, TourData, BannerSlide } from '@/lib/data'
+import { getAllBlogPosts, type BlogPost } from '@/lib/blog'
 import { Metadata } from 'next'
 
 const SITE_URL = 'https://sonhangtravel.com'
@@ -163,13 +165,15 @@ export default async function Home() {
   let tours: ReturnType<typeof transformTour>[] = []
   let allTours: ReturnType<typeof transformTour>[] = []
   let bannerSlides: ReturnType<typeof transformBannerSlide>[] = []
+  let latestPosts: BlogPost[] = []
 
   try {
-    const [categoriesData, featuredToursData, allToursData, siteSettings] = await Promise.all([
+    const [categoriesData, featuredToursData, allToursData, siteSettings, blogPostsData] = await Promise.all([
       getCategories(),
       getTours({ pageSize: 200, sort: 'bookingCount:desc', featured: true }),
       getTours({ pageSize: 200, sort: 'bookingCount:desc' }),
-      getSiteSettings()
+      getSiteSettings(),
+      getAllBlogPosts(),
     ])
     
     if (categoriesData && categoriesData.length > 0) {
@@ -200,6 +204,8 @@ export default async function Home() {
     if (siteSettings?.bannerSlides && siteSettings.bannerSlides.length > 0) {
       bannerSlides = siteSettings.bannerSlides.map((slide, index) => transformBannerSlide(slide, index))
     }
+
+    latestPosts = (blogPostsData || []).slice(0, 4)
   } catch (error) {
     console.error('Error fetching home data:', error)
   }
@@ -238,6 +244,7 @@ export default async function Home() {
         />
       ))}
       <WhyChooseUs />
+      <HomeNewsSection posts={latestPosts} />
     </main>
   )
 }
