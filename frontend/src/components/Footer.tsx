@@ -3,6 +3,12 @@ import Image from 'next/image'
 
 interface FooterProps {
   logoUrl?: string
+  siteName?: string
+  phoneNumber?: string
+  zaloNumber?: string
+  email?: string
+  address?: string
+  facebookUrl?: string
   categories?: Array<{
     id: number
     name: string
@@ -15,239 +21,309 @@ interface FooterProps {
   }>
 }
 
-export default function Footer({ logoUrl, categories = [], topTours = [] }: FooterProps) {
-  const featuredCategories = categories.slice(0, 5)
-  const featuredTours = topTours.slice(0, 6)
+function normalizeDigits(value?: string) {
+  return (value || '').replace(/\D/g, '')
+}
+
+function MapPinIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 21s7-4.35 7-11a7 7 0 10-14 0c0 6.65 7 11 7 11Z" />
+      <circle cx="12" cy="10" r="2.8" strokeWidth={1.8} />
+    </svg>
+  )
+}
+
+function PhoneIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4.8 4.8h3.3l1.65 4.1-2.1 1.9a16.4 16.4 0 006.5 6.5l1.9-2.1 4.1 1.65v3.3A2.2 2.2 0 0118 22C9.16 22 2 14.84 2 6a2.2 2.2 0 012.8-1.2Z" />
+    </svg>
+  )
+}
+
+function MailIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 6h16v12H4z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="m4 8 8 6 8-6" />
+    </svg>
+  )
+}
+
+function GlobeIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" strokeWidth={1.8} />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 12h18M12 3c2.4 2.5 3.6 5.5 3.6 9S14.4 18.5 12 21c-2.4-2.5-3.6-5.5-3.6-9S9.6 5.5 12 3Z" />
+    </svg>
+  )
+}
+
+function ArrowIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5h10v10M19 5 5 19" />
+    </svg>
+  )
+}
+
+function FacebookIcon() {
+  return (
+    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M13.5 22v-8h2.7l.5-3.2h-3.2V8.7c0-.9.3-1.5 1.6-1.5H17V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4.1v2.3H8V14h2.8v8h2.7Z" />
+    </svg>
+  )
+}
+
+function ZaloIcon() {
+  return <span className="text-xs font-black tracking-[0.2em]">Z</span>
+}
+
+export default function Footer({
+  logoUrl,
+  siteName = 'Sơn Hằng Travel',
+  phoneNumber = '0338239888',
+  zaloNumber,
+  email = 'Lienhe@sonhangtravel.com',
+  address = 'Khu 5 - Phường Móng Cái - Quảng Ninh',
+  facebookUrl,
+  categories = [],
+  topTours = [],
+}: FooterProps) {
+  const featuredCategories = categories.slice(0, 6)
+  const featuredTours = topTours.slice(0, 5)
+  const normalizedPhone = normalizeDigits(phoneNumber)
+  const normalizedZalo = normalizeDigits(zaloNumber) || normalizedPhone
+  const zaloHref = normalizedZalo ? `https://zalo.me/${normalizedZalo}` : undefined
+  const facebookHref = facebookUrl || 'https://facebook.com/sonhangtravel'
+  const hotlineDisplay = phoneNumber || '0338 239 888'
+  const supportLabel = email || 'Lienhe@sonhangtravel.com'
+  const siteUrl = 'https://sonhangtravel.com'
 
   return (
-    <footer className="bg-[#059669] text-white pb-20 md:pb-0">
-      {/* Mobile Footer */}
-      <div className="md:hidden">
-        <div className="px-4 py-6 space-y-4">
-          {/* Company Name + Logo */}
-          <div className="flex items-center gap-3">
-            {logoUrl ? (
-              <Image src={logoUrl} alt="Son Hang Travel" width={48} height={48} className="w-12 h-12 object-contain rounded-xl bg-white/20 p-1" unoptimized />
-            ) : (
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white font-bold shrink-0">
-                SH
-              </div>
-            )}
-            <div>
-              <h3 className="font-bold text-white text-sm leading-tight">CÔNG TY TNHH SƠN HẰNG TRAVEL</h3>
-              <p className="text-white/70 text-[11px]">SON HANG TRAVEL COMPANY LIMITED</p>
+    <footer id="site-footer" className="border-t border-emerald-900/60 bg-[radial-gradient(circle_at_top_left,_rgba(110,231,183,0.16),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(52,211,153,0.14),_transparent_28%),linear-gradient(180deg,_#064e3b,_#065f46_45%,_#064e3b)] text-white pb-20 md:pb-0">
+      <div className="border-b border-white/10">
+        <div className="container-custom py-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Hỗ trợ đặt tour nhanh</p>
+              <h3 className="mt-2 text-xl font-bold tracking-tight text-white md:text-2xl">Tư vấn lịch khởi hành, báo giá và chốt tour ngay trong ngày</h3>
+              <p className="mt-2 text-sm leading-6 text-emerald-50/78">
+                Đội ngũ {siteName} hỗ trợ xuyên suốt từ chọn tuyến, chuẩn bị giấy tờ đến giữ chỗ nhanh cho khách đi Đông Hưng, Nam Ninh, Hà Khẩu và các tuyến dài ngày.
+              </p>
             </div>
-          </div>
 
-          {/* Info */}
-          <div className="space-y-2 text-[13px] text-white/80">
-            <p>MST: <span className="text-white font-medium">5702215220</span></p>
-            <p>📍 Khu 5 - Phường Móng Cái - Quảng Ninh</p>
-            <p>📍 VP: 01 Xuân Diệu - Trần Phú - Móng Cái - Quảng Ninh</p>
-            <p className="text-white/60 text-xs pl-5">(cách cửa khẩu Quốc Tế Móng Cái 100m)</p>
-          </div>
-
-          {/* Hotline */}
-          <a
-            href="tel:0338239888"
-            className="flex items-center justify-center gap-2 bg-white text-[#047857] py-3 rounded-xl font-bold text-base w-full"
-          >
-            ☎️ HOTLINE 24/7: 0338 239 888
-          </a>
-
-          {/* Consultants */}
-          <div className="grid grid-cols-2 gap-2">
-            <a href="tel:0986409633" className="flex items-center justify-center gap-1.5 bg-white/15 text-white py-2.5 rounded-xl text-sm hover:bg-white/25 transition-colors">
-              📞 0986 409 633
-            </a>
-            <a href="https://zalo.me/0388091993" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-white/15 text-white py-2.5 rounded-xl text-sm hover:bg-white/25 transition-colors">
-              💬 0388 091 993
-            </a>
-          </div>
-
-          {/* Social + Email */}
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex gap-2">
-              <a href="https://zalo.me/561113801789156735" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/15 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors text-xs font-bold">
-                Z
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <a
+                href={`tel:${normalizedPhone}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-emerald-900 shadow-[0_14px_32px_rgba(4,120,87,0.18)] transition hover:bg-emerald-50"
+              >
+                <PhoneIcon />
+                Gọi {hotlineDisplay}
               </a>
-              <a href="#" className="w-9 h-9 bg-white/15 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-              </a>
+              {zaloHref && (
+                <a
+                  href={zaloHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/16"
+                >
+                  <ZaloIcon />
+                  Nhắn Zalo
+                </a>
+              )}
             </div>
-            <a href="mailto:Lienhe@sonhangtravel.com" className="text-xs text-white/70 hover:text-white">
-              Lienhe@sonhangtravel.com
-            </a>
           </div>
-
-          {/* Copyright */}
-          {featuredCategories.length > 0 && (
-            <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Điểm đến hot</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {featuredCategories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={`/tours/${category.slug}`}
-                    className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/25"
-                  >
-                    Tour {category.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <p className="text-center text-white/50 text-[11px] pt-1">
-            &copy; 2026 Sơn Hằng Travel. All rights reserved.
-          </p>
         </div>
       </div>
 
-      {/* Desktop Footer */}
-      <div className="hidden md:block">
-        <div className="container-custom py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Company Info */}
-            <div className="lg:col-span-5">
-              <div className="flex items-center gap-3 mb-5">
-                {logoUrl ? (
-                  <Image src={logoUrl} alt="Son Hang Travel" width={56} height={56} className="w-14 h-14 object-contain rounded-xl bg-white/20 p-1" unoptimized />
-                ) : (
-                  <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0">
-                    SH
-                  </div>
-                )}
-                <div>
-                  <h3 className="text-white font-bold">CÔNG TY TNHH SƠN HẰNG TRAVEL</h3>
-                  <p className="text-white/70 text-xs">SON HANG TRAVEL COMPANY LIMITED</p>
+      <div className="container-custom py-10 md:py-12">
+        <div className="grid gap-8 lg:grid-cols-[1.35fr_0.9fr_1fr_1.05fr]">
+          <div>
+            <div className="flex items-center gap-3">
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt={siteName}
+                  width={56}
+                  height={56}
+                  className="h-14 w-14 rounded-2xl bg-white/12 p-1.5 object-contain ring-1 ring-white/10"
+                  unoptimized
+                />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/12 text-lg font-bold text-white ring-1 ring-white/10">
+                  SH
+                </div>
+              )}
+
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-100/70">Thương hiệu</p>
+                <h3 className="mt-1 text-lg font-bold tracking-tight text-white">CÔNG TY TNHH SƠN HẰNG TRAVEL</h3>
+                <p className="mt-1 text-xs text-emerald-50/65">SON HANG TRAVEL COMPANY LIMITED</p>
+              </div>
+            </div>
+
+            <div className="mt-5 max-w-xl space-y-3 text-sm leading-6 text-emerald-50/82">
+              <p>
+                Chuyên tour Trung Quốc khởi hành từ Móng Cái, tập trung tuyến ngắn ngày dễ đi và các hành trình dài ngày có lịch rõ ràng, hỗ trợ nhanh.
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2.5">
+                  <MapPinIcon />
+                  <span>{address}</span>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <GlobeIcon />
+                  <a href={siteUrl} className="transition hover:text-white">
+                    sonhangtravel.com
+                  </a>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <MailIcon />
+                  <a href={`mailto:${supportLabel}`} className="transition hover:text-white">
+                    {supportLabel}
+                  </a>
                 </div>
               </div>
-
-              <ul className="space-y-2.5 text-sm text-white/90">
-                <li className="flex items-start gap-2.5">
-                  <span className="shrink-0 text-white font-semibold">MST:</span>
-                  <span className="text-white font-medium">5702215220</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <svg className="w-4 h-4 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  <span>Hải Yên, Móng Cái 3, Tỉnh Quảng Ninh, Việt Nam</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <svg className="w-4 h-4 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
-                  <a href="tel:0986409633" className="hover:text-white/70 transition-colors">0986409633</a>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <svg className="w-4 h-4 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                  <a href="mailto:cskh@esimcn.net" className="hover:text-white/70 transition-colors">cskh@esimcn.net</a>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <svg className="w-4 h-4 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                  <a href="https://sonhangtravel.com" className="hover:text-white/70 transition-colors">sonhangtravel.com</a>
-                </li>
-              </ul>
             </div>
 
-            {/* Hotline & Consultants */}
-            <div className="lg:col-span-3">
-              <h4 className="text-white font-semibold mb-4">Liên Hệ</h4>
-              <ul className="space-y-3 text-sm">
-                <li>
-                  <p className="text-white/60 text-xs mb-1">SỐ ĐIỆN THOẠI</p>
-                  <a href="tel:0986409633" className="text-white font-bold text-lg hover:text-white/80 transition-colors">
-                    ☎️ 0986 409 633
-                  </a>
-                </li>
-                <li className="pt-2">
-                  <p className="text-white/60 text-xs mb-2">EMAIL CSKH</p>
-                  <a href="mailto:cskh@esimcn.net" className="flex items-center gap-2 hover:text-white/70 transition-colors">
-                    <span>✉️</span>
-                    <span className="text-white/80">cskh@esimcn.net</span>
-                  </a>
-                </li>
-              </ul>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-medium text-emerald-50/85">MST: 5702215220</span>
+              <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-medium text-emerald-50/85">Hỗ trợ 24/7</span>
+              <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-xs font-medium text-emerald-50/85">Khởi hành từ Móng Cái</span>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Điều hướng</p>
+            <ul className="mt-4 space-y-3 text-sm text-emerald-50/82">
+              <li>
+                <Link href="/tours" className="inline-flex items-center gap-2 transition hover:text-white">
+                  <ArrowIcon />
+                  Tất cả tour
+                </Link>
+              </li>
+              <li>
+                <Link href="/so-do-tour" className="inline-flex items-center gap-2 transition hover:text-white">
+                  <ArrowIcon />
+                  Sơ đồ tour Trung Quốc
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="inline-flex items-center gap-2 transition hover:text-white">
+                  <ArrowIcon />
+                  Blog du lịch
+                </Link>
+              </li>
+              <li>
+                <Link href="/ve-chung-toi" className="inline-flex items-center gap-2 transition hover:text-white">
+                  <ArrowIcon />
+                  Về chúng tôi
+                </Link>
+              </li>
+              <li>
+                <Link href="/lien-he" className="inline-flex items-center gap-2 transition hover:text-white">
+                  <ArrowIcon />
+                  Liên hệ
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Điểm đến nổi bật</p>
+            <div className="mt-4 flex flex-wrap gap-2.5">
+              {featuredCategories.map((category) => (
+                <Link
+                  key={category.id}
+                  href={`/tours/${category.slug}`}
+                  className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-sm font-medium text-emerald-50/88 transition hover:border-white/20 hover:bg-white/14 hover:text-white"
+                >
+                  Tour {category.name}
+                </Link>
+              ))}
             </div>
 
-            {/* Links & Social */}
-            <div className="lg:col-span-4">
-              <h4 className="text-white font-semibold mb-4">Tour Du Lịch</h4>
-              <ul className="space-y-2 text-sm text-white/90 mb-6">
-                <li>
-                  <Link href="/tours" className="hover:text-white/70 transition-colors">Tất cả tour</Link>
-                </li>
-                <li>
-                  <Link href="/so-do-tour" className="hover:text-white/70 transition-colors">Sơ đồ tour Trung Quốc</Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="hover:text-white/70 transition-colors">Blog du lịch</Link>
-                </li>
-                <li>
-                  <Link href="/ve-chung-toi" className="hover:text-white/70 transition-colors">Về chúng tôi</Link>
-                </li>
-                <li>
-                  <Link href="/lien-he" className="hover:text-white/70 transition-colors">Liên hệ</Link>
-                </li>
-              </ul>
+            {featuredTours.length > 0 && (
+              <>
+                <p className="mt-7 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Tour bán chạy</p>
+                <ul className="mt-4 space-y-2.5 text-sm text-emerald-50/82">
+                  {featuredTours.map((tour) => (
+                    <li key={tour.id}>
+                      <Link href={`/tour/${tour.slug}`} className="inline-flex items-start gap-2 transition hover:text-white">
+                        <ArrowIcon />
+                        <span>{tour.title}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
 
-              {featuredCategories.length > 0 && (
-                <>
-                  <h4 className="text-white font-semibold mb-4">Điểm Đến Nổi Bật</h4>
-                  <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-white/90 mb-6">
-                    {featuredCategories.map((category) => (
-                      <li key={category.id}>
-                        <Link href={`/tours/${category.slug}`} className="hover:text-white/70 transition-colors">
-                          Tour {category.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-
-              {featuredTours.length > 0 && (
-                <>
-                  <h4 className="text-white font-semibold mb-4">Tour Bán Chạy</h4>
-                  <ul className="space-y-2 text-sm text-white/90 mb-6">
-                    {featuredTours.map((tour) => (
-                      <li key={tour.id}>
-                        <Link href={`/tour/${tour.slug}`} className="hover:text-white/70 transition-colors">
-                          {tour.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-
-              <h4 className="text-white font-semibold mb-4">Kết Nối</h4>
-              <div className="flex gap-3">
-                <a href="#" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors" title="Facebook">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                  </svg>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-100/70">Liên hệ nhanh</p>
+            <div className="mt-4 space-y-4">
+              <div className="border-b border-white/10 pb-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-emerald-100/60">Hotline</p>
+                <a href={`tel:${normalizedPhone}`} className="mt-2 inline-flex items-center gap-2 text-2xl font-bold tracking-tight text-white transition hover:text-emerald-100">
+                  <PhoneIcon />
+                  {hotlineDisplay}
                 </a>
-                <a href="https://zalo.me/561113801789156735" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors" title="Zalo OA">
-                  <span className="text-sm font-bold">Z</span>
+              </div>
+
+              <div className="space-y-3 text-sm text-emerald-50/82">
+                <a href={`mailto:${supportLabel}`} className="inline-flex items-center gap-2 transition hover:text-white">
+                  <MailIcon />
+                  {supportLabel}
                 </a>
+                <a href={siteUrl} className="inline-flex items-center gap-2 transition hover:text-white">
+                  <GlobeIcon />
+                  sonhangtravel.com
+                </a>
+              </div>
+
+              <div className="pt-2">
+                <p className="text-xs uppercase tracking-[0.18em] text-emerald-100/60">Kết nối</p>
+                <div className="mt-3 flex items-center gap-3">
+                  <a
+                    href={facebookHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/10 text-white transition hover:bg-white/16"
+                    title="Facebook"
+                  >
+                    <FacebookIcon />
+                  </a>
+                  {zaloHref && (
+                    <a
+                      href={zaloHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/10 text-white transition hover:bg-white/16"
+                      title="Zalo"
+                    >
+                      <ZaloIcon />
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/20">
-          <div className="container-custom py-4">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-2 text-sm text-white/60">
-              <p>&copy; 2026 CÔNG TY TNHH SƠN HẰNG TRAVEL. Tất cả quyền được bảo lưu.</p>
-              <p>MST: 5702215220</p>
-            </div>
+      <div className="border-t border-white/10">
+        <div className="container-custom flex flex-col gap-2 py-4 text-xs text-emerald-50/58 md:flex-row md:items-center md:justify-between">
+          <p>&copy; 2026 CÔNG TY TNHH SƠN HẰNG TRAVEL. Tất cả quyền được bảo lưu.</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <span>MST: 5702215220</span>
+            <span className="hidden h-1 w-1 rounded-full bg-emerald-100/30 md:inline-block" />
+            <span>Khởi hành từ Móng Cái, Quảng Ninh</span>
           </div>
         </div>
       </div>
     </footer>
   )
 }
-
-2026-05-06 14:28:50

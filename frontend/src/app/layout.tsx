@@ -251,7 +251,17 @@ export default async function RootLayout({
         <div className="pb-16 md:pb-0">
           {children}
         </div>
-        <Footer logoUrl={logoUrl} categories={categories} topTours={topTours} />
+        <Footer
+          logoUrl={logoUrl}
+          siteName={siteName}
+          phoneNumber={phoneNumber}
+          zaloNumber={zaloNumber}
+          email={email}
+          address={siteSettings?.address || undefined}
+          facebookUrl={siteSettings?.facebookUrl || undefined}
+          categories={categories}
+          topTours={topTours}
+        />
         <BottomNav phoneNumber={phoneNumber} zaloNumber={zaloNumber} />
         <SpeedInsights />
         <Analytics />
